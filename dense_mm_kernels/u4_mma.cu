@@ -70,7 +70,7 @@ __global__ void apmm_wu4au4(const int4 *W, const int4 *X, int *D, int M_GLOBAL, 
   // GEMM configuration.
   int K_TILES = K_GLOBAL / 32;
 
-  int ROW_BIT = K_GLOBAL/32;
+  int ROW_BIT = K_GLOBAL / 32;
 
   extern __shared__ int4 shmem[][CHUNK_K+SKEW]; // TODO: Padding opportunity may exist here.
 
@@ -108,8 +108,8 @@ __global__ void apmm_wu4au4(const int4 *W, const int4 *X, int *D, int M_GLOBAL, 
 
       int *shmem_ptr = (int*)shmem + warpId*8*4*(CHUNK_K+SKEW) + (laneId/4)*4*(CHUNK_K+SKEW) + laneId%4;
 
-      int *lane_ptr_w = (int*)warp_ptr_w + laneId/4*ROW_BIT*4 + laneId%4 + tile_k*4*2;
-      int *lane_ptr_x = (int*)warp_ptr_x + laneId/4*ROW_BIT*4 + laneId%4 + tile_k*4*2;
+      int *lane_ptr_w = (int*)warp_ptr_w + laneId/4*ROW_BIT*4 + laneId%4 + tile_k*4;
+      int *lane_ptr_x = (int*)warp_ptr_x + laneId/4*ROW_BIT*4 + laneId%4 + tile_k*4;
       
       *shmem_ptr = *lane_ptr_w;
       shmem_ptr += 8*4*WARPS_PER_BLOCK;
@@ -140,7 +140,7 @@ __global__ void apmm_wu4au4(const int4 *W, const int4 *X, int *D, int M_GLOBAL, 
         size_t shmem_idx_x = 32 + (warpId % 2) * 2 * N + k_step * N;
         const int4 *tile_ptr_x = &shmem[shmem_idx_x][0];
         wmma::load_matrix_sync(b, tile_ptr_x, (CHUNK_K + SKEW)*32);
-        wmma::bmma_sync(c, a, b, c, bmmaBitOpAND);
+        wmma::mma_sync(c, a, b, c);
       }
       __syncthreads();
     }
@@ -200,13 +200,15 @@ void compute_ref(int4 *W, int4 *X, int *ref_C, int M_GLOBAL, int N_GLOBAL, int K
     for (int m = 0; m < M_GLOBAL; m++) {
         for (int n = 0; n < N_GLOBAL; n++) {
             int tmp = 0;
-            for(int k_tile = 0; k < K_GLOBAL/8; k_tile++) {
+            for(int k_tile = 0; k_tile < K_GLOBAL/8; k_tile++) {
                 int w_int = W_int[m*K_GLOBAL/8 + k_tile];
                 int x_int = X_int[n*K_GLOBAL/8 + k_tile];
                 for(int k = 0; k < 8; k++) {
                     int shift = k*4;
                     int x_val = ((mask << shift) & x_int) >> shift;
                     int w_val = ((mask << shift) & w_int) >> shift;
+		    if(x_val<0 || w_val<0)
+		        printf("cpu compute error");
                     tmp += x_val * w_val;
                 }
             }
@@ -243,18 +245,25 @@ void validate_results(int *C, int* ref_C, int M_, int N_) {
 
 int main(int argc, char **argv) {
 
-  int dev = findCudaDevice(argc, (const char **)argv);
+  //int dev = findCudaDevice(argc, (const char **)argv);
+  //checkCudaErrors(cudaGetDeviceProperties(&deviceProp, dev));
 
+  int d;
+  cudaError_t err = cudaGetDevice(&d);
+  if (err != cudaSuccess) 
+      printf("kernel cuda error: %d, %s\n", (int)err, cudaGetErrorString(err));
+  printf("device = %d\n", d);
   cudaDeviceProp deviceProp;
-  checkCudaErrors(cudaGetDeviceProperties(&deviceProp, dev));
+  checkCudaErrors(cudaGetDeviceProperties(&deviceProp, d));
 
   int X_BIT = 4;
   int W_BIT = 4;
 
-  int M_GLOBAL = 64;
+  //int M_GLOBAL = 64;
+  int M_GLOBAL = 1024;
   // int N_GLOBAL = 64;
   // int K_GLOBAL = 128;
-  for (int N_GLOBAL=128; N_GLOBAL<=1024; N_GLOBAL += 128 ) {
+  for (int N_GLOBAL=128; N_GLOBAL<=2048; N_GLOBAL += 128 ) {
     int K_GLOBAL = N_GLOBAL;
   
     int4 *X = NULL;
@@ -287,6 +296,7 @@ int main(int argc, char **argv) {
       apmm_wu4au4, cudaFuncAttributeMaxDynamicSharedMemorySize,
       SHMEM_SZ));
   
+    printf("number of SMs: %d\n", deviceProp.multiProcessorCount);
     // Run ours NUM_PROFILES times and record time.
     float bmma_ms_avg = 0.0f;
     int NUM_PROFILES = 1000;
@@ -316,20 +326,20 @@ int main(int argc, char **argv) {
   
   
 #ifdef verify_output
-  printf("Validating results...\n");
-  checkCudaErrors(cudaMemcpy(Output_h, Output, sizeof(int) * M_GLOBAL * N_GLOBAL, cudaMemcpyDeviceToHost));
+    printf("Validating results...\n");
+    checkCudaErrors(cudaMemcpy(Output_h, Output, sizeof(int) * M_GLOBAL * N_GLOBAL, cudaMemcpyDeviceToHost));
 
-  int *Output_ref = (int *)malloc(sizeof(int) * M_GLOBAL * N_GLOBAL);
+    int *Output_ref = (int *)malloc(sizeof(int) * M_GLOBAL * N_GLOBAL);
 
-  /* Copmpute reference matrix on CPU */
-  compute_ref(W_h, X_h, Output_ref, M_GLOBAL, N_GLOBAL, K_GLOBAL, W_BIT, X_BIT);
+    /* Copmpute reference matrix on CPU */
+    compute_ref(W_h, X_h, Output_ref, M_GLOBAL, N_GLOBAL, K_GLOBAL, W_BIT, X_BIT);
 
-  /* validation results */
-  validate_results(Output_h, Output_ref, M_GLOBAL, N_GLOBAL);
-  free(W_h);
-  free(X_h);
-  free(Output_h);
-  free(Output_ref);
+    /* validation results */
+    validate_results(Output_h, Output_ref, M_GLOBAL, N_GLOBAL);
+    free(W_h);
+    free(X_h);
+    free(Output_h);
+    free(Output_ref);
 #endif
   
     checkCudaErrors(cudaFree(reinterpret_cast<void *>(W)));

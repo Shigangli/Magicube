@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #include <helper_cuda.h>
-#include <helper_functions.h>
+//#include <helper_functions.h>
 
 // GPU configuration.
 
@@ -352,18 +352,20 @@ void validate_results(int *C, int* ref_C, int M_, int N_) {
 
 int main(int argc, char **argv) {
 
-  int dev = findCudaDevice(argc, (const char **)argv);
+  //int dev = findCudaDevice(argc, (const char **)argv);
 
   cudaDeviceProp deviceProp;
-  checkCudaErrors(cudaGetDeviceProperties(&deviceProp, dev));
+  //checkCudaErrors(cudaGetDeviceProperties(&deviceProp, dev));
+  checkCudaErrors(cudaGetDeviceProperties(&deviceProp, 0));
 
   int X_BIT = 4;
   int W_BIT = 4;
 
-  int M_GLOBAL = 64;
+  //int M_GLOBAL = 64;
+  int M_GLOBAL = 1024;
   // int N_GLOBAL = 64;
   // int K_GLOBAL = 128;
-  for (int N_GLOBAL=128; N_GLOBAL<=1024; N_GLOBAL += 128 ) {
+  for (int N_GLOBAL=128; N_GLOBAL<=2048; N_GLOBAL += 128 ) {
     int K_GLOBAL = N_GLOBAL;
   
     int4 *X = NULL;
