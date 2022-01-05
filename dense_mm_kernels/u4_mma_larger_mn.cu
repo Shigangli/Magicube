@@ -17,7 +17,7 @@
 #define C_LAYOUT wmma::mem_row_major
 
 // Implementation constants.
-#define WARPS_PER_BLOCK 4
+#define WARPS_PER_BLOCK 8
 #define THREADS_PER_BLOCK (WARP_SIZE * WARPS_PER_BLOCK)
 
 #define CHUNK_K 1
@@ -100,7 +100,7 @@ __global__ void apmm_wu4au4(const int4 *W, const int4 *X, int *D, int M_GLOBAL, 
 
     // Go through the global K dimension by a fixed step at a time.
 #pragma unroll
-    for (int tile_k = 0; tile_k < K_TILES; tile_k += 4) {
+    for (int tile_k = 0; tile_k < K_TILES; tile_k += 2) {
       // Offset in shared memory from which the B matrix is stored.
       // Copy slices of the A and B matrices to shared memory.
       // The first half of the warps in the CTA copy the A matrix, the rest copy
@@ -113,13 +113,6 @@ __global__ void apmm_wu4au4(const int4 *W, const int4 *X, int *D, int M_GLOBAL, 
       
       *shmem_ptr = *lane_ptr_w;
       shmem_ptr += 8*4*WARPS_PER_BLOCK;
-      lane_ptr_w += 8;
-      *shmem_ptr = *lane_ptr_w;
-
-      shmem_ptr += 8*4*WARPS_PER_BLOCK;
-      *shmem_ptr = *lane_ptr_x;
-      shmem_ptr += 8*4*WARPS_PER_BLOCK;
-      lane_ptr_x += 8;
       *shmem_ptr = *lane_ptr_x;
 
       // U4 tmp_probe;
@@ -136,15 +129,15 @@ __global__ void apmm_wu4au4(const int4 *W, const int4 *X, int *D, int M_GLOBAL, 
 
       // Compute a grid of C matrix tiles in each warp.
 #pragma unroll
-      for (int k_step = 0; k_step < 4; k_step++) {
+      for (int k_step = 0; k_step < 2; k_step++) {
         wmma::fragment<wmma::matrix_a, M, N, K, precision::u4, wmma::row_major> a;
         wmma::fragment<wmma::matrix_b, M, N, K, precision::u4, wmma::col_major> b;
 
-        size_t shmem_idx_w = (k_step / 2) * 32 + (warpId / 2) * 2 * M + (k_step % 2) * M;
+        size_t shmem_idx_w = (warpId / 2) * 2 * M + k_step * M;
         const int4 *tile_ptr_w = &shmem[shmem_idx_w][0];
         wmma::load_matrix_sync(a, tile_ptr_w, (CHUNK_K + SKEW)*32);
 
-        size_t shmem_idx_x = 64 + (k_step / 2) * 32 + (warpId % 2) * 2 * N + (k_step % 2) * N;
+        size_t shmem_idx_x = 32 + (warpId % 2) * 2 * N + k_step * N;
         const int4 *tile_ptr_x = &shmem[shmem_idx_x][0];
         wmma::load_matrix_sync(b, tile_ptr_x, (CHUNK_K + SKEW)*32);
         wmma::mma_sync(c, a, b, c);
@@ -267,13 +260,11 @@ int main(int argc, char **argv) {
   int W_BIT = 4;
 
   //int M_GLOBAL = 64;
-  //int M_GLOBAL = 1024;
+  int M_GLOBAL = 1024;
   // int N_GLOBAL = 64;
   // int K_GLOBAL = 128;
-  //for (int N_GLOBAL=128; N_GLOBAL<=2048; N_GLOBAL += 128 ) {
-  for (int N_GLOBAL=512; N_GLOBAL<=8192; N_GLOBAL *= 2 ) {
+  for (int N_GLOBAL=128; N_GLOBAL<=2048; N_GLOBAL += 128 ) {
     int K_GLOBAL = N_GLOBAL;
-    int M_GLOBAL = N_GLOBAL;
   
     int4 *X = NULL;
     int4 *W = NULL;
