@@ -198,6 +198,21 @@ namespace spmm{
                     *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + lane_id_%8) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
                 }
 	    }
+	    
+	    
+            //output_fragment_[((lane_id_/4+1)%2)*2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2], 4, 32);
+            //output_fragment_[((lane_id_/4+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1], 4, 32);
+
+            //output_fragment_[((lane_id_/4+1)%2)*2 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 4], 4, 32);
+            //output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4], 4, 32);
+            //
+
+	    //if(lane_id_ < 16){
+            //    #pragma unroll
+            //    for (int i = 0; i < 4; i++){
+            //        *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + (lane_id_%8)%4*2+(lane_id_%8)/4) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+            //    }
+	    //}
         }
     };
 
