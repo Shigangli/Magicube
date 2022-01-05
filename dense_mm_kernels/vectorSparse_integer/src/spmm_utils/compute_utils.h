@@ -194,12 +194,11 @@ namespace spmm{
         //
 
         // Shared memory buffer storing the lhs tile values
-        const float2* lhs_tile_;
-        // Register file fragment storing the rhs tile
-        const half* rhs_fragment_;
+        const int* lhs_tile_;
+        const int* dense_tile_;
         // Register file fragment to accumulate results into
         int* output_fragment_;
-        int thread_group_;
+        int lane_id_;
 
         // Constructor
         __device__ __forceinline__ wmmaComputeUtils4_8bit(
@@ -242,7 +241,7 @@ namespace spmm{
 	    }
             
 	    if(lane_id_ < 16){
-	        lhs_fragment[0] = lhs_tile[lane_id_+n_group_idx*16];
+	        lhs_fragment[0] = lhs_tile_[lane_id_+n_group_idx*16];
 	    }
 	    else{
 	        lhs_fragment[0] = 0;
@@ -255,7 +254,7 @@ namespace spmm{
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+f"(output_fragment_[0 + i]), "+f"(output_fragment_[4 + i]),
+                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[4 + i]):
                     "r"(lhs_fragment[0]),
                     "r"(rhs_fragment_transpose[i])
                 );
@@ -268,7 +267,7 @@ namespace spmm{
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+f"(output_fragment_[8 + i]), "+f"(output_fragment_[12 + i]),
+                    "+r"(output_fragment_[8 + i]), "+r"(output_fragment_[12 + i]):
                     "r"(lhs_fragment[0]),
                     "r"(rhs_fragment_transpose[i+4])
                 );

@@ -165,7 +165,7 @@ namespace spmm{
         int rhs_columns_int4;
 
         // Constructor
-        __device__ __forceinline__ wmmaOutputTile4(
+        __device__ __forceinline__ wmmaOutputTile4_8bit(
             int lane_id,
             int row_offset_vec, int column_offset,
             int cols,

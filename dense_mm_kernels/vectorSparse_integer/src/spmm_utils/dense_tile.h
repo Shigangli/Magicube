@@ -263,7 +263,7 @@ namespace spmm {
         __device__ __forceinline__ void ResidueLoad(int row_group_idx, int residue){
             if (residue == 0) return;
 	    const int step = residue/2;
-	    const int res_residue = residule % 2;
+	    const int res_residue = residue % 2;
             const int *row_offsets = row_offsets_base_ + lane_id_/16 + row_group_idx * 16;
 	    const int bank_id = lane_id_%16;
             int bank_offset = 0;

@@ -104,12 +104,6 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
             MakeDenseMatrix<InType>(n, k / type_width, rhs_matrix, generator);
             MakeDenseMatrix<InType>(1, nonzeros / type_width, values, generator);
 	}
-	else{
-            values = new InType[nonzeros];
-            rhs_matrix = new InType[n * k];
-            MakeDenseMatrix<InType>(n, k, rhs_matrix, generator);
-            MakeDenseMatrix<InType>(1, nonzeros, values, generator);
-	}
 
         // Allocate the host output
         //float *output_value_host = new float[m * k];
@@ -206,103 +200,103 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
             spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
             std::cout << "performance GFLOP/s: " << flops/spmm_ms_avg << "\n";
         }
-        else if (kernel == 1){
-            printf("Using CUDA \n");
-            spmm::cudaSpmm(m_vec, vec_length, k, n, d_row_indices, d_row_offsets, d_col_indices, d_value, d_rhs_matrix, d_output_value);
-        }
-        else if (kernel == 2){
-            printf("Using Sputnik \n");
-            DTypeVec* d_value_vec = reinterpret_cast<DTypeVec *>(d_value);
-            DTypeVec* d_rhs_matrix_vec = reinterpret_cast<DTypeVec *>(d_rhs_matrix);
-            DTypeVec* d_output_value_vec = reinterpret_cast<DTypeVec *>(d_output_value);
-            ITypeVec* d_col_indices_sputnik_vec = reinterpret_cast<ITypeVec *>(d_col_indices_sputnik);
-            sputnik::CudaSpmm(m, n, k, nonzeros, d_row_indices, d_value_vec, d_row_offsets, d_col_indices_sputnik_vec, d_rhs_matrix_vec, d_output_value_vec, 0);
-        }
-        else if (kernel == 3){
-            printf("Using CuSPARSE \n");
-            cusparseHandle_t handle;
-            cusparseDnMatDescr_t rhs_dense, output_dense;
-            cusparseSpMatDescr_t lhs_sparse;
+        //else if (kernel == 1){
+        //    printf("Using CUDA \n");
+        //    spmm::cudaSpmm(m_vec, vec_length, k, n, d_row_indices, d_row_offsets, d_col_indices, d_value, d_rhs_matrix, d_output_value);
+        //}
+        //else if (kernel == 2){
+        //    printf("Using Sputnik \n");
+        //    DTypeVec* d_value_vec = reinterpret_cast<DTypeVec *>(d_value);
+        //    DTypeVec* d_rhs_matrix_vec = reinterpret_cast<DTypeVec *>(d_rhs_matrix);
+        //    DTypeVec* d_output_value_vec = reinterpret_cast<DTypeVec *>(d_output_value);
+        //    ITypeVec* d_col_indices_sputnik_vec = reinterpret_cast<ITypeVec *>(d_col_indices_sputnik);
+        //    sputnik::CudaSpmm(m, n, k, nonzeros, d_row_indices, d_value_vec, d_row_offsets, d_col_indices_sputnik_vec, d_rhs_matrix_vec, d_output_value_vec, 0);
+        //}
+        //else if (kernel == 3){
+        //    printf("Using CuSPARSE \n");
+        //    cusparseHandle_t handle;
+        //    cusparseDnMatDescr_t rhs_dense, output_dense;
+        //    cusparseSpMatDescr_t lhs_sparse;
 
-            cusparseCreate(&handle);
+        //    cusparseCreate(&handle);
 
-            // create lhs sparse matrix
-            cusparseCreateCsr(
-                &lhs_sparse, m, n, nonzeros_vec, d_row_offsets, d_col_indices, d_value,
-                CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_BASE_ZERO, DCuSPARSE
-            );
-            
-            // create rhs dense matrix
-            cusparseCreateDnMat(
-                &rhs_dense, n, k, k, d_rhs_matrix, DCuSPARSE, CUSPARSE_ORDER_ROW
-            );
+        //    // create lhs sparse matrix
+        //    cusparseCreateCsr(
+        //        &lhs_sparse, m, n, nonzeros_vec, d_row_offsets, d_col_indices, d_value,
+        //        CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_BASE_ZERO, DCuSPARSE
+        //    );
+        //    
+        //    // create rhs dense matrix
+        //    cusparseCreateDnMat(
+        //        &rhs_dense, n, k, k, d_rhs_matrix, DCuSPARSE, CUSPARSE_ORDER_ROW
+        //    );
 
-            // create output dense matrix
-            cusparseCreateDnMat(
-                &output_dense, m, k, k, d_output_value, DCuSPARSE, CUSPARSE_ORDER_ROW
-            );
+        //    // create output dense matrix
+        //    cusparseCreateDnMat(
+        //        &output_dense, m, k, k, d_output_value, DCuSPARSE, CUSPARSE_ORDER_ROW
+        //    );
 
-            InType alpha = 1.0;
-            InType beta  = 0.0;
-            size_t buffer_size;
-            void* dBuffer = NULL;
+        //    InType alpha = 1.0;
+        //    InType beta  = 0.0;
+        //    size_t buffer_size;
+        //    void* dBuffer = NULL;
 
-            // get buffer
-            cusparseSpMM_bufferSize(
-                handle, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
-                &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_CSR_ALG2, &buffer_size
-            );
+        //    // get buffer
+        //    cusparseSpMM_bufferSize(
+        //        handle, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
+        //        &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_CSR_ALG2, &buffer_size
+        //    );
 
-            checkCuda(cudaMalloc(&dBuffer, buffer_size));
-            
-            /*
-            // preprocess to get additional speedup
-            cusparseSpMM_preprocess(
-                handle, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
-                &alpha, lhs_sparse, rhs_dense, &beta, output_dense, CUDA_R_16F, CUSPARSE_SPMM_CSR_ALG2,
-                dBuffer
-            );
-            */
+        //    checkCuda(cudaMalloc(&dBuffer, buffer_size));
+        //    
+        //    /*
+        //    // preprocess to get additional speedup
+        //    cusparseSpMM_preprocess(
+        //        handle, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
+        //        &alpha, lhs_sparse, rhs_dense, &beta, output_dense, CUDA_R_16F, CUSPARSE_SPMM_CSR_ALG2,
+        //        dBuffer
+        //    );
+        //    */
 
-            // execute SpMM
-            cusparseSpMM(
-                handle, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
-                &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_CSR_ALG2,
-                dBuffer
-            );
+        //    // execute SpMM
+        //    cusparseSpMM(
+        //        handle, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
+        //        &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_CSR_ALG2,
+        //        dBuffer
+        //    );
 
-            checkCuda(cudaFree(dBuffer));
-            cusparseDestroyDnMat(rhs_dense);
-            cusparseDestroyDnMat(output_dense);
-            cusparseDestroySpMat(lhs_sparse);
-            cusparseDestroy(handle);
-        }
+        //    checkCuda(cudaFree(dBuffer));
+        //    cusparseDestroyDnMat(rhs_dense);
+        //    cusparseDestroyDnMat(output_dense);
+        //    cusparseDestroySpMat(lhs_sparse);
+        //    cusparseDestroy(handle);
+        //}
         else{
             printf("Unsupported Kernel \n");
         }
         cudaProfilerStop();
 
 
-        if (func){
-            OutType *output_value_cuda = new OutType[m * k];
-            checkCuda(cudaMemcpy(output_value_cuda, d_output_value, m * k * sizeof(OutType), cudaMemcpyDeviceToHost));
+        //if (func){
+        //    OutType *output_value_cuda = new OutType[m * k];
+        //    checkCuda(cudaMemcpy(output_value_cuda, d_output_value, m * k * sizeof(OutType), cudaMemcpyDeviceToHost));
 
-            // Verify the result
-            int errors = 0;
-            for (int j=0; j < m * k; j++){
-                // if (j < 256) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
-                    // if (j < 2560) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                    errors ++;
-                }
-            }
-            if (errors > 0) {
-                printf( "SPMM does not agree with SEQUENTIAL! %d errors!\n",errors);
-            }else {
-                printf("Results verified: they agree.\n");
-            }
-            delete output_value_cuda;
-        }
+        //    // Verify the result
+        //    int errors = 0;
+        //    for (int j=0; j < m * k; j++){
+        //        // if (j < 256) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
+        //        if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
+        //            // if (j < 2560) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
+        //            errors ++;
+        //        }
+        //    }
+        //    if (errors > 0) {
+        //        printf( "SPMM does not agree with SEQUENTIAL! %d errors!\n",errors);
+        //    }else {
+        //        printf("Results verified: they agree.\n");
+        //    }
+        //    delete output_value_cuda;
+        //}
 
 
         // Free the memory
@@ -323,232 +317,232 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
         delete output_value_host;
     }
     // Blocked Ell Algorithm
-    else if (sparse == 2){
-        // Define the Blocked Ell Size
-        float sparsity = (float)nonzeros / (m * n);
-        int A_num_rows = m;
-        int A_ell_blocksize = vec_length;
-        int A_num_col_block = (n + vec_length - 1) / vec_length;
-        int A_num_col = A_num_col_block * vec_length;
-        int A_num_col_block_nz = A_num_col_block * sparsity + 1;
-        int A_ell_cols = A_num_col_block_nz * vec_length;
+    //else if (sparse == 2){
+    //    // Define the Blocked Ell Size
+    //    float sparsity = (float)nonzeros / (m * n);
+    //    int A_num_rows = m;
+    //    int A_ell_blocksize = vec_length;
+    //    int A_num_col_block = (n + vec_length - 1) / vec_length;
+    //    int A_num_col = A_num_col_block * vec_length;
+    //    int A_num_col_block_nz = A_num_col_block * sparsity + 1;
+    //    int A_ell_cols = A_num_col_block_nz * vec_length;
 
-        printf("A: %d x %d. There are %d nonzero blocks, Each row has %d blocks. Block size is %d x %d\n", 
-                A_num_rows, A_num_col, A_num_col_block_nz * m_vec, A_num_col_block_nz, A_ell_blocksize, A_ell_blocksize);
+    //    printf("A: %d x %d. There are %d nonzero blocks, Each row has %d blocks. Block size is %d x %d\n", 
+    //            A_num_rows, A_num_col, A_num_col_block_nz * m_vec, A_num_col_block_nz, A_ell_blocksize, A_ell_blocksize);
 
-        // Create the matrix A
-        int *A_columns = new int[A_num_col_block_nz * m_vec];
-        InType *A_values = new InType[A_ell_cols * A_num_rows];
+    //    // Create the matrix A
+    //    int *A_columns = new int[A_num_col_block_nz * m_vec];
+    //    InType *A_values = new InType[A_ell_cols * A_num_rows];
 
-        GenerateUniformBlockedELLIndex(A_num_col_block, A_num_col_block_nz, m_vec, A_columns, generator);
-        MakeDenseMatrix<InType>(A_num_rows, A_ell_cols, A_values, generator);
+    //    GenerateUniformBlockedELLIndex(A_num_col_block, A_num_col_block_nz, m_vec, A_columns, generator);
+    //    MakeDenseMatrix<InType>(A_num_rows, A_ell_cols, A_values, generator);
 
-        // Create the matrix B
-        InType* rhs_matrix = new InType[A_num_col * k];
-        MakeDenseMatrix<InType>(A_num_col, k, rhs_matrix, generator);
+    //    // Create the matrix B
+    //    InType* rhs_matrix = new InType[A_num_col * k];
+    //    MakeDenseMatrix<InType>(A_num_col, k, rhs_matrix, generator);
 
-        // Device
-        int *dA_columns;
-        InType * dA_value, * d_rhs_matrix;
-        OutType *d_output_value;
+    //    // Device
+    //    int *dA_columns;
+    //    InType * dA_value, * d_rhs_matrix;
+    //    OutType *d_output_value;
 
-        checkCuda(cudaMalloc(&dA_columns, (A_num_col_block_nz * m_vec) * sizeof(int)));
-        checkCuda(cudaMalloc(&dA_value, (A_ell_cols * A_num_rows) * sizeof(InType)));
-        checkCuda(cudaMalloc(&d_rhs_matrix, (A_num_col * k) * sizeof(InType)));
-        checkCuda(cudaMalloc(&d_output_value, (A_num_rows * k) * sizeof(OutType)));
+    //    checkCuda(cudaMalloc(&dA_columns, (A_num_col_block_nz * m_vec) * sizeof(int)));
+    //    checkCuda(cudaMalloc(&dA_value, (A_ell_cols * A_num_rows) * sizeof(InType)));
+    //    checkCuda(cudaMalloc(&d_rhs_matrix, (A_num_col * k) * sizeof(InType)));
+    //    checkCuda(cudaMalloc(&d_output_value, (A_num_rows * k) * sizeof(OutType)));
 
-        checkCuda(cudaMemcpy(dA_columns, A_columns, (A_num_col_block_nz * m_vec) * sizeof(int), cudaMemcpyHostToDevice));
-        checkCuda(cudaMemcpy(dA_value, A_values, (A_ell_cols * A_num_rows) * sizeof(InType), cudaMemcpyHostToDevice));
-        checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, (A_num_col * k) * sizeof(InType), cudaMemcpyHostToDevice));
+    //    checkCuda(cudaMemcpy(dA_columns, A_columns, (A_num_col_block_nz * m_vec) * sizeof(int), cudaMemcpyHostToDevice));
+    //    checkCuda(cudaMemcpy(dA_value, A_values, (A_ell_cols * A_num_rows) * sizeof(InType), cudaMemcpyHostToDevice));
+    //    checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, (A_num_col * k) * sizeof(InType), cudaMemcpyHostToDevice));
 
-        cusparseHandle_t handle_ell;
-        cusparseCreate(&handle_ell);
+    //    cusparseHandle_t handle_ell;
+    //    cusparseCreate(&handle_ell);
 
-        cusparseSpMatDescr_t lhs_sparse;
-        cusparseDnMatDescr_t rhs_dense, output_dense;
+    //    cusparseSpMatDescr_t lhs_sparse;
+    //    cusparseDnMatDescr_t rhs_dense, output_dense;
 
-        // Create sparse matrix A in blocked ELL format
-        cusparseCreateBlockedEll(
-            &lhs_sparse, A_num_rows, A_num_col, A_ell_blocksize,
-            A_ell_cols, dA_columns, dA_value,
-            CUSPARSE_INDEX_32I,
-            CUSPARSE_INDEX_BASE_ZERO, DCuSPARSE
-        );
+    //    // Create sparse matrix A in blocked ELL format
+    //    cusparseCreateBlockedEll(
+    //        &lhs_sparse, A_num_rows, A_num_col, A_ell_blocksize,
+    //        A_ell_cols, dA_columns, dA_value,
+    //        CUSPARSE_INDEX_32I,
+    //        CUSPARSE_INDEX_BASE_ZERO, DCuSPARSE
+    //    );
 
-        // Create dense matrix B
-        cusparseCreateDnMat(&rhs_dense, A_num_col, k, k, d_rhs_matrix, DCuSPARSE, CUSPARSE_ORDER_ROW);
+    //    // Create dense matrix B
+    //    cusparseCreateDnMat(&rhs_dense, A_num_col, k, k, d_rhs_matrix, DCuSPARSE, CUSPARSE_ORDER_ROW);
 
-        // Create output dense matrix
-        cusparseCreateDnMat(&output_dense, A_num_rows, k, k, d_output_value, DCuSPARSE, CUSPARSE_ORDER_ROW);
+    //    // Create output dense matrix
+    //    cusparseCreateDnMat(&output_dense, A_num_rows, k, k, d_output_value, DCuSPARSE, CUSPARSE_ORDER_ROW);
 
-        InType alpha = 1.0;
-        InType beta  = 0.0;
-        size_t buffer_size;
-        void* dBuffer = NULL;
+    //    InType alpha = 1.0;
+    //    InType beta  = 0.0;
+    //    size_t buffer_size;
+    //    void* dBuffer = NULL;
 
-        cudaProfilerStart();
-        printf("Blocked ELL based SpMM\n");
-        // get buffer
-        cusparseSpMM_bufferSize(
-            handle_ell, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
-            &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_BLOCKED_ELL_ALG1, &buffer_size
-        );
+    //    cudaProfilerStart();
+    //    printf("Blocked ELL based SpMM\n");
+    //    // get buffer
+    //    cusparseSpMM_bufferSize(
+    //        handle_ell, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
+    //        &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_BLOCKED_ELL_ALG1, &buffer_size
+    //    );
 
-        checkCuda(cudaMalloc(&dBuffer, buffer_size));
+    //    checkCuda(cudaMalloc(&dBuffer, buffer_size));
 
-        // Does the computation
-        cusparseSpMM(
-            handle_ell, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
-            &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_BLOCKED_ELL_ALG1, dBuffer
-        );
-        cudaProfilerStop();
+    //    // Does the computation
+    //    cusparseSpMM(
+    //        handle_ell, CUSPARSE_OPERATION_NON_TRANSPOSE, CUSPARSE_OPERATION_NON_TRANSPOSE,
+    //        &alpha, lhs_sparse, rhs_dense, &beta, output_dense, DCuSPARSE, CUSPARSE_SPMM_BLOCKED_ELL_ALG1, dBuffer
+    //    );
+    //    cudaProfilerStop();
 
-        // Functional verification
-        if (func){
-            float *output_value_host = new float[A_num_rows * k];
-            // traverse all the vector rows
-            for (int i=0; i < m_vec; i++){
-                // traverse all the rows within the row vector group
-                for (int v=0; v < A_ell_blocksize; v++){
-                    int row_idx = i * A_ell_blocksize + v;
-                    // travers all the output column s
-                    for (int j=0; j < k; j++){
-                        float psum = 0;
-                        // traverse all the column blocks
-                        for (int c=0; c < A_num_col_block_nz; c++){
-                            int col_idx_base = A_columns[i * A_num_col_block_nz + c] * A_ell_blocksize;
-                            // traverse the column block size
-                            for (int cv=0; cv < A_ell_blocksize; cv++){
-                                int col_idx = col_idx_base + cv;
-                                // psum += (float)A_values[row_idx * A_ell_cols + c * A_ell_blocksize + cv] * (float)rhs_matrix[col_idx * k + j];
-                                psum += (float)A_values[row_idx * A_ell_cols + c * A_ell_blocksize + cv] * (float)rhs_matrix[col_idx * k + j];
-                            }
-                        }
-                        output_value_host[row_idx * k + j] = psum;
-                    }
-                }
-            }
-            
+    //    // Functional verification
+    //    if (func){
+    //        float *output_value_host = new float[A_num_rows * k];
+    //        // traverse all the vector rows
+    //        for (int i=0; i < m_vec; i++){
+    //            // traverse all the rows within the row vector group
+    //            for (int v=0; v < A_ell_blocksize; v++){
+    //                int row_idx = i * A_ell_blocksize + v;
+    //                // travers all the output column s
+    //                for (int j=0; j < k; j++){
+    //                    float psum = 0;
+    //                    // traverse all the column blocks
+    //                    for (int c=0; c < A_num_col_block_nz; c++){
+    //                        int col_idx_base = A_columns[i * A_num_col_block_nz + c] * A_ell_blocksize;
+    //                        // traverse the column block size
+    //                        for (int cv=0; cv < A_ell_blocksize; cv++){
+    //                            int col_idx = col_idx_base + cv;
+    //                            // psum += (float)A_values[row_idx * A_ell_cols + c * A_ell_blocksize + cv] * (float)rhs_matrix[col_idx * k + j];
+    //                            psum += (float)A_values[row_idx * A_ell_cols + c * A_ell_blocksize + cv] * (float)rhs_matrix[col_idx * k + j];
+    //                        }
+    //                    }
+    //                    output_value_host[row_idx * k + j] = psum;
+    //                }
+    //            }
+    //        }
+    //        
 
-            OutType *output_value_cuda = new OutType[A_num_rows * k];
-            checkCuda(cudaMemcpy(output_value_cuda, d_output_value, A_num_rows * k * sizeof(OutType), cudaMemcpyDeviceToHost));
+    //        OutType *output_value_cuda = new OutType[A_num_rows * k];
+    //        checkCuda(cudaMemcpy(output_value_cuda, d_output_value, A_num_rows * k * sizeof(OutType), cudaMemcpyDeviceToHost));
 
-            // Verify the result
-            int errors = 0;
-            for (int j=0; j < A_num_rows * k; j++){
-                // if (j < 256) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
-                    // if (j < 2560) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                    errors ++;
-                }
-            }
-            if (errors > 0) {
-                printf( "SPMM Blocked ELL does not agree with SEQUENTIAL! %d errors!\n",errors);
-            }else {
-                printf("Results verified: they agree.\n");
-            }
-            delete output_value_cuda;
-            delete output_value_host;
+    //        // Verify the result
+    //        int errors = 0;
+    //        for (int j=0; j < A_num_rows * k; j++){
+    //            // if (j < 256) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
+    //            if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
+    //                // if (j < 2560) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
+    //                errors ++;
+    //            }
+    //        }
+    //        if (errors > 0) {
+    //            printf( "SPMM Blocked ELL does not agree with SEQUENTIAL! %d errors!\n",errors);
+    //        }else {
+    //            printf("Results verified: they agree.\n");
+    //        }
+    //        delete output_value_cuda;
+    //        delete output_value_host;
 
-        }
-        
+    //    }
+    //    
 
-        checkCuda(cudaFree(dBuffer));
-        cusparseDestroyDnMat(rhs_dense);
-        cusparseDestroyDnMat(output_dense);
-        cusparseDestroySpMat(lhs_sparse);
-        cusparseDestroy(handle_ell);
-        
-        cudaFree(dA_columns);
-        cudaFree(dA_value);
-        cudaFree(d_rhs_matrix);
-        cudaFree(d_output_value);
+    //    checkCuda(cudaFree(dBuffer));
+    //    cusparseDestroyDnMat(rhs_dense);
+    //    cusparseDestroyDnMat(output_dense);
+    //    cusparseDestroySpMat(lhs_sparse);
+    //    cusparseDestroy(handle_ell);
+    //    
+    //    cudaFree(dA_columns);
+    //    cudaFree(dA_value);
+    //    cudaFree(d_rhs_matrix);
+    //    cudaFree(d_output_value);
 
-        delete A_columns;
-        delete A_values;
-        delete rhs_matrix;
+    //    delete A_columns;
+    //    delete A_values;
+    //    delete rhs_matrix;
 
-    }
-    // CuBLAS Dense GeMM
-    else{
-        // Create cublas handles
-        cublasHandle_t handle;
-        checkCublas(cublasCreate(&handle));
-        
+    //}
+    //// CuBLAS Dense GeMM
+    //else{
+    //    // Create cublas handles
+    //    cublasHandle_t handle;
+    //    checkCublas(cublasCreate(&handle));
+    //    
 
-        // Initialize the input operands
-        InType *lhs_matrix = new InType[m * n];
-        InType *rhs_matrix = new InType[n * k];
-        MakeDenseMatrix<InType>(m, n, lhs_matrix, generator);
-        MakeDenseMatrix<InType>(n, k, rhs_matrix, generator);
+    //    // Initialize the input operands
+    //    InType *lhs_matrix = new InType[m * n];
+    //    InType *rhs_matrix = new InType[n * k];
+    //    MakeDenseMatrix<InType>(m, n, lhs_matrix, generator);
+    //    MakeDenseMatrix<InType>(n, k, rhs_matrix, generator);
 
-        
-        // Allocate and initialize device memory
-        InType *d_lhs_matrix, *d_rhs_matrix;
-        InType *d_output_values;
+    //    
+    //    // Allocate and initialize device memory
+    //    InType *d_lhs_matrix, *d_rhs_matrix;
+    //    InType *d_output_values;
 
-        checkCuda(cudaMalloc(&d_lhs_matrix, (m * n) * sizeof(InType)));
-        checkCuda(cudaMalloc(&d_rhs_matrix, (n * k) * sizeof(InType)));
-        checkCuda(cudaMalloc(&d_output_values, (m * k) * sizeof(InType)));
-        
-        checkCuda(cudaMemcpy(d_lhs_matrix, lhs_matrix, (m * n) * sizeof(InType), cudaMemcpyHostToDevice));
-        checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, (n * k) * sizeof(InType), cudaMemcpyHostToDevice));
-
-
+    //    checkCuda(cudaMalloc(&d_lhs_matrix, (m * n) * sizeof(InType)));
+    //    checkCuda(cudaMalloc(&d_rhs_matrix, (n * k) * sizeof(InType)));
+    //    checkCuda(cudaMalloc(&d_output_values, (m * k) * sizeof(InType)));
+    //    
+    //    checkCuda(cudaMemcpy(d_lhs_matrix, lhs_matrix, (m * n) * sizeof(InType), cudaMemcpyHostToDevice));
+    //    checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, (n * k) * sizeof(InType), cudaMemcpyHostToDevice));
 
 
-        cudaProfilerStart();
-        printf("Dense Baseline\n");
-        cublasGeMM(handle, m, n, k, d_rhs_matrix, d_lhs_matrix, d_output_values);
-        cudaProfilerStop();
 
-        InType * output_value_host = new InType[m * k];
 
-        if (func){
-            // All the rows in the output matrix
-            for (int i=0; i < m; i++){
-                // All the columns in the output matrix
-                for (int j=0; j < k; j++){
-                    // the inner product dimension
-                    float out_temp = 0;
-                    for (int v=0; v < n; v++){
-                        out_temp += (float)lhs_matrix[i * n + v] * (float)rhs_matrix[v * k + j];
-                    }
-                    output_value_host[i * k + j] = (InType)out_temp;
-                }
-            }
+    //    cudaProfilerStart();
+    //    printf("Dense Baseline\n");
+    //    cublasGeMM(handle, m, n, k, d_rhs_matrix, d_lhs_matrix, d_output_values);
+    //    cudaProfilerStop();
 
-            InType *output_value_cuda = new InType[m * k];
-            checkCuda(cudaMemcpy(output_value_cuda, d_output_values, m * k * sizeof(InType), cudaMemcpyDeviceToHost));
+    //    InType * output_value_host = new InType[m * k];
 
-            // Verify the result
-            int errors = 0;
-            for (int j=0; j < m * k; j++){
-                // if (j < 256) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
-                    // printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                    errors ++;
-                }
-            }
-            if (errors > 0) {
-                printf( "CuBLAS does not agree with SEQUENTIAL! %d errors!\n",errors);
-            }else {
-                printf("Results verified: they agree.\n");
-            }
-            delete output_value_cuda;
-            delete output_value_host;
-        }
+    //    if (func){
+    //        // All the rows in the output matrix
+    //        for (int i=0; i < m; i++){
+    //            // All the columns in the output matrix
+    //            for (int j=0; j < k; j++){
+    //                // the inner product dimension
+    //                float out_temp = 0;
+    //                for (int v=0; v < n; v++){
+    //                    out_temp += (float)lhs_matrix[i * n + v] * (float)rhs_matrix[v * k + j];
+    //                }
+    //                output_value_host[i * k + j] = (InType)out_temp;
+    //            }
+    //        }
 
-        checkCublas(cublasDestroy(handle));
+    //        InType *output_value_cuda = new InType[m * k];
+    //        checkCuda(cudaMemcpy(output_value_cuda, d_output_values, m * k * sizeof(InType), cudaMemcpyDeviceToHost));
 
-        cudaFree(d_lhs_matrix);
-        cudaFree(d_rhs_matrix);
-        cudaFree(d_output_values);
+    //        // Verify the result
+    //        int errors = 0;
+    //        for (int j=0; j < m * k; j++){
+    //            // if (j < 256) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
+    //            if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
+    //                // printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
+    //                errors ++;
+    //            }
+    //        }
+    //        if (errors > 0) {
+    //            printf( "CuBLAS does not agree with SEQUENTIAL! %d errors!\n",errors);
+    //        }else {
+    //            printf("Results verified: they agree.\n");
+    //        }
+    //        delete output_value_cuda;
+    //        delete output_value_host;
+    //    }
 
-        delete lhs_matrix;
-        delete rhs_matrix;
+    //    checkCublas(cublasDestroy(handle));
 
-    }
+    //    cudaFree(d_lhs_matrix);
+    //    cudaFree(d_rhs_matrix);
+    //    cudaFree(d_output_values);
+
+    //    delete lhs_matrix;
+    //    delete rhs_matrix;
+
+    //}
 }
 
 
@@ -591,9 +585,10 @@ int main(int argc, char **argv){
         int sparse = std::atoi(argv[7]);
         int mixed = std::atoi(argv[8]);
 
-        if (mixed==1) BmFN<half, half, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
-	else if (mixed==2) BmFN<int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
-        else BmFN<float, float, int, float, int, CUDA_R_32F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed); 
+        //if (mixed==1) BmFN<half, half, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
+	//else if (mixed==2) BmFN<int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
+        //else BmFN<float, float, int, float, int, CUDA_R_32F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed); 
+	if (mixed==2) BmFN<int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
     }
     
     //int dimK = 256;
