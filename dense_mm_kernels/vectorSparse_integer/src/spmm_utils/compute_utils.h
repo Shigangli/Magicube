@@ -228,7 +228,11 @@ namespace spmm{
 	    for(int i=0; i<4; i++){
 	        rhs_fragment[4+i] = *(dense_tile_ + base_offset + 8 + i*16); 
 	    }
+            char mask = 0b00001111;
+            char *rhs_fragment_char = reinterpret_cast<char *>(rhs_fragment);
+	    rhs_fragment_char[0] = (rhs_fragment_char[0] >> 4) ^ mask;  
 
+            //u4 *rhs_fragment_4bit = reinterpret_cast<u4 *>(rhs_fragment); 
             //char *rhs_fragment_char = reinterpret_cast<char *>(rhs_fragment); 
             //char *rhs_fragment_transpose_char = reinterpret_cast<char *>(rhs_fragment_transpose);
 

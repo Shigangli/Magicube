@@ -1,6 +1,7 @@
 #include <cuda_runtime.h>
 #include <random>
 #include <assert.h>
+#include <math.h>
 #include <algorithm>
 #include <stdio.h>
 #include "include/bm_test_utils.h"
@@ -32,9 +33,9 @@ double compute_ref(int *A, int *B, int *ref_C, int M_GLOBAL, int N_GLOBAL, int K
             int col_idx = col_indices[j];
 	    int A_int = A[j];
             // traverse all the elements in the vector
-            for (int v=0; v < vec_length; v++){
-                int row_idx = i * vec_length + v;
-                int shift_a = v*A_BIT;
+            for (int av=0; av < vec_length; av++){
+                int row_idx = i * vec_length + av;
+                int shift_a = av*A_BIT;
                 int a_val = ((mask << shift_a) & A_int) >> shift_a;
                 for (int k=0; k < K_GLOBAL/b_tile; k++){
 		    int B_int = B[col_idx * (K_GLOBAL/b_tile) + k];
@@ -43,7 +44,7 @@ double compute_ref(int *A, int *B, int *ref_C, int M_GLOBAL, int N_GLOBAL, int K
                         int b_val = ((mask << shift_b) & B_int) >> shift_b;
 		        if(a_val<0 || b_val<0)
 		            printf("cpu compute error");
-                        ref_C[row_idx * K_GLOBAL + k*4 + bv] += a_val * b_val;
+                        ref_C[row_idx*K_GLOBAL + k*b_tile + bv] += a_val*b_val;
                         flops += 2.0;
 	            }
                 }
@@ -79,30 +80,83 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
     // SpMM
     if (sparse == 1){
         int *row_offsets = new int[m_vec + 1];
-        for (int i = 0; i < m_vec + 1; i ++){
+        for(int i = 0; i < m_vec + 1; i++){
             if (i == m_vec) std::getline(infile, line, '\n');
             else std::getline(infile, line, ' ');
             row_offsets[i] = std::stoi(line);
         }
         int *col_indices = new int[nonzeros_vec];
         IndexType *col_indices_sputnik = new IndexType[nonzeros_vec];
-        for (int i = 0; i < nonzeros_vec; i ++){
+        for(int i = 0; i < nonzeros_vec; i++){
             std::getline(infile, line, ' ');
             col_indices[i] = std::stoi(line);
             col_indices_sputnik[i] = (IndexType)std::stoi(line);
         }
 
+        //int *aligned_row_offsets = new int[m_vec*2 + 1];
+        int *aligned_row_offsets = new int[m_vec*2];
+	int aligned_num_item = 0;
+	int warp_width = 32;
+	aligned_row_offsets[0] = aligned_num_item;
+	for(int i = 1; i < m_vec + 1; i++){
+	    int num_item = row_offsets[i] - row_offsets[i-1];
+            //ceiling
+	    aligned_num_item += (num_item + warp_width - 1) / warp_width * warp_width;
+	    if(i != m_vec)
+	        aligned_row_offsets[i*2] = aligned_num_item;
+	    aligned_row_offsets[i*2-1] = aligned_row_offsets[i*2-2] + num_item;
+	}
+
+	std::cout << " nonzero_vec: " << nonzeros_vec << " aligned_ nonzero_vec: " << aligned_num_item  << "\n" ;
+        //int *aligned_col_indices = new int[aligned_row_offsets[m_vec*2]];
+        int *aligned_col_indices = new int[aligned_num_item];
+	for(int i = 0; i < aligned_num_item; i++){
+	    aligned_col_indices[i] = 0;
+	}
+
+	for(int i = 1; i < m_vec + 1; i++){
+	    int offset_begin = row_offsets[i-1];
+	    int offset_end = row_offsets[i];
+	    for(int j = offset_begin; j < offset_end; j++)
+	        aligned_col_indices[aligned_row_offsets[(i-1)*2] + j - offset_begin] = col_indices[j];
+	}
 
 	InType *values;
+	InType *aligned_values;
+	InType *aligned_values_transpose;
 	InType *rhs_matrix;
         // Initialize the input operands
 	if (mixed == 2){
 	    std::cout << "mixed: " << mixed << " type: 8-bit int" << "\n" ;
-	    int type_width = 4;
+	    InType type_width = 4;
             values = new InType[nonzeros / type_width];
             rhs_matrix = new InType[n * k / type_width];
             MakeDenseMatrix<InType>(n, k / type_width, rhs_matrix, generator);
             MakeDenseMatrix<InType>(1, nonzeros / type_width, values, generator);
+
+            aligned_values = new InType[aligned_num_item];
+            aligned_values_transpose = new InType[aligned_num_item];
+	    for(int i = 0; i < aligned_num_item; i++){
+	        aligned_values[i] = 0;
+	        aligned_values_transpose[i] = 0;
+	    }
+
+	    for(int i = 1; i < m_vec + 1; i++){
+	        int offset_begin = row_offsets[i-1];
+	        int offset_end = row_offsets[i];
+	        for(int j = offset_begin; j < offset_end; j++)
+	            aligned_values[aligned_row_offsets[(i-1)*2] + j - offset_begin] = values[j];
+	    }
+
+	    // warp-width-wise transpose for 8-bit int
+	    char * aligned_values_char = reinterpret_cast<char *>(aligned_values);
+	    char * aligned_values_transpose_char = reinterpret_cast<char *>(aligned_values_transpose);
+            // for vec_length = 4, 8-bit int
+	    for(int i = 0; i < aligned_num_item*vec_length; i+=(warp_width*vec_length))
+	        for(int j = 0; j < warp_width; j++)
+	            for(int k = 0; k < vec_length; k++)
+	                aligned_values_transpose_char[i+k*warp_width+j] = aligned_values_char[i+j*vec_length+k];
+
 	}
 
         // Allocate the host output
