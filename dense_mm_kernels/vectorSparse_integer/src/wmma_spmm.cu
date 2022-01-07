@@ -242,8 +242,8 @@ __global__ void wmmaSpmmKernel4(
     m_index_vec = __ldg(row_indices + m_index_vec);
 
     // Load the row offset and calculate the number of nonzeros in the row
-    int row_offset_vec = __ldg(row_offsets + m_index_vec);
-    int nonzeros = __ldg(row_offsets + m_index_vec + 1) - row_offset_vec;
+    int row_offset_vec = __ldg(row_offsets + m_index_vec*2);
+    int nonzeros = __ldg(row_offsets + m_index_vec*2 + 1) - row_offset_vec;
 
     // Shared memory tiles for the lhs values and indices
     __shared__ int values_tile_array[Tile_N];
@@ -297,26 +297,30 @@ __global__ void wmmaSpmmKernel4(
         }
         __syncthreads();
     }
-    
-    sparse_tile_loader.ZeroTiles();
-    __syncthreads();
-    sparse_tile_loader.Residue(nonzeros);
-    __syncthreads();
+   
+    if(nonzeros > 0){
+        //sparse_tile_loader.ZeroTiles();
+        __syncthreads();
+        sparse_tile_loader.Residue(nonzeros);
+        __syncthreads();
 
-    int n_group_idx = 0;
+        int n_group_idx_red = 0;
 
-    #pragma unroll
-    for (; n_group_idx < InnerSteps; n_group_idx ++){
-        if (nonzeros < 16) break;
-        dense_tile_loader.LoadRow(n_group_idx);
-        computer.TileMAC(n_group_idx);
-        nonzeros -= 16;
-    }
-    asm("");
+        #pragma unroll
+        for (; n_group_idx_red < InnerSteps; n_group_idx_red++){
+            if (nonzeros < 16) break;
+            dense_tile_loader.LoadRow(n_group_idx_red);
+            computer.TileMAC(n_group_idx_red);
+            nonzeros -= 16;
+        }
+        asm("");
 
-    dense_tile_loader.ResidueLoad(n_group_idx, nonzeros);
-    //computer.TileMACResidue(n_group_idx);
-    computer.TileMAC(n_group_idx);
+	if(nonzeros > 0){
+            dense_tile_loader.ResidueLoad(n_group_idx_red, nonzeros);
+            //computer.TileMACResidue(n_group_idx_red);
+            computer.TileMAC(n_group_idx_red);
+	}
+    } 
 
     wmmaOutputTile4_8bit<OutType> output_tile_storer(lane_id, m_index_vec, k_index, k, output_fragment, output_matrix);
     output_tile_storer.Store();

@@ -131,11 +131,14 @@ template <typename ValueType>
 void MakeDenseMatrix(int rows, int columns, ValueType *matrix,
                      std::default_random_engine generator)
 {
-    std::uniform_real_distribution<float> distribution(-1.0, 1.0);
+    std::uniform_real_distribution<float> distribution(0.0, 1.0);
     
     for (int64_t i = 0; i < static_cast<int64_t>(rows) * columns; ++i){
-        float temp = distribution(generator);
+        float temp = 2147483647.0*distribution(generator);
         matrix[i] = ValueType(temp);
+	if(matrix[i] < 0){
+            printf("generate error");	
+	}
         // int temp = (i / columns) % 8;
         // matrix[i] = half(temp * 0.01);
     }

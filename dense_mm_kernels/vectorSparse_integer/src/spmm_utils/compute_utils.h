@@ -215,7 +215,7 @@ namespace spmm{
         __device__ __forceinline__ void TileMAC(int n_group_idx){
             int lhs_fragment[1];
             int rhs_fragment[8];
-            //int rhs_fragment_transpose[8];
+            int rhs_fragment_transpose[8];
 	    int chunk_id = lane_id_ % 4;
 	    int base_offset = chunk_id * 72 + lane_id_/4 + n_group_idx * 72 * 4;
 
@@ -228,21 +228,17 @@ namespace spmm{
 	    for(int i=0; i<4; i++){
 	        rhs_fragment[4+i] = *(dense_tile_ + base_offset + 8 + i*16); 
 	    }
-            char mask = 0b00001111;
-            char *rhs_fragment_char = reinterpret_cast<char *>(rhs_fragment);
-	    rhs_fragment_char[0] = (rhs_fragment_char[0] >> 4) ^ mask;  
 
-            //u4 *rhs_fragment_4bit = reinterpret_cast<u4 *>(rhs_fragment); 
-            //char *rhs_fragment_char = reinterpret_cast<char *>(rhs_fragment); 
-            //char *rhs_fragment_transpose_char = reinterpret_cast<char *>(rhs_fragment_transpose);
+            char *rhs_fragment_char = reinterpret_cast<char *>(rhs_fragment); 
+            char *rhs_fragment_transpose_char = reinterpret_cast<char *>(rhs_fragment_transpose);
 
-            //#pragma unroll
-	    //for(int i=0; i<4; i++){
-	    //    for(int j=0; j<4; j++){
-	    //        *(rhs_fragment_transpose_char + j*4 + i) = *(rhs_fragment_char + j + i*4);
-	    //        *(rhs_fragment_transpose_char + 16 + j*4 + i) = *(rhs_fragment_char + 16 + j + i*4);
-	    //    }
-	    //}
+            #pragma unroll
+	    for(int i=0; i<4; i++){
+	        for(int j=0; j<4; j++){
+	            *(rhs_fragment_transpose_char + j*4 + i) = *(rhs_fragment_char + j + i*4);
+	            *(rhs_fragment_transpose_char + 16 + j*4 + i) = *(rhs_fragment_char + 16 + j + i*4);
+		}
+	    }
             
 	    if(lane_id_ < 16){
 	        lhs_fragment[0] = lhs_tile_[lane_id_+n_group_idx*16];
@@ -260,7 +256,7 @@ namespace spmm{
                     "{%0, %1}; ":
                     "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[4 + i]):
                     "r"(lhs_fragment[0]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_transpose[i])
                 );
             }
 
@@ -273,7 +269,7 @@ namespace spmm{
                     "{%0, %1}; ":
                     "+r"(output_fragment_[8 + i]), "+r"(output_fragment_[12 + i]):
                     "r"(lhs_fragment[0]),
-                    "r"(rhs_fragment[i+4])
+                    "r"(rhs_fragment_transpose[i+4])
                 );
             }
         }

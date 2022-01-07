@@ -183,36 +183,36 @@ namespace spmm{
         __device__ __forceinline__ void Store(){
             // Step 1: warp shuffle to align the memory access
              
-            #pragma unroll
-            for (int i = 1; i < 5; i*=2){
-                output_fragment_[((lane_id_/i+1)%2)*2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2], i, 32);
-                output_fragment_[((lane_id_/i+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2 + 1], i, 32);
+            //#pragma unroll
+            //for (int i = 1; i < 5; i*=2){
+            //    output_fragment_[((lane_id_/i+1)%2)*2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2], i, 32);
+            //    output_fragment_[((lane_id_/i+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2 + 1], i, 32);
 
-                output_fragment_[((lane_id_/i+1)%2)*2 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2 + 4], i, 32);
-                output_fragment_[((lane_id_/i+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2 + 1 + 4], i, 32);
-            }
-
-	    if(lane_id_ < 16){
-                #pragma unroll
-                for (int i = 0; i < 4; i++){
-                    *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + lane_id_%8) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
-                }
-	    }
-	    
-	    
-            //output_fragment_[((lane_id_/4+1)%2)*2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2], 4, 32);
-            //output_fragment_[((lane_id_/4+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1], 4, 32);
-
-            //output_fragment_[((lane_id_/4+1)%2)*2 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 4], 4, 32);
-            //output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4], 4, 32);
-            //
+            //    output_fragment_[((lane_id_/i+1)%2)*2 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2 + 4], i, 32);
+            //    output_fragment_[((lane_id_/i+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/i+1)%2)*2 + 1 + 4], i, 32);
+            //}
 
 	    //if(lane_id_ < 16){
             //    #pragma unroll
             //    for (int i = 0; i < 4; i++){
-            //        *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + (lane_id_%8)%4*2+(lane_id_%8)/4) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+            //        *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + lane_id_%8) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
             //    }
 	    //}
+	    
+	    
+            output_fragment_[((lane_id_/4+1)%2)*2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2], 4, 32);
+            output_fragment_[((lane_id_/4+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1], 4, 32);
+
+            output_fragment_[((lane_id_/4+1)%2)*2 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 4], 4, 32);
+            output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4], 4, 32);
+            
+
+	    if(lane_id_ < 16){
+                #pragma unroll
+                for (int i = 0; i < 4; i++){
+                    *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + (lane_id_%8)%4*2+(lane_id_%8)/4) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+                }
+	    }
         }
     };
 

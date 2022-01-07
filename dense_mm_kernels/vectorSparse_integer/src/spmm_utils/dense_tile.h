@@ -255,13 +255,13 @@ namespace spmm {
 	    const int bank_id = lane_id_%16;
 	    for(int i=0; i<8; i++){
 		const int bank_offset = i/2;
-                *(dense_tile_ + row_group_idx * 8 * 4 + bank_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
+                *(dense_tile_ + row_group_idx * 72 * 4 + bank_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
 	    }
         }
 
         // Load the residual and compute the matrix product
         __device__ __forceinline__ void ResidueLoad(int row_group_idx, int residue){
-            if (residue == 0) return;
+            //if (residue == 0) return;
 	    const int step = residue/2;
 	    const int res_residue = residue % 2;
             const int *row_offsets = row_offsets_base_ + lane_id_/16 + row_group_idx * 16;
@@ -270,11 +270,11 @@ namespace spmm {
             int i = 0;
 	    for(; i<step; i++){
                 bank_offset = i/2;
-                *(dense_tile_ + row_group_idx * 8 * 4 + bank_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
+                *(dense_tile_ + row_group_idx * 72 * 4 + bank_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
 	    }
             bank_offset = i/2;
 	    if (res_residue == 1 && lane_id_<16)
-                *(dense_tile_ + row_group_idx * 8 * 4 + bank_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
+                *(dense_tile_ + row_group_idx * 72 * 4 + bank_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
         }
     };
 }

@@ -338,7 +338,7 @@ namespace spmm{
             const int* __restrict__ values,
             const int* __restrict__ column_idxs,
             VecType *values_tile, int * column_idxs_tile):
-            rhs_columns_(rhs_columns / kValuesPerLoad_),
+            rhs_columns_(rhs_columns / 4),
             values_(reinterpret_cast<const VecType *>(values) + row_offset_vec + thread_idx_x),
             column_idxs_(reinterpret_cast<const int *>(column_idxs) + row_offset_vec + thread_idx_x),
             values_tile_base_(reinterpret_cast<VecType *>(values_tile) + thread_idx_x),
@@ -353,6 +353,8 @@ namespace spmm{
             for (int n_item_idx = 0; n_item_idx < kThreadItemsN_; n_item_idx ++){
                 *(values_tile) = __ldg(values_);
                 *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
+                //*(values_tile) = *(values_);
+                //*(column_idxs_tile) = rhs_columns_ * (*(column_idxs_));
                 values_ += BlockWidth;
                 column_idxs_ += BlockWidth;
                 values_tile += BlockWidth;
@@ -384,9 +386,12 @@ namespace spmm{
 
             #pragma unroll
             for (int n_item_idx = 0; n_item_idx < kThreadItemsN_; n_item_idx ++){
-                if (residue <= threadIdx.x) return;
+                //if (residue <= threadIdx.x) return;
+		if(residue <= 0) return;
                 *(values_tile) = __ldg(values_);
-                *(column_idxs_tile) = __ldg(column_idxs_) * rhs_columns_;
+                *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
+                //*(values_tile) = *(values_);
+                //*(column_idxs_tile) = rhs_columns_ * (*(column_idxs_));
 
                 values_ += BlockWidth;
                 column_idxs_ += BlockWidth;
