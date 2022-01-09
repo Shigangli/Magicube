@@ -16,33 +16,42 @@
 #include <cusparse.h>
 #include <iostream>
 
-double compute_ref(int *A, int *B, int *ref_C, int M_GLOBAL, int N_GLOBAL, int K_GLOBAL, int A_BIT, int B_BIT, int vec_length, int *row_offsets, int *col_indices, int m_vec) {
-    int mask = 255;  //0b0000000011111111
+int power2n(int n){
+    int exp=1;
+    for(int i=0; i < n; i++)
+        exp *= 2;
+    return exp;
+}
+
+template <typename TypeA>
+double compute_ref_integers(TypeA *A, int *B, int *ref_C, int M_GLOBAL, int N_GLOBAL, int K_GLOBAL, int A_BIT, int B_BIT, int vec_length, int *row_offsets, int *col_indices, int m_vec) {
+    int maskA = power2n(A_BIT)-1; //0b0000000011111111 for 8 bits
+    int maskB = power2n(B_BIT)-1; //0b0000000011111111 for 8 bits
 
     // Initialize the output matrix with 0
-    for (int i=0; i < M_GLOBAL * K_GLOBAL; i++){
+    for(int i=0; i < M_GLOBAL * K_GLOBAL; i++){
         ref_C[i] = 0;
     }
 
     double flops = 0;     
     int b_tile = 32/B_BIT; 
     // traverse all the vector rows
-    for (int i=0; i < m_vec; i++){
+    for(int i=0; i < m_vec; i++){
         // traverse all the nonzero columns in this row
-        for (int j=row_offsets[i]; j < row_offsets[i+1]; j++){
+        for(int j=row_offsets[i]; j < row_offsets[i+1]; j++){
             int col_idx = col_indices[j];
-	    int A_int = A[j];
+	    TypeA A_vec_tile = A[j];
             // traverse all the elements in the vector
-            for (int av=0; av < vec_length; av++){
+            for(int av=0; av < vec_length; av++){
                 int row_idx = i * vec_length + av;
                 int shift_a = av*A_BIT;
-                int a_val = ((mask << shift_a) & A_int) >> shift_a;
-                for (int k=0; k < K_GLOBAL/b_tile; k++){
-		    int B_int = B[col_idx * (K_GLOBAL/b_tile) + k];
-                    for (int bv=0; bv < b_tile; bv++){
+                int a_val = (int)(((maskA << shift_a) & A_vec_tile) >> shift_a);
+                for(int k=0; k < K_GLOBAL/b_tile; k++){
+		    int B_tile = B[col_idx * (K_GLOBAL/b_tile) + k];
+                    for(int bv=0; bv < b_tile; bv++){
 			int shift_b = bv*B_BIT;
-                        int b_val = ((mask << shift_b) & B_int) >> shift_b;
-		        if(a_val>255 || a_val<0 || b_val<0 || b_val>255)
+                        int b_val = ((maskB << shift_b) & B_tile) >> shift_b;
+		        if(a_val>maskA || a_val<0 || b_val<0 || b_val>maskB)
 		            printf("cpu compute error");
                         ref_C[row_idx*K_GLOBAL + k*b_tile + bv] += (a_val*b_val);
                         flops += 2.0;
@@ -55,8 +64,8 @@ double compute_ref(int *A, int *B, int *ref_C, int M_GLOBAL, int N_GLOBAL, int K
 }
 
 
-template <typename InType, typename OutType, typename IndexType, typename DTypeVec, typename ITypeVec, cudaDataType_t DCuSPARSE>
-void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sorted, bool func, int sparse, int mixed){
+template <typename TypeA, typename TypeB, typename OutType, typename IndexType, typename DTypeVec, typename ITypeVec, cudaDataType_t DCuSPARSE>
+void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sorted, bool func, int sparse, int preA, int preB){
 
     // Open the benchmark file
     std::ifstream infile(benchmark, std::ifstream::in);
@@ -71,7 +80,13 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
     const int nonzeros_vec = std::stoi(line);
     const int nonzeros = nonzeros_vec * vec_length;
     const int k = dimK;
-    std::cout << "mixed: " << mixed << " m_vec: " << m_vec << " n: " << n << " nonzeros_vec: " << nonzeros_vec << " dimk: " << k << " vec_length: " << vec_length << "\n" ;
+    int mma_k_dim = 16;
+    if(preA == 4 || preB == 4 || preA == 12 || preB == 12)
+        mma_k_dim = 32;
+    else
+        mma_k_dim = 16;
+
+    std::cout << "preA: " << preA << "preB: " << preB << " m_vec: " << m_vec << " n: " << n << " nonzeros_vec: " << nonzeros_vec << " dimk: " << k << " vec_length: " << vec_length << "\n" ;
 
     // Create the A column indices
 
@@ -93,10 +108,14 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
             col_indices_sputnik[i] = (IndexType)std::stoi(line);
         }
 
-        //int *aligned_row_offsets = new int[m_vec*2 + 1];
         int *aligned_row_offsets = new int[m_vec*2];
 	int aligned_num_item = 0;
 	int warp_width = 32;
+	if(preA == 8 && preB == 8)
+	    warp_width = 32;
+	else if(preA == 4 && preB == 4)
+	    warp_width = 64;
+
 	aligned_row_offsets[0] = aligned_num_item;
 	for(int i = 1; i < m_vec + 1; i++){
 	    int num_item = row_offsets[i] - row_offsets[i-1];
@@ -108,10 +127,11 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
 	}
 
 	std::cout << " nonzero_vec: " << nonzeros_vec << " aligned_ nonzero_vec: " << aligned_num_item  << "\n" ;
-        //int *aligned_col_indices = new int[aligned_row_offsets[m_vec*2]];
         int *aligned_col_indices = new int[aligned_num_item];
+        int *aligned_col_indices_shuffle = new int[aligned_num_item];
 	for(int i = 0; i < aligned_num_item; i++){
 	    aligned_col_indices[i] = 0;
+	    aligned_col_indices_shuffle[i] = 0;
 	}
 
 	for(int i = 1; i < m_vec + 1; i++){
@@ -121,21 +141,28 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
 	        aligned_col_indices[aligned_row_offsets[(i-1)*2] + j - offset_begin] = col_indices[j];
 	}
 
-	InType *values;
-	InType *aligned_values;
-	InType *aligned_values_transpose;
-	InType *rhs_matrix;
+	for(int i = 0; i < aligned_num_item/8; i++){
+	    for(int j = 0; j < 8; j++){
+	        aligned_col_indices_shuffle[i*8 + (j%2)*4 + j/2] = aligned_col_indices[i*8 + j];
+	    }
+	}
+
+	TypeA *values;
+	TypeA *aligned_values;
+	TypeA *aligned_values_transpose;
+	TypeB *rhs_matrix;
         // Initialize the input operands
 	//if (mixed == 2){
-	std::cout << "mixed: " << mixed << " type: 8-bit int" << "\n" ;
-	InType type_width = 4;
-        values = new InType[nonzeros / type_width];
-        rhs_matrix = new InType[n * k / type_width];
-        MakeDenseMatrix<InType>(n, k / type_width, rhs_matrix, generator);
-        MakeDenseMatrix<InType>(1, nonzeros / type_width, values, generator);
+	int type_width_A = sizeof(TypeA)*8/preA;
+	int type_width_B = sizeof(TypeB)*8/preB;
+        values = new TypeA[nonzeros / type_width_A];
+        rhs_matrix = new TypeB[n * k / type_width_B];
 
-        aligned_values = new InType[aligned_num_item];
-        aligned_values_transpose = new InType[aligned_num_item];
+        MakeDenseMatrix<TypeA>(1, nonzeros / type_width_A, values, generator);
+        MakeDenseMatrix<TypeB>(n, k / type_width_B, rhs_matrix, generator);
+
+        aligned_values = new TypeA[aligned_num_item];
+        aligned_values_transpose = new TypeA[aligned_num_item];
 	for(int i = 0; i < aligned_num_item; i++){
 	    aligned_values[i] = 0;
 	    aligned_values_transpose[i] = 0;
@@ -149,19 +176,27 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
 	}
 
 	// warp-width-wise transpose for 8-bit int
-	char * aligned_values_char = reinterpret_cast<char *>(aligned_values);
-	char * aligned_values_transpose_char = reinterpret_cast<char *>(aligned_values_transpose);
-        // for vec_length = 4, 8-bit int
-	//for(int i = 0; i < aligned_num_item*vec_length; i+=(warp_width*vec_length))
-	//    for(int j = 0; j < warp_width; j++)
-	//        for(int k = 0; k < vec_length; k++)
-	//            aligned_values_transpose_char[i+k*warp_width+j] = aligned_values_char[i+j*vec_length+k];
+	unsigned char * aligned_values_char = reinterpret_cast<unsigned char *>(aligned_values);
+	unsigned char * aligned_values_transpose_char = reinterpret_cast<unsigned char *>(aligned_values_transpose);
 
-	int k_width = 16; //k_width for wmma
-	for(int i = 0; i < aligned_num_item*vec_length; i+=(k_width*vec_length))
-	    for(int j = 0; j < k_width; j++)
-	        for(int v = 0; v < vec_length; v++)
-	            aligned_values_transpose_char[i+v*k_width+j] = aligned_values_char[i+j*vec_length+v];
+        // for 8-bit int
+	if(mma_k_dim == 16){
+	    for(int i = 0; i < aligned_num_item*vec_length; i+=(mma_k_dim*vec_length))
+	        for(int j = 0; j < mma_k_dim; j++)
+	            for(int v = 0; v < vec_length; v++)
+	                aligned_values_transpose_char[i+v*mma_k_dim+j] = aligned_values_char[i+j*vec_length+v];
+	}
+	else if(mma_k_dim == 32){ // for 4-bit int
+	    unsigned char mask = 15; // 0b00001111
+	    for(int i = 0; i < aligned_num_item*(vec_length/2); i+=(mma_k_dim*(vec_length/2)))
+	        for(int j = 0; j < mma_k_dim; j++)
+	            for(int v = 0; v < vec_length/2; v++){
+			int intra_char_offset_0 = (j%2)*4;
+			int intra_char_offset_1 = ((j+1)%2)*4;
+	                aligned_values_transpose_char[i+mma_k_dim*v+j/2] |= ((aligned_values_char[i+j*(vec_length/2)+v] & mask) << intra_char_offset_0);
+	                aligned_values_transpose_char[i+mma_k_dim*v+mma_k_dim/2+j/2] |= ((aligned_values_char[i+j*(vec_length/2)+v] & (mask << 4)) >> intra_char_offset_1);
+		    }
+	}
 	//}
 
         // Allocate the host output
@@ -170,31 +205,32 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
         double flops = 0;
 
         if(func){
-            if(mixed == 2){
-                flops = compute_ref(values, rhs_matrix, output_value_host, m, n, k, 8, 8, 4, row_offsets, col_indices, m_vec);
-            }
-	    else{
-                // Initialize the output matrix with 0
-                for (int i=0; i < m * k; i++){
-                    output_value_host[i] = 0.0f;
-                }
-                
-                // traverse all the vector rows
-                for (int i=0; i < m_vec; i++){
-                    // traverse all the nonzero columns in this row
-                    for (int j=row_offsets[i]; j < row_offsets[i+1]; j++){
-                        int col_idx = col_indices[j];
-                        // traverse all the elements in the vector
-                        for (int v=0; v < vec_length; v++){
-                            int row_idx = i * vec_length + v;
-                            for (int l=0; l < k; l++){
-                                output_value_host[row_idx * k + l] += (float)values[j * vec_length + v] * (float)rhs_matrix[col_idx * k + l];
-                                flops += 2.0;
-                            }
-                        }
-                    }
-                }
-	    }
+            flops = compute_ref_integers<TypeA>(values, rhs_matrix, output_value_host, m, n, k, 8, 8, 4, row_offsets, col_indices, m_vec);
+            //if(mixed == 2){
+            //    flops = compute_ref_integers<TypeA>(values, rhs_matrix, output_value_host, m, n, k, 8, 8, 4, row_offsets, col_indices, m_vec);
+            //}
+	    //else{
+            //    // Initialize the output matrix with 0
+            //    for (int i=0; i < m * k; i++){
+            //        output_value_host[i] = 0.0f;
+            //    }
+            //    
+            //    // traverse all the vector rows
+            //    for (int i=0; i < m_vec; i++){
+            //        // traverse all the nonzero columns in this row
+            //        for (int j=row_offsets[i]; j < row_offsets[i+1]; j++){
+            //            int col_idx = col_indices[j];
+            //            // traverse all the elements in the vector
+            //            for (int v=0; v < vec_length; v++){
+            //                int row_idx = i * vec_length + v;
+            //                for (int l=0; l < k; l++){
+            //                    output_value_host[row_idx * k + l] += (float)values[j * vec_length + v] * (float)rhs_matrix[col_idx * k + l];
+            //                    flops += 2.0;
+            //                }
+            //            }
+            //        }
+            //    }
+	    //}
         }// end if func
 
 	flops = flops/1024.0/1024.0/1024.0;
@@ -213,7 +249,8 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
         // Device
         int *d_row_offsets, *d_col_indices, *d_row_indices;
         IndexType *d_col_indices_sputnik;
-        InType *d_value, *d_rhs_matrix;
+        TypeA *d_value; 
+	TypeB *d_rhs_matrix;
         OutType *d_output_value;
 
         checkCuda(cudaMalloc(&d_row_offsets, (m_vec*2) * sizeof(int)));
@@ -228,7 +265,13 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
         checkCuda(cudaMalloc(&d_output_value, (m * k) * sizeof(OutType)));
 
         checkCuda(cudaMemcpy(d_row_offsets, aligned_row_offsets , (m_vec*2) * sizeof(int), cudaMemcpyHostToDevice));
-        checkCuda(cudaMemcpy(d_col_indices, aligned_col_indices, aligned_num_item * sizeof(int), cudaMemcpyHostToDevice));
+	if(mma_k_dim == 16){
+            checkCuda(cudaMemcpy(d_col_indices, aligned_col_indices, aligned_num_item * sizeof(int), cudaMemcpyHostToDevice));
+	}
+	else if(mma_k_dim == 32){
+            checkCuda(cudaMemcpy(d_col_indices, aligned_col_indices_shuffle, aligned_num_item * sizeof(int), cudaMemcpyHostToDevice));
+	}
+
         checkCuda(cudaMemcpy(d_value, aligned_values_transpose, aligned_num_item * sizeof(int), cudaMemcpyHostToDevice));
         checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, n * k, cudaMemcpyHostToDevice));
         checkCuda(cudaMemcpy(d_row_indices, row_indices, m_vec * sizeof(int), cudaMemcpyHostToDevice));
@@ -612,7 +655,7 @@ int main(int argc, char **argv){
         printf("The A_mxn can be a sparse matrix in CSR format loaded from the benchmark [bm], or a row-major dense matrix.\n");
         printf("The B_nxk and C_mxk are row-major dense matrices.\n");
         printf("\n");
-        printf("usage: ./spmm_benchmark [bm] [k] [v] [kernel] [sort] [function] [sparse] [mixed]\n");
+        printf("usage: ./spmm_benchmark [bm] [k] [v] [kernel] [sort] [function] [sparse] [preA] [preB]\n");
         printf("arguments\n");
         printf("bm      :   path to the sparse matrix benchmark.\n");
         printf("            e.g.: /raid/datasets/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx\n");
@@ -629,9 +672,14 @@ int main(int argc, char **argv){
         printf("sparse  :   sparse = 0, the dense version is executed as a baseline;\n");
         printf("            sparse = 1, the SpMM is executed;\n");
         printf("        :   sparse = 2, the Blocked Ell based SpMM is executed");
-        printf("mixed   :   mixed = 0, use single precision; \n");
-        printf("            mixed = 1, use half precision; \n");
-        printf("            mixed = 2, use 8-bit int precision; \n");
+        printf("preA   :   preA = 32, use single precision; \n");
+        printf("           preA = 16, use half precision; \n");
+        printf("           preA = 8, use 8-bit int precision; \n");
+        printf("           preA = 4, use 8-bit int precision; \n");
+        printf("preB   :   preB = 32, use single precision; \n");
+        printf("           preB = 16, use half precision; \n");
+        printf("           preB = 8, use 8-bit int precision; \n");
+        printf("           preB = 4, use 8-bit int precision; \n");
     }
     // Run the benchmark
     else{
@@ -642,22 +690,12 @@ int main(int argc, char **argv){
         int sorted = std::atoi(argv[5]);
         int func = std::atoi(argv[6]);
         int sparse = std::atoi(argv[7]);
-        int mixed = std::atoi(argv[8]);
+        int preA = std::atoi(argv[8]);
+        int preB = std::atoi(argv[9]);
 
-        //if (mixed==1) BmFN<half, half, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
-	//else if (mixed==2) BmFN<int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
-        //else BmFN<float, float, int, float, int, CUDA_R_32F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed); 
-	if (mixed==2) BmFN<int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, mixed);
+	if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
+	//else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
+	else printf("Unsupported precision and vec_length!\n");
     }
     
-    //int dimK = 256;
-    //int vec_length = 8;
-    //int kernel = 1;
-    //int sorted = 0;
-    //int func = 1;
-    //int sparse = 1;
-    //int mixed = 1;
-
-    //if (mixed) BmFN<half, half, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse);
-    //else BmFN<float, float, int, float, int, CUDA_R_32F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse); 
 }

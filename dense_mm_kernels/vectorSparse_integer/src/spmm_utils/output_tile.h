@@ -153,6 +153,52 @@ namespace spmm{
     };
 
     template<typename OutType>
+    struct wmmaOutputTile4_4bit{
+        //
+        // Member variables
+        //
+        int lane_id_;
+        // The register file fragment with the results to store
+        unsigned long long* output_fragment_;
+        int4* output_matrix_;
+        // The number of columns in the rhs matrix
+        int rhs_columns_int4;
+
+        // Constructor
+        __device__ __forceinline__ wmmaOutputTile4_4bit(
+            int lane_id,
+            int row_offset_vec, int column_offset,
+            int cols,
+            int* output_fragment,
+            OutType* output_matrix)
+        {
+            output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
+            const int output_offset = (row_offset_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
+            output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
+            rhs_columns_int4 = cols / 4;
+            lane_id_ = lane_id;
+        }
+
+        // Store
+        __device__ __forceinline__ void Store(){
+            // Step 1: warp shuffle to align the memory access
+            output_fragment_[((lane_id_/4+1)%2)*2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2], 4, 32);
+            output_fragment_[((lane_id_/4+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1], 4, 32);
+
+            output_fragment_[((lane_id_/4+1)%2)*2 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 4], 4, 32);
+            output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4], 4, 32);
+            
+
+	    if(lane_id_ < 16){
+                #pragma unroll
+                for (int i = 0; i < 4; i++){
+                    *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + (lane_id_%8)%4*2+(lane_id_%8)/4) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+                }
+	    }
+        }
+    };
+
+    template<typename OutType>
     struct wmmaOutputTile4_8bit{
         //
         // Member variables

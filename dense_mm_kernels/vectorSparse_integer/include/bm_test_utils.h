@@ -132,15 +132,25 @@ void MakeDenseMatrix(int rows, int columns, ValueType *matrix,
                      std::default_random_engine generator)
 {
     std::uniform_real_distribution<float> distribution(0.0, 1.0);
-    
-    for (int64_t i = 0; i < static_cast<int64_t>(rows) * columns; ++i){
-        float temp = 2147483647.0*distribution(generator);
-        matrix[i] = ValueType(temp);
-	if(matrix[i] < 0){
-            printf("generate error");	
+    for(int64_t i = 0; i < static_cast<int64_t>(rows) * columns; ++i){
+	if(typeid(matrix[i]) == typeid(int)){
+            float temp = 2147483647.0*distribution(generator);
+            matrix[i] = ValueType(temp);
 	}
-        // int temp = (i / columns) % 8;
-        // matrix[i] = half(temp * 0.01);
+	else if(typeid(matrix[i]) == typeid(short)){
+            float temp = 32767.0*distribution(generator);
+            matrix[i] = ValueType(temp);
+	}
+	else if(typeid(matrix[i]) == typeid(char)){
+            float temp = 127.0*distribution(generator);
+            matrix[i] = ValueType(temp);
+	}
+	else{
+	    printf("Unsupported datatype for matrix elements!\n");
+	}
+	if(matrix[i] < 0){
+            printf("Matrix generate error!\n");	
+	}
     }
 }
 

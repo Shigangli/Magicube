@@ -3,9 +3,15 @@
 
 int main ()
 {   
-    signed char a = 127;
-    signed char b = 0;
-    b = a + 8;
+    //char a = 127;
+    //char b = 0;
+    unsigned char m1 = 15;
+    unsigned char a = 223;
+    unsigned char b = 0;
+    //b = a + 8;
+    //printf("b = %d %o %x\n", b, b, b);	
+    printf("a = %d %o %x\n", a & (m1 << 4), a & (m1 << 4), a & (m1 << 4));	
+    printf("a shift = %d %o %x\n", (a & (m1 << 4)) >> 4, (a & (m1 << 4)) >> 4, (a & (m1 << 4)) >> 4);	
     int an = a;
     int n = b;
     int inf_int = 0x7F800000;
