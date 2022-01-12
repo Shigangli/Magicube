@@ -220,41 +220,40 @@ namespace spmm{
             unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
             unsigned char *rhs_fragment_transpose_char = reinterpret_cast<unsigned char *>(rhs_fragment_transpose);
 
-	    //unsigned char maskc = 0x0F;
-            //#pragma unroll
-	    //for(int j = 0; j < 8; j++)
-	    //    for(int v = 0; v < 4; v++){
-	    //	    int intra_char_offset_0 = (j%2)*4;
-	    //	    int intra_char_offset_1 = ((j+1)%2)*4;
-	    //        rhs_fragment_transpose_char[8*v+j/2] |= ((rhs_fragment_char[j*4+v] & maskc) << intra_char_offset_0);
-	    //        rhs_fragment_transpose_char[8*v+8/2+j/2] |= ((rhs_fragment_char[j*4+v] & (maskc << 4)) >> intra_char_offset_1);
-	    //    }
-
+	    unsigned char maskc = 0x0F;
             #pragma unroll
-	    for(int i=0; i<8; i++){
-	        for(int j=0; j<4; j++){
-	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
-	        }
-	    }
-            unsigned int mask0 = 0xF0F0F0F0;
-            unsigned int mask1 = 0x0F0F0F0F;
-            unsigned int *rhs_fragment_uint = reinterpret_cast<unsigned int *>(rhs_fragment); 
-            unsigned int *rhs_fragment_transpose_uint = reinterpret_cast<unsigned int *>(rhs_fragment_transpose);
-
+	    for(int j = 0; j < 8; j++)
+	        for(int v = 0; v < 4; v++){
+	    	    int intra_char_offset_0 = (j%2)*4;
+	    	    int intra_char_offset_1 = ((j+1)%2)*4;
+	            rhs_fragment_transpose_char[8*v+j/2] |= ((rhs_fragment_char[j*4+v] & maskc) << intra_char_offset_0);
+	            rhs_fragment_transpose_char[8*v+8/2+j/2] |= ((rhs_fragment_char[j*4+v] & (maskc << 4)) >> intra_char_offset_1);
+	        } 
             //#pragma unroll
-	    //for(int i=0; i<4; i++){
-	    //    rhs_fragment_uint[i*2] = (rhs_fragment_transpose_uint[i*2] & mask1) | ((rhs_fragment_transpose_uint[i*2+1] & mask1) << 4);
-	    //    rhs_fragment_uint[i*2+1] = ((rhs_fragment_transpose_uint[i*2] & mask0) >> 4) | (rhs_fragment_transpose_uint[i*2+1] & mask0);
+	    //for(int i=0; i<8; i++){
+	    //    for(int j=0; j<4; j++){
+	    //        *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
+	    //    }
 	    //}
-	    
-	    rhs_fragment_uint[0] = (rhs_fragment_transpose_uint[0] & mask1) | ((rhs_fragment_transpose_uint[1] & mask1) << 4);
-	    rhs_fragment_uint[1] = ((rhs_fragment_transpose_uint[0] & mask0) >> 4) | (rhs_fragment_transpose_uint[1] & mask0);
-	    rhs_fragment_uint[2] = (rhs_fragment_transpose_uint[2] & mask1) | ((rhs_fragment_transpose_uint[3] & mask1) << 4);
-	    rhs_fragment_uint[3] = ((rhs_fragment_transpose_uint[2] & mask0) >> 4) | (rhs_fragment_transpose_uint[3] & mask0);
-	    rhs_fragment_uint[4] = (rhs_fragment_transpose_uint[4] & mask1) | ((rhs_fragment_transpose_uint[5] & mask1) << 4);
-	    rhs_fragment_uint[5] = ((rhs_fragment_transpose_uint[4] & mask0) >> 4) | (rhs_fragment_transpose_uint[5] & mask0);
-	    rhs_fragment_uint[6] = (rhs_fragment_transpose_uint[6] & mask1) | ((rhs_fragment_transpose_uint[7] & mask1) << 4);
-	    rhs_fragment_uint[7] = ((rhs_fragment_transpose_uint[6] & mask0) >> 4) | (rhs_fragment_transpose_uint[7] & mask0);
+            //unsigned int mask0 = 0xF0F0F0F0;
+            //unsigned int mask1 = 0x0F0F0F0F;
+            //unsigned int *rhs_fragment_uint = reinterpret_cast<unsigned int *>(rhs_fragment); 
+            //unsigned int *rhs_fragment_transpose_uint = reinterpret_cast<unsigned int *>(rhs_fragment_transpose);
+
+            ////#pragma unroll
+	    ////for(int i=0; i<4; i++){
+	    ////    rhs_fragment_uint[i*2] = (rhs_fragment_transpose_uint[i*2] & mask1) | ((rhs_fragment_transpose_uint[i*2+1] & mask1) << 4);
+	    ////    rhs_fragment_uint[i*2+1] = ((rhs_fragment_transpose_uint[i*2] & mask0) >> 4) | (rhs_fragment_transpose_uint[i*2+1] & mask0);
+	    ////}
+	    //
+	    //rhs_fragment_uint[0] = (rhs_fragment_transpose_uint[0] & mask1) | ((rhs_fragment_transpose_uint[1] & mask1) << 4);
+	    //rhs_fragment_uint[1] = ((rhs_fragment_transpose_uint[0] & mask0) >> 4) | (rhs_fragment_transpose_uint[1] & mask0);
+	    //rhs_fragment_uint[2] = (rhs_fragment_transpose_uint[2] & mask1) | ((rhs_fragment_transpose_uint[3] & mask1) << 4);
+	    //rhs_fragment_uint[3] = ((rhs_fragment_transpose_uint[2] & mask0) >> 4) | (rhs_fragment_transpose_uint[3] & mask0);
+	    //rhs_fragment_uint[4] = (rhs_fragment_transpose_uint[4] & mask1) | ((rhs_fragment_transpose_uint[5] & mask1) << 4);
+	    //rhs_fragment_uint[5] = ((rhs_fragment_transpose_uint[4] & mask0) >> 4) | (rhs_fragment_transpose_uint[5] & mask0);
+	    //rhs_fragment_uint[6] = (rhs_fragment_transpose_uint[6] & mask1) | ((rhs_fragment_transpose_uint[7] & mask1) << 4);
+	    //rhs_fragment_uint[7] = ((rhs_fragment_transpose_uint[6] & mask0) >> 4) | (rhs_fragment_transpose_uint[7] & mask0);
 
 	    if(lane_id_ < 16){
 	        lhs_fragment[0] = lhs_tile_[lane_id_+n_group_idx*16];
@@ -272,7 +271,7 @@ namespace spmm{
                     "{%0, %1}; ":
                     "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[8 + i]):
                     "r"(lhs_fragment[0]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_transpose[i])
                 );
             }
         }
