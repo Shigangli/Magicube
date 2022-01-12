@@ -401,7 +401,91 @@ namespace spmm{
             }
             asm(""); // without this, it is said that the loop cannot be unrolled.
         }
+    };
 
+
+    template <typename LoadType, typename VecType, int VecLength, int Tile_N, int BlockWidth>
+    struct wmmaSparseTile_4bit{
+        //
+        // Static members
+        //
+
+        static constexpr int kValuesPerLoad_ = sizeof(LoadType) / sizeof(char);
+        static constexpr int kThreadItemsN_ = Tile_N / BlockWidth;
+
+        //
+        // Member variables
+        //
+
+        // The number of columns in the rhs matrix
+        const int rhs_columns_;
+        // The sparse matrix value array.
+        const int * values_;
+        // The sparse matrix column indices for each value
+        const int * column_idxs_;
+        int * values_tile_base_;
+        // shared memory tile for sparse marix values
+        int * column_idxs_tile_base_;
+
+        // Constructor. Set the initial pointer offsets
+        __device__ __forceinline__ wmmaSparseTile_4bit(
+            int rhs_columns, int row_offset_vec, int thread_idx_x,
+            const VecType * __restrict__ values,
+            const int * __restrict__ column_idxs,
+            int *values_tile, int * column_idxs_tile):
+            rhs_columns_(rhs_columns / 8),
+            values_(reinterpret_cast<const int *>(values + row_offset_vec) + thread_idx_x),
+            column_idxs_(reinterpret_cast<const int *>(column_idxs) + row_offset_vec + thread_idx_x),
+            values_tile_base_(reinterpret_cast<int *>(values_tile) + thread_idx_x),
+            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + thread_idx_x){}
+        
+        // Load
+        __device__ __forceinline__ void Load(){
+            int * values_tile = values_tile_base_;
+            int * column_idxs_tile = column_idxs_tile_base_;
+
+            #pragma unroll
+            for (int n_item_idx = 0; n_item_idx < kThreadItemsN_/2; n_item_idx++){
+                *(values_tile) = __ldg(values_);
+                values_ += BlockWidth;
+                values_tile += BlockWidth;
+            }
+
+            #pragma unroll
+            for (int n_item_idx = 0; n_item_idx < kThreadItemsN_; n_item_idx++){
+                *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
+                column_idxs_ += BlockWidth;
+                column_idxs_tile += BlockWidth;
+            }
+        }
+
+
+        // Load Residual
+        __device__ __forceinline__ void Residue(int residue){
+            int * values_tile = values_tile_base_;
+            int * column_idxs_tile = column_idxs_tile_base_;
+	    int intra_residue = residue;
+
+            #pragma unroll
+            for (int n_item_idx = 0; n_item_idx < kThreadItemsN_/2; n_item_idx++){
+		if(intra_residue <= 0) break;
+                *(values_tile) = __ldg(values_);
+                values_ += BlockWidth;
+                values_tile += BlockWidth;
+		intra_residue -= (2*BlockWidth);
+            }
+
+	    intra_residue = residue;
+            #pragma unroll
+            for (int n_item_idx = 0; n_item_idx < kThreadItemsN_; n_item_idx++){
+		if(intra_residue <= 0) break;
+                *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
+                column_idxs_ += BlockWidth;
+                column_idxs_tile += BlockWidth;
+		intra_residue -= BlockWidth;
+            }
+            asm(""); // without this, it is said that the loop cannot be unrolled.
+        }
     };
 }
 #endif

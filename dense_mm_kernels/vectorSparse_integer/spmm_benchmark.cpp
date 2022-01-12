@@ -86,11 +86,18 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
     else
         mma_k_dim = 16;
 
-    std::cout << "preA: " << preA << "preB: " << preB << " m_vec: " << m_vec << " n: " << n << " nonzeros_vec: " << nonzeros_vec << " dimk: " << k << " vec_length: " << vec_length << "\n" ;
+    std::cout << "preA: " << preA << "preB: " << preB << " m_vec: " << m_vec << " n: " << n << " nonzeros_vec: " << nonzeros_vec << " dimk: " << k << " vec_length: " << vec_length << "mma_k_dim: " << mma_k_dim << "\n" ;
 
     // Create the A column indices
 
     std::default_random_engine generator;
+    int d;
+    cudaGetDevice(&d);
+    printf("device = %d\n", d);
+    cudaDeviceProp deviceProp;
+    cudaGetDeviceProperties(&deviceProp, d);
+
+    printf("number of SMs: %d\n", deviceProp.multiProcessorCount);
 
     // SpMM
     if (sparse == 1){
@@ -130,8 +137,10 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
         int *aligned_col_indices = new int[aligned_num_item];
         int *aligned_col_indices_shuffle = new int[aligned_num_item];
 	for(int i = 0; i < aligned_num_item; i++){
-	    aligned_col_indices[i] = 0;
-	    aligned_col_indices_shuffle[i] = 0;
+	    //aligned_col_indices[i] = 0;
+	    //aligned_col_indices_shuffle[i] = 0;
+	    aligned_col_indices[i] = -1;
+	    aligned_col_indices_shuffle[i] = -1;
 	}
 
 	for(int i = 1; i < m_vec + 1; i++){
@@ -195,6 +204,8 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
 			int intra_char_offset_1 = ((j+1)%2)*4;
 	                aligned_values_transpose_char[i+mma_k_dim*v+j/2] |= ((aligned_values_char[i+j*(vec_length/2)+v] & mask) << intra_char_offset_0);
 	                aligned_values_transpose_char[i+mma_k_dim*v+mma_k_dim/2+j/2] |= ((aligned_values_char[i+j*(vec_length/2)+v] & (mask << 4)) >> intra_char_offset_1);
+			//if((i<8) && (j<8))
+			//    printf("%x, %x, %x\n", aligned_values_char[i+j*(vec_length/2)+v], aligned_values_transpose_char[i+mma_k_dim*v+j/2], aligned_values_transpose_char[i+mma_k_dim*v+mma_k_dim/2+j/2]);
 		    }
 	}
 	//}
@@ -205,7 +216,7 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
         double flops = 0;
 
         if(func){
-            flops = compute_ref_integers<TypeA>(values, rhs_matrix, output_value_host, m, n, k, 8, 8, 4, row_offsets, col_indices, m_vec);
+            flops = compute_ref_integers<TypeA>(values, rhs_matrix, output_value_host, m, n, k, preA, preB, vec_length, row_offsets, col_indices, m_vec);
             //if(mixed == 2){
             //    flops = compute_ref_integers<TypeA>(values, rhs_matrix, output_value_host, m, n, k, 8, 8, 4, row_offsets, col_indices, m_vec);
             //}
@@ -260,8 +271,9 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
 
         //checkCuda(cudaMalloc(&d_value, nonzeros * sizeof(InType)));
         //checkCuda(cudaMalloc(&d_rhs_matrix, (n * k) * sizeof(InType)));
-        checkCuda(cudaMalloc(&d_value, aligned_num_item * sizeof(int)));
-        checkCuda(cudaMalloc(&d_rhs_matrix, n * k));
+	
+        checkCuda(cudaMalloc(&d_value, aligned_num_item * sizeof(TypeA)));
+        checkCuda(cudaMalloc(&d_rhs_matrix, n * k * preB / 8));
         checkCuda(cudaMalloc(&d_output_value, (m * k) * sizeof(OutType)));
 
         checkCuda(cudaMemcpy(d_row_offsets, aligned_row_offsets , (m_vec*2) * sizeof(int), cudaMemcpyHostToDevice));
@@ -272,8 +284,8 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
             checkCuda(cudaMemcpy(d_col_indices, aligned_col_indices_shuffle, aligned_num_item * sizeof(int), cudaMemcpyHostToDevice));
 	}
 
-        checkCuda(cudaMemcpy(d_value, aligned_values_transpose, aligned_num_item * sizeof(int), cudaMemcpyHostToDevice));
-        checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, n * k, cudaMemcpyHostToDevice));
+        checkCuda(cudaMemcpy(d_value, aligned_values_transpose, aligned_num_item * sizeof(TypeA), cudaMemcpyHostToDevice));
+        checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, n * k * preB / 8, cudaMemcpyHostToDevice));
         checkCuda(cudaMemcpy(d_row_indices, row_indices, m_vec * sizeof(int), cudaMemcpyHostToDevice));
         checkCuda(cudaMemcpy(d_col_indices_sputnik, col_indices_sputnik, nonzeros_vec * sizeof(IndexType), cudaMemcpyHostToDevice));
         
@@ -386,7 +398,7 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
             for (int j=0; j < m * k; j++){
                 //if (j < 32) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                 //if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
-                if (j < 32) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
+                if (j < 64) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
                 if ((output_value_cuda[j] - output_value_host[j]) != 0){
                     // if (j < 2560) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                     errors ++;
@@ -694,7 +706,7 @@ int main(int argc, char **argv){
         int preB = std::atoi(argv[9]);
 
 	if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
-	//else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
+	else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else printf("Unsupported precision and vec_length!\n");
     }
     

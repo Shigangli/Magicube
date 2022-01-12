@@ -163,6 +163,7 @@ namespace spmm{
         int4* output_matrix_;
         // The number of columns in the rhs matrix
         int rhs_columns_int4;
+        int thread_offset;
 
         // Constructor
         __device__ __forceinline__ wmmaOutputTile4_4bit(
@@ -173,27 +174,44 @@ namespace spmm{
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
-            const int output_offset = (row_offset_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
+            //const int output_offset = (row_offset_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
+            const int output_offset = (row_offset_vec * 4 + lane_id / 4) * cols + column_offset;
             output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
             rhs_columns_int4 = cols / 4;
             lane_id_ = lane_id;
+	    //thread_offset = ((lane_id%8)%4/2 + (lane_id%8)%4%2*2)*2 + (lane_id%8)/4;
         }
 
         // Store
         __device__ __forceinline__ void Store(){
             // Step 1: warp shuffle to align the memory access
-            output_fragment_[((lane_id_/4+1)%2)*2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2], 4, 32);
-            output_fragment_[((lane_id_/4+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1], 4, 32);
-
-            output_fragment_[((lane_id_/4+1)%2)*2 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 4], 4, 32);
-            output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4], 4, 32);
+            //output_fragment_[((lane_id_/2+1)%2)*4]     = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/2+1)%2)*4], 2, 32);
+            //output_fragment_[((lane_id_/2+1)%2)*4 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/2+1)%2)*4 + 1], 2, 32);
+            //output_fragment_[((lane_id_/2+1)%2)*4 + 2] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/2+1)%2)*4 + 2], 2, 32);
+            //output_fragment_[((lane_id_/2+1)%2)*4 + 3] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/2+1)%2)*4 + 3], 2, 32);
             
+            //output_fragment_[((lane_id_/4+1)%2)*2]     = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2], 4, 32);
+            //output_fragment_[((lane_id_/4+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1], 4, 32);
+            //output_fragment_[((lane_id_/4+1)%2)*2 + 4]     = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 4], 4, 32);
+            //output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4] = __shfl_xor_sync(0xffffffff, output_fragment_[((lane_id_/4+1)%2)*2 + 1 + 4], 4, 32);
 
+	    //if(lane_id_ < 16){
+            //    #pragma unroll
+            //    for (int i = 0; i < 4; i++){
+            //        *(output_matrix_ + i % 2 * rhs_columns_int4 + (i/2) * 8 + thread_offset) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+            //    }
+	    //}
 	    if(lane_id_ < 16){
-                #pragma unroll
-                for (int i = 0; i < 4; i++){
-                    *(output_matrix_ + i % 2 * rhs_columns_int4 + 8 * (i/2) + (lane_id_%8)%4*2+(lane_id_%8)/4) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
-                }
+                //#pragma unroll
+                //for (int i = 0; i < 4; i++){
+                //    *(output_matrix_ + (lane_id_ % 4) * 4 + i) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+                //    //*(output_matrix_ + i % 2 * rhs_columns_int4 + (i/2) * 8 + thread_offset) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+                //    //*(output_matrix_ + i % 2 * rhs_columns_int4 + (i/2) * 8 + (lane_id_%8)) = *(reinterpret_cast<int4 *>(output_fragment_) + i);
+                //}
+                *(output_matrix_ + (lane_id_ % 4) * 4 + 0) = *(reinterpret_cast<int4 *>(output_fragment_) + 0);
+                *(output_matrix_ + (lane_id_ % 4) * 4 + 1) = *(reinterpret_cast<int4 *>(output_fragment_) + 1);
+                *(output_matrix_ + (lane_id_ % 4) * 4 + 2) = *(reinterpret_cast<int4 *>(output_fragment_) + 2);
+                *(output_matrix_ + (lane_id_ % 4) * 4 + 3) = *(reinterpret_cast<int4 *>(output_fragment_) + 3);
 	    }
         }
     };

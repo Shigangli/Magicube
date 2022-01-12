@@ -181,6 +181,103 @@ namespace spmm{
         }
     };
 
+
+    // Compute Tile for k=4, 8-bit integer
+    template <int Tile_N>
+    struct wmmaComputeUtils4_4bit {
+
+        // Shared memory buffers
+        const int* lhs_tile_;
+        const int* dense_tile_;
+        // Register file fragment to accumulate results into
+        int* output_fragment_;
+        int lane_id_;
+
+        // Constructor
+        __device__ __forceinline__ wmmaComputeUtils4_4bit(
+            const int* lhs_tile,
+            const int* dense_tile,
+            int* output_fragment,
+            int lane_id):
+            lhs_tile_(lhs_tile),
+            lane_id_(lane_id),
+            dense_tile_(dense_tile),
+            output_fragment_(output_fragment){}
+        
+        // Compute
+        __device__ __forceinline__ void TileMAC(int n_group_idx){
+            int lhs_fragment[1];
+            int rhs_fragment[8];
+            int rhs_fragment_transpose[8];
+	    int chunk_id = lane_id_ % 4;
+	    int base_offset = chunk_id * 72 + lane_id_/4 + n_group_idx * 72 * 4;
+
+            #pragma unroll
+	    for(int i=0; i<8; i++){
+	        rhs_fragment[i] = *(dense_tile_ + base_offset + i*8); 
+	    }
+
+            char *rhs_fragment_char = reinterpret_cast<char *>(rhs_fragment); 
+            char *rhs_fragment_transpose_char = reinterpret_cast<char *>(rhs_fragment_transpose);
+
+            #pragma unroll
+	    for(int i=0; i<8; i++){
+	        for(int j=0; j<4; j++){
+	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
+		}
+	    }
+            unsigned int mask0 = 0xF0F0F0F0;
+            unsigned int mask1 = 0x0F0F0F0F;
+            unsigned int *rhs_fragment_uint = reinterpret_cast<unsigned int *>(rhs_fragment); 
+            unsigned int *rhs_fragment_transpose_uint = reinterpret_cast<unsigned int *>(rhs_fragment_transpose);
+
+            //#pragma unroll
+	    //for(int i=0; i<4; i++){
+	    //    //rhs_fragment_uint[i*2] = (rhs_fragment_transpose_uint[i*2] & mask0) | ((rhs_fragment_transpose_uint[i*2+1] & mask0) >> 4);
+	    //    //rhs_fragment_uint[i*2+1] = ((rhs_fragment_transpose_uint[i*2] & mask1) << 4) | (rhs_fragment_transpose_uint[i*2+1] & mask1);
+	    //    rhs_fragment_uint[i*2] = (rhs_fragment_transpose_uint[i*2] & mask1) | ((rhs_fragment_transpose_uint[i*2+1] & mask1) << 4);
+	    //    rhs_fragment_uint[i*2+1] = ((rhs_fragment_transpose_uint[i*2] & mask0) >> 4) | (rhs_fragment_transpose_uint[i*2+1] & mask0);
+	    //}
+	    
+	    rhs_fragment_uint[0] = (rhs_fragment_transpose_uint[0] & mask1) | ((rhs_fragment_transpose_uint[1] & mask1) << 4);
+	    rhs_fragment_uint[1] = ((rhs_fragment_transpose_uint[0] & mask0) >> 4) | (rhs_fragment_transpose_uint[1] & mask0);
+	    rhs_fragment_uint[2] = (rhs_fragment_transpose_uint[2] & mask1) | ((rhs_fragment_transpose_uint[3] & mask1) << 4);
+	    rhs_fragment_uint[3] = ((rhs_fragment_transpose_uint[2] & mask0) >> 4) | (rhs_fragment_transpose_uint[3] & mask0);
+	    rhs_fragment_uint[4] = (rhs_fragment_transpose_uint[4] & mask1) | ((rhs_fragment_transpose_uint[5] & mask1) << 4);
+	    rhs_fragment_uint[5] = ((rhs_fragment_transpose_uint[4] & mask0) >> 4) | (rhs_fragment_transpose_uint[5] & mask0);
+	    rhs_fragment_uint[6] = (rhs_fragment_transpose_uint[6] & mask1) | ((rhs_fragment_transpose_uint[7] & mask1) << 4);
+	    rhs_fragment_uint[7] = ((rhs_fragment_transpose_uint[6] & mask0) >> 4) | (rhs_fragment_transpose_uint[7] & mask0);
+	    //rhs_fragment_uint[0] = ((rhs_fragment_transpose_uint[0] & mask1) << 4) + (rhs_fragment_transpose_uint[1] & mask1);
+	    //rhs_fragment_uint[1] = (rhs_fragment_transpose_uint[0] & mask0) + ((rhs_fragment_transpose_uint[1] & mask0) >> 4);
+	    //rhs_fragment_uint[2] = ((rhs_fragment_transpose_uint[2] & mask1) << 4) + (rhs_fragment_transpose_uint[3] & mask1);
+	    //rhs_fragment_uint[3] = (rhs_fragment_transpose_uint[2] & mask0) + ((rhs_fragment_transpose_uint[3] & mask0) >> 4);
+	    //rhs_fragment_uint[4] = ((rhs_fragment_transpose_uint[4] & mask1) << 4) + (rhs_fragment_transpose_uint[5] & mask1);
+	    //rhs_fragment_uint[5] = (rhs_fragment_transpose_uint[4] & mask0) + ((rhs_fragment_transpose_uint[5] & mask0) >> 4);
+	    //rhs_fragment_uint[6] = ((rhs_fragment_transpose_uint[6] & mask1) << 4) + (rhs_fragment_transpose_uint[7] & mask1);
+	    //rhs_fragment_uint[7] = (rhs_fragment_transpose_uint[6] & mask0) + ((rhs_fragment_transpose_uint[7] & mask0) >> 4);
+
+	    if(lane_id_ < 16){
+	        lhs_fragment[0] = lhs_tile_[lane_id_+n_group_idx*16];
+	    }
+	    else{
+	        lhs_fragment[0] = 0;
+	    } 
+
+            #pragma unroll
+            for (int i = 0; i < 8; i ++){
+                asm("mma.sync.aligned.m8n8k32.row.col.satfinite.s32.u4.u4.s32 \t"
+                    "{%0, %1}, \t"
+                    "{%2}, \t"
+                    "{%3}, \t"
+                    "{%0, %1}; ":
+                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[8 + i]):
+                    "r"(lhs_fragment[0]),
+                    "r"(rhs_fragment[i])
+                );
+            }
+        }
+    };
+
     // Compute Tile for k=4, 8-bit integer
     template <typename VecType, int Tile_N>
     struct wmmaComputeUtils4_8bit {
@@ -193,7 +290,7 @@ namespace spmm{
         // Member variables
         //
 
-        // Shared memory buffer storing the lhs tile values
+        // Shared memory buffers
         const int* lhs_tile_;
         const int* dense_tile_;
         // Register file fragment to accumulate results into

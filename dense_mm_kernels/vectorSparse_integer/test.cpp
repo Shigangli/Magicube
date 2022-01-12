@@ -8,9 +8,16 @@ int main ()
     unsigned char m1 = 15;
     unsigned char a = 223;
     unsigned char b = 0;
+    int array_a[6] = {1, 2, 3, 4, 5, 6};
+    if(*(array_a+3) == 4)
+        printf("pointer test correct\n");
     //b = a + 8;
     //printf("b = %d %o %x\n", b, b, b);	
     printf("a = %d %o %x\n", a & (m1 << 4), a & (m1 << 4), a & (m1 << 4));	
+    printf("a shift = %d %o %x\n", (a & (m1 << 4)) >> 4, (a & (m1 << 4)) >> 4, (a & (m1 << 4)) >> 4);
+    unsigned int aaa = 0xF0000F00;    
+    unsigned int bbb = aaa >> 4;    
+    printf("aaa = %x, bbb = %x \n", (aaa << 4), (aaa >> 4));	
     printf("a shift = %d %o %x\n", (a & (m1 << 4)) >> 4, (a & (m1 << 4)) >> 4, (a & (m1 << 4)) >> 4);	
     int an = a;
     int n = b;
