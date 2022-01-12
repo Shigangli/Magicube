@@ -208,9 +208,10 @@ namespace spmm{
         __device__ __forceinline__ void TileMAC(int n_group_idx){
             int lhs_fragment[1];
             int rhs_fragment[8];
-            int rhs_fragment_transpose[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+            int rhs_fragment_transpose[8];
 	    int chunk_id = lane_id_ % 4;
 	    int base_offset = chunk_id * 72 + lane_id_/4 + n_group_idx * 72 * 4;
+	    //int base_offset = chunk_id * 64 + lane_id_/4 + n_group_idx * 64 * 4;
 
             #pragma unroll
 	    for(int i=0; i<8; i++){

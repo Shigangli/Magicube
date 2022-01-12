@@ -359,6 +359,7 @@ __global__ void wmmaSpmmKernel4_4bit(
 
     // each int value has four 4-bit values, padding to avoid bank conflict, assuming Tile_N=64 
     __shared__ int dense_tile_array[Tile_K*Tile_N/8 + 8*7];
+    //__shared__ int dense_tile_array[Tile_K*Tile_N/8];
 
     // Pointers to the shared memory tiles
     int* values_tile = values_tile_array;
