@@ -289,6 +289,7 @@ __global__ void wmmaSpmmKernel4(
         #pragma unroll
         for (int n_group_idx = 0; n_group_idx < InnerSteps; n_group_idx ++){
             dense_tile_loader.LoadRow(n_group_idx);
+            //computer.TileMAC(n_group_idx);
         }
         __threadfence_block();
         #pragma unroll
@@ -299,7 +300,6 @@ __global__ void wmmaSpmmKernel4(
     }
    
     if(nonzeros > 0){
-        //sparse_tile_loader.ZeroTiles();
         __syncthreads();
         sparse_tile_loader.Residue(nonzeros);
         __syncthreads();
@@ -326,7 +326,7 @@ __global__ void wmmaSpmmKernel4(
     output_tile_storer.Store();
 }
 
-//4-bit integer
+//4-bit integer larger Tile_K
 template <typename LoadType, typename IndexType, typename VecType, 
           typename OutType, int Tile_N, 
           int Tile_K, int BlockWidth, int VecLength=4>
@@ -384,7 +384,7 @@ __global__ void wmmaSpmmKernel4_4bit(
     );
 
     // Accumulator registers for the output values.
-    constexpr int kOutputFragmentSize = 16;
+    constexpr int kOutputFragmentSize = 32;
     __align__(16) int output_fragment[kOutputFragmentSize] = {};
     wmmaComputeUtils4_4bit<Tile_N> computer(values_tile, dense_tile, output_fragment, lane_id);
 
@@ -437,6 +437,118 @@ __global__ void wmmaSpmmKernel4_4bit(
     wmmaOutputTile4_4bit<OutType> output_tile_storer(lane_id, m_index_vec, k_index, k, output_fragment, output_matrix);
     output_tile_storer.Store();
 }
+
+////4-bit integer
+//template <typename LoadType, typename IndexType, typename VecType, 
+//          typename OutType, int Tile_N, 
+//          int Tile_K, int BlockWidth, int VecLength=4>
+//__global__ void wmmaSpmmKernel4_4bit(
+//    int m_vec, int k, int n, 
+//    const int* __restrict__ row_indices, 
+//    const int* __restrict__ row_offsets,
+//    const int* __restrict__ column_indices,
+//    const short* __restrict__ values,
+//    const int* __restrict__ rhs_matrix,
+//    OutType* __restrict__ output_matrix)
+//{
+//    // For the wmma based implementation, we have Tile_M = 1
+//    int m_index_vec = blockIdx.x;
+//    int k_index = blockIdx.y * Tile_K;
+//    const int lane_id = threadIdx.x;
+//
+//    // Threads that work on different m-dim indices are independent
+//    // If we're out of bounds in the m-dimension we can just return
+//    if (m_index_vec >= m_vec) return;
+//    m_index_vec = __ldg(row_indices + m_index_vec);
+//
+//    // Load the row offset and calculate the number of nonzeros in the row
+//    int row_offset_vec = __ldg(row_offsets + m_index_vec*2);
+//    int nonzeros = __ldg(row_offsets + m_index_vec*2 + 1) - row_offset_vec;
+//
+//    // Shared memory tiles for the lhs values and indices
+//    __shared__ int values_tile_array[Tile_N/2];
+//    __shared__ int column_indices_tile_array[Tile_N];
+//
+//    // each int value has four 4-bit values, padding to avoid bank conflict, assuming Tile_N=64 
+//    __shared__ int dense_tile_array[Tile_K*32/8 + 8*3];
+//    //__shared__ int dense_tile_array[Tile_K*Tile_N/8 + 8*7];
+//    //__shared__ int dense_tile_array[Tile_K*Tile_N/8];
+//
+//    // Pointers to the shared memory tiles
+//    int* values_tile = values_tile_array;
+//    int* column_indices_tile = column_indices_tile_array;
+//    int* dense_tile = dense_tile_array;
+//
+//    // Initialize the pointers to the sparse lhs matrix
+//    // ToDo: VecType is useless?
+//    wmmaSparseTile_4bit<LoadType, VecType, VecLength, Tile_N, BlockWidth> sparse_tile_loader(
+//        k, row_offset_vec, threadIdx.x, values, column_indices,
+//        values_tile, column_indices_tile
+//    );
+//
+//    // Register fragment for the dense matrix values
+//    //constexpr int kDenseFragmentSize = Tile_N / 4 * 8;
+//    //__align__(16) half dense_matrix_fragment[kDenseFragmentSize];
+//
+//    // Initialize the pointers to the dense rhs matrix
+//    wmmaDenseTile_4bit<LoadType, Tile_N, Tile_K, BlockWidth> dense_tile_loader(
+//        k, k_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile
+//    );
+//
+//    // Accumulator registers for the output values.
+//    constexpr int kOutputFragmentSize = 16;
+//    __align__(16) int output_fragment[kOutputFragmentSize] = {};
+//    wmmaComputeUtils4_4bit<Tile_N> computer(values_tile, dense_tile, output_fragment, lane_id);
+//
+//    //
+//    // Begin kernel main loop
+//    //
+//
+//    constexpr int InnerSteps = Tile_N / 32;
+//
+//    for (; nonzeros >= Tile_N; nonzeros -= Tile_N){
+//        sparse_tile_loader.Load();
+//        //__syncthreads();
+//        #pragma unroll
+//        for (int n_group_idx = 0; n_group_idx < InnerSteps; n_group_idx ++){
+//            dense_tile_loader.LoadRow(n_group_idx);
+//            computer.TileMAC(n_group_idx);
+//        }
+//        //__threadfence_block();
+//        //#pragma unroll
+//        //for (int n_group_idx = 0; n_group_idx < InnerSteps; n_group_idx ++){
+//        //    computer.TileMAC(n_group_idx);
+//        //}
+//        //__syncthreads();
+//    }
+//   
+//    if(nonzeros > 0){
+//        //sparse_tile_loader.ZeroTiles();
+//        //__syncthreads();
+//        sparse_tile_loader.Residue(nonzeros);
+//        //__syncthreads();
+//
+//        int n_group_idx_red = 0;
+//
+//        #pragma unroll
+//        for (; n_group_idx_red < InnerSteps; n_group_idx_red++){
+//            if (nonzeros < 32) break;
+//            dense_tile_loader.LoadRow(n_group_idx_red);
+//            computer.TileMAC(n_group_idx_red);
+//            nonzeros -= 32;
+//        }
+//        asm("");
+//
+//        if(nonzeros > 0){
+//            dense_tile_loader.ResidueLoad(n_group_idx_red, nonzeros);
+//            //computer.TileMACResidue(n_group_idx_red);
+//            computer.TileMAC(n_group_idx_red);
+//        }
+//    } 
+//
+//    wmmaOutputTile4_4bit<OutType> output_tile_storer(lane_id, m_index_vec, k_index, k, output_fragment, output_matrix);
+//    output_tile_storer.Store();
+//}
 
 template <typename IndexType, int Tile_M, int Tile_N, int Tile_K, int BlockWidth>
 cudaError_t wmmaSpmmEx_4bit(
@@ -532,7 +644,8 @@ cudaError_t wmmaSpmm(int m_vec, int vec_length, int k, int n,
     int* __restrict__ output_matrix)
 {
     //printf("4-bit wmmaSpmm\n");
-    return wmmaSpmmEx_4bit<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+    //return wmmaSpmmEx_4bit<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+    return wmmaSpmmEx_4bit<int, 1, 64, 128, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
 }
 
 //// Function for mixed precision

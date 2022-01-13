@@ -222,7 +222,6 @@ namespace spmm {
 
         // The number of values that will be loaded per-thread, per-load
         static constexpr int kValuesPerLoad_ = sizeof(LoadType) / sizeof(char);
-        static constexpr int kTotalStep = Tile_N / 16 - 1;
 
         //
         // Member variables
@@ -278,6 +277,7 @@ namespace spmm {
         }
     };
 
+    ////baseline with bank conflict
     //template <typename LoadType, int Tile_N, int Tile_K, int BlockWidth>
     //struct wmmaDenseTile_4bit {
     //    //
@@ -343,6 +343,8 @@ namespace spmm {
     //    }
     //};
 
+
+    //larger Tile_K 128
     template <typename LoadType, int Tile_N, int Tile_K, int BlockWidth>
     struct wmmaDenseTile_4bit {
         //
@@ -380,43 +382,122 @@ namespace spmm {
         
         // Load a pair of odd and even row groups
         __device__ __forceinline__ void LoadRow(int row_group_idx){
-            const int *row_offsets = row_offsets_base_ + lane_id_/8 + row_group_idx * 32;
-            const int bank_id = lane_id_%8;
-            for(int i=0; i<8; i++){
-        	const int pad_offset = i/2;
-                //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
-                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+            const int *row_offsets = row_offsets_base_ + lane_id_/16 + row_group_idx * 32;
+            const int bank_id = lane_id_%16;
+            for(int i=0; i<16; i++){
+        	const int pad_offset = i/4;
+                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
             }
         }
 
         // Load the residual and compute the matrix product
         __device__ __forceinline__ void ResidueLoad(int row_group_idx, int residue){
-            const int step = (residue/8)*2;
+            const int step = (residue/8)*4;
             const int res_residue = residue % 8;
-            const int *row_offsets = row_offsets_base_ + lane_id_/8 + row_group_idx * 32;
-            const int bank_id = lane_id_%8;
+            const int *row_offsets = row_offsets_base_ + lane_id_/16 + row_group_idx * 32;
+            const int bank_id = lane_id_%16;
 
             int pad_offset = 0;
             int i = 0;
             for(; i<step; i++){
-                pad_offset = i/2;
-                //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
-                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                pad_offset = i/4;
+                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
             }
 
             if(res_residue > 0){
-                pad_offset = i/2;
-                if (*(row_offsets + i*4) >= 0)
-                    //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
-                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                pad_offset = i/4;
+                if (*(row_offsets + i*2) >= 0)
+                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
                 i++;
-                pad_offset = i/2;
-                if (*(row_offsets + i*4) >= 0)
-                    //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
-                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                pad_offset = i/4;
+                if (*(row_offsets + i*2) >= 0)
+                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
+                i++;
+                pad_offset = i/4;
+                if (*(row_offsets + i*2) >= 0)
+                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
+                i++;
+                pad_offset = i/4;
+                if (*(row_offsets + i*2) >= 0)
+                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*2) + bank_id);
             }
         }
     };
+
+    //template <typename LoadType, int Tile_N, int Tile_K, int BlockWidth>
+    //struct wmmaDenseTile_4bit {
+    //    //
+    //    // Static members
+    //    //
+
+    //    // The number of values that will be loaded per-thread, per-load
+    //    static constexpr int kValuesPerLoad_ = sizeof(LoadType) / sizeof(char);
+    //    static constexpr int kTotalStep = Tile_N / 16 - 1;
+
+    //    //
+    //    // Member variables
+    //    //
+
+    //    // The number of columns in the rhs matrix
+    //    const int lane_id_;
+    //    // The dense matrix pointer in global memory
+    //    const LoadType *matrix_base_;
+    //    // The loaded dense matrix row offset in shared memory
+    //    const int* row_offsets_base_;
+    //    // The register file fragment to load the dense values into.
+    //    LoadType *dense_tile_;
+
+    //    // Constructor. Set the initial pointer offsets
+    //    __device__ __forceinline__ wmmaDenseTile_4bit(
+    //        int rhs_columns, int offset, 
+    //        int lane_id, 
+    //        const int* __restrict__ matrix, 
+    //        const int *row_offsets,
+    //        int * dense_tile):
+    //        lane_id_(lane_id),
+    //        matrix_base_(reinterpret_cast<const LoadType *>(matrix + offset)),
+    //        row_offsets_base_(row_offsets),
+    //        dense_tile_(reinterpret_cast<LoadType *>(dense_tile)){}
+    //    
+    //    // Load a pair of odd and even row groups
+    //    __device__ __forceinline__ void LoadRow(int row_group_idx){
+    //        const int *row_offsets = row_offsets_base_ + lane_id_/8 + row_group_idx * 32;
+    //        const int bank_id = lane_id_%8;
+    //        for(int i=0; i<8; i++){
+    //    	const int pad_offset = i/2;
+    //            //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //            *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //        }
+    //    }
+
+    //    // Load the residual and compute the matrix product
+    //    __device__ __forceinline__ void ResidueLoad(int row_group_idx, int residue){
+    //        const int step = (residue/8)*2;
+    //        const int res_residue = residue % 8;
+    //        const int *row_offsets = row_offsets_base_ + lane_id_/8 + row_group_idx * 32;
+    //        const int bank_id = lane_id_%8;
+
+    //        int pad_offset = 0;
+    //        int i = 0;
+    //        for(; i<step; i++){
+    //            pad_offset = i/2;
+    //            //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //            *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //        }
+
+    //        if(res_residue > 0){
+    //            pad_offset = i/2;
+    //            if (*(row_offsets + i*4) >= 0)
+    //                //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //            i++;
+    //            pad_offset = i/2;
+    //            if (*(row_offsets + i*4) >= 0)
+    //                //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+    //        }
+    //    }
+    //};
 }
 
 #endif
