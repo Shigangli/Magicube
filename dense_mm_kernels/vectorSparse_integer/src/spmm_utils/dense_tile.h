@@ -384,7 +384,8 @@ namespace spmm {
             const int bank_id = lane_id_%8;
             for(int i=0; i<8; i++){
         	const int pad_offset = i/2;
-                *(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
             }
         }
 
@@ -399,17 +400,20 @@ namespace spmm {
             int i = 0;
             for(; i<step; i++){
                 pad_offset = i/2;
-                *(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
             }
 
             if(res_residue > 0){
                 pad_offset = i/2;
                 if (*(row_offsets + i*4) >= 0)
-                    *(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                    //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
                 i++;
                 pad_offset = i/2;
                 if (*(row_offsets + i*4) >= 0)
-                    *(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                    //*(dense_tile_ + row_group_idx * 72 * 4 + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
+                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*32) = __ldg(matrix_base_ + *(row_offsets + i*4) + bank_id);
             }
         }
     };

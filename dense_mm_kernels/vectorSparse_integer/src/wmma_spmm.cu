@@ -358,7 +358,8 @@ __global__ void wmmaSpmmKernel4_4bit(
     __shared__ int column_indices_tile_array[Tile_N];
 
     // each int value has four 4-bit values, padding to avoid bank conflict, assuming Tile_N=64 
-    __shared__ int dense_tile_array[Tile_K*Tile_N/8 + 8*7];
+    __shared__ int dense_tile_array[Tile_K*32/8 + 8*3];
+    //__shared__ int dense_tile_array[Tile_K*Tile_N/8 + 8*7];
     //__shared__ int dense_tile_array[Tile_K*Tile_N/8];
 
     // Pointers to the shared memory tiles
@@ -395,24 +396,25 @@ __global__ void wmmaSpmmKernel4_4bit(
 
     for (; nonzeros >= Tile_N; nonzeros -= Tile_N){
         sparse_tile_loader.Load();
-        __syncthreads();
+        //__syncthreads();
         #pragma unroll
         for (int n_group_idx = 0; n_group_idx < InnerSteps; n_group_idx ++){
             dense_tile_loader.LoadRow(n_group_idx);
-        }
-        __threadfence_block();
-        #pragma unroll
-        for (int n_group_idx = 0; n_group_idx < InnerSteps; n_group_idx ++){
             computer.TileMAC(n_group_idx);
         }
-        __syncthreads();
+        //__threadfence_block();
+        //#pragma unroll
+        //for (int n_group_idx = 0; n_group_idx < InnerSteps; n_group_idx ++){
+        //    computer.TileMAC(n_group_idx);
+        //}
+        //__syncthreads();
     }
    
     if(nonzeros > 0){
         //sparse_tile_loader.ZeroTiles();
-        __syncthreads();
+        //__syncthreads();
         sparse_tile_loader.Residue(nonzeros);
-        __syncthreads();
+        //__syncthreads();
 
         int n_group_idx_red = 0;
 

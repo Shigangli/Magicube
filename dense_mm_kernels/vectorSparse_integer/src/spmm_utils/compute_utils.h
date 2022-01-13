@@ -210,7 +210,8 @@ namespace spmm{
             int rhs_fragment[8];
             int rhs_fragment_transpose[8];
 	    int chunk_id = lane_id_ % 4;
-	    int base_offset = chunk_id * 72 + lane_id_/4 + n_group_idx * 72 * 4;
+	    int base_offset = chunk_id * 72 + lane_id_/4;
+	    //int base_offset = chunk_id * 72 + lane_id_/4 + n_group_idx * 72 * 4;
 	    //int base_offset = chunk_id * 64 + lane_id_/4 + n_group_idx * 64 * 4;
 
             #pragma unroll
@@ -221,6 +222,7 @@ namespace spmm{
             unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
             unsigned char *rhs_fragment_transpose_char = reinterpret_cast<unsigned char *>(rhs_fragment_transpose);
 
+	    //baseline with more bit-wise shift
 	    //unsigned char maskc = 0x0F;
             //#pragma unroll
 	    //for(int j = 0; j < 8; j++)
