@@ -19,6 +19,22 @@ cudaError_t wmmaSpmm(int m_vec, int vec_length, int k, int n,
     const short* __restrict__ values,
     const int* __restrict__ rhs_matrix,
     int* __restrict__ output_matrix) ;
+
+cudaError_t wmmaSpmm_4b8v(int m_vec, int vec_length, int k, int n, 
+    const int* __restrict__ row_indices, 
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const int* __restrict__ values,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_matrix) ;
+
+cudaError_t wmmaSpmm_4b8v(int m_vec, int vec_length, int k, int n, 
+    const int* __restrict__ row_indices, 
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const short* __restrict__ values,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_matrix) ;
 //cudaError_t wmmaSpmm(int m_vec, int vec_length, int k, int n, 
 //    const int* __restrict__ row_indices, 
 //    const int* __restrict__ row_offsets,

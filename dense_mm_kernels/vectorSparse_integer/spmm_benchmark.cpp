@@ -164,6 +164,8 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
 	//if (mixed == 2){
 	int type_width_A = sizeof(TypeA)*8/preA;
 	int type_width_B = sizeof(TypeB)*8/preB;
+	assert(type_width_A == vec_length);
+
         values = new TypeA[nonzeros / type_width_A];
         rhs_matrix = new TypeB[n * k / type_width_B];
 
@@ -292,7 +294,27 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, bool sort
         cudaProfilerStart();
 	float spmm_ms_avg = 0.0f;
 	int NUM_PROFILES = 512;
-        if (kernel == 0){
+        if((kernel == 0) && (preA == 4) && (vec_length == 8)){
+            printf("Using WMMA \n");
+	    for(int iter=0; iter<NUM_PROFILES; ++iter){
+	        float spmm_ms = 0.0f;
+	        cudaEvent_t spmm_start;
+	        cudaEvent_t spmm_end;
+	        cudaEventCreate(&spmm_start);
+	        cudaEventCreate(&spmm_end);
+	        cudaEventRecord(spmm_start);
+                spmm::wmmaSpmm_4b8v(m_vec, vec_length, k, n, d_row_indices, d_row_offsets, d_col_indices, d_value, d_rhs_matrix, d_output_value);
+	        cudaEventRecord(spmm_end);
+	        cudaEventSynchronize(spmm_end);
+	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
+                cudaEventDestroy(spmm_start);
+                cudaEventDestroy(spmm_end);
+                spmm_ms_avg += spmm_ms;
+	    }
+            spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
+            std::cout << "performance GFLOP/s: " << flops/spmm_ms_avg << "\n";
+        }
+	else if(kernel == 0){
             printf("Using WMMA \n");
 	    for(int iter=0; iter<NUM_PROFILES; ++iter){
 	        float spmm_ms = 0.0f;
@@ -686,12 +708,14 @@ int main(int argc, char **argv){
         printf("        :   sparse = 2, the Blocked Ell based SpMM is executed");
         printf("preA   :   preA = 32, use single precision; \n");
         printf("           preA = 16, use half precision; \n");
+        printf("           preA = 12, use 12-bit int precision; \n");
         printf("           preA = 8, use 8-bit int precision; \n");
-        printf("           preA = 4, use 8-bit int precision; \n");
+        printf("           preA = 4, use 4-bit int precision; \n");
         printf("preB   :   preB = 32, use single precision; \n");
         printf("           preB = 16, use half precision; \n");
+        printf("           preB = 12, use 12-bit int precision; \n");
         printf("           preB = 8, use 8-bit int precision; \n");
-        printf("           preB = 4, use 8-bit int precision; \n");
+        printf("           preB = 4, use 4-bit int precision; \n");
     }
     // Run the benchmark
     else{
@@ -707,6 +731,7 @@ int main(int argc, char **argv){
 
 	if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
+	else if ((preA == 4) && (preB == 4) && (vec_length == 8)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else printf("Unsupported precision and vec_length!\n");
     }
     
