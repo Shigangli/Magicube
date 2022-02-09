@@ -281,7 +281,7 @@ namespace spmm{
 
     // Tile_N=128 4bit v=8
     template <int Tile_K>
-    struct wmmaComputeUtils4_4bit_8v {
+    struct wmmaComputeUtils_4b8v{
 
         // Shared memory buffers
         const int* lhs_tile_;
@@ -291,7 +291,7 @@ namespace spmm{
         int lane_id_;
 
         // Constructor
-        __device__ __forceinline__ wmmaComputeUtils4_4bit_8v(
+        __device__ __forceinline__ wmmaComputeUtils_4b8v(
             const int* lhs_tile,
             const int* dense_tile,
             int* output_fragment,
@@ -341,6 +341,7 @@ namespace spmm{
 	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
 	        }
 	    }
+
             unsigned int mask0 = 0xF0F0F0F0;
             unsigned int mask1 = 0x0F0F0F0F;
             unsigned int *rhs_fragment_uint = reinterpret_cast<unsigned int *>(rhs_fragment); 
@@ -425,6 +426,113 @@ namespace spmm{
                     "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[8 + i]):
                     "r"(lhs_fragment[0]),
                     "r"(rhs_fragment[i])
+                );
+            }
+        }
+    };
+
+    // Tile_N=64 8bit v=4
+    template <int Tile_K>
+    struct wmmaComputeUtils_8b4v{
+
+        // Shared memory buffers
+        const int* lhs_tile_;
+        const int* dense_tile_;
+        // Register file fragment to accumulate results into
+        int* output_fragment_;
+        int lane_id_;
+
+        // Constructor
+        __device__ __forceinline__ wmmaComputeUtils_8b4v(
+            const int* lhs_tile,
+            const int* dense_tile,
+            int* output_fragment,
+            int lane_id):
+            lhs_tile_(lhs_tile),
+            lane_id_(lane_id),
+            dense_tile_(dense_tile),
+            output_fragment_(output_fragment){}
+        
+        // Compute
+        __device__ __forceinline__ void TileMAC(int step){
+            int lhs_fragment[1];
+            int rhs_fragment[4];
+            int rhs_fragment_transpose[4];
+	    int chunk_id = lane_id_ % 4;
+	    int base_offset = chunk_id * 72 + lane_id_ / 4;
+
+            #pragma unroll
+	    for(int i=0; i<4; i++){
+	        rhs_fragment[i] = *(dense_tile_ + base_offset + i*16); 
+	    }
+
+            unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
+            unsigned char *rhs_fragment_transpose_char = reinterpret_cast<unsigned char *>(rhs_fragment_transpose);
+
+            #pragma unroll
+	    for(int i=0; i<4; i++){
+	        for(int j=0; j<4; j++){
+	            *(rhs_fragment_transpose_char + j*4 + i) = *(rhs_fragment_char + j + i*4);
+	        }
+	    }
+
+            if(lane_id_ % 32 < 16)
+	        lhs_fragment[0] = lhs_tile_[lane_id_ % 16 + (step % 2) * 16];
+	    else
+		lhs_fragment[0] = 0;
+
+            #pragma unroll
+            for (int i = 0; i < 4; i ++){
+                asm("mma.sync.aligned.m8n8k16.row.col.satfinite.s32.u8.u8.s32 \t"
+                    "{%0, %1}, \t"
+                    "{%2}, \t"
+                    "{%3}, \t"
+                    "{%0, %1}; ":
+                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[4 + i]):
+                    "r"(lhs_fragment[0]),
+                    "r"(rhs_fragment_transpose[i])
+                );
+            }
+        }
+
+
+        __device__ __forceinline__ void TileMACResidue(){
+            int lhs_fragment[1];
+            int rhs_fragment[4];
+            int rhs_fragment_transpose[4];
+	    int chunk_id = lane_id_ % 4;
+	    int base_offset = chunk_id * 72 + lane_id_ / 4;
+
+            #pragma unroll
+	    for(int i=0; i<4; i++){
+	        rhs_fragment[i] = *(dense_tile_ + base_offset + i*16); 
+	    }
+
+            unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
+            unsigned char *rhs_fragment_transpose_char = reinterpret_cast<unsigned char *>(rhs_fragment_transpose);
+
+            #pragma unroll
+	    for(int i=0; i<4; i++){
+	        for(int j=0; j<4; j++){
+	            *(rhs_fragment_transpose_char + j*4 + i) = *(rhs_fragment_char + j + i*4);
+	        }
+	    }
+
+            if(lane_id_ % 32 < 16)
+	        lhs_fragment[0] = lhs_tile_[lane_id_ % 16];
+	    else
+		lhs_fragment[0] = 0;
+
+            #pragma unroll
+            for (int i = 0; i < 4; i ++){
+                asm("mma.sync.aligned.m8n8k16.row.col.satfinite.s32.u8.u8.s32 \t"
+                    "{%0, %1}, \t"
+                    "{%2}, \t"
+                    "{%3}, \t"
+                    "{%0, %1}; ":
+                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[4 + i]):
+                    "r"(lhs_fragment[0]),
+                    "r"(rhs_fragment_transpose[i])
                 );
             }
         }

@@ -118,12 +118,13 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         int *aligned_row_offsets = new int[m_vec*2];
 	int aligned_num_item = 0;
 	int warp_width = 32;
-	if(preA == 8 && preB == 8)
+	if(preA == 8 && preB == 8 && vec_length == 4)
+	    warp_width = 16;
+	else if(preA == 8 && preB == 8 && vec_length == 8)
 	    warp_width = 32;
-	else if(preA == 4 && preB == 4 && vec_length == 4)
-            warp_width = 64;
         else if(preA == 4 && preB == 4 && vec_length == 8)
-            //warp_width = 32;
+            warp_width = 32;
+	else if(preA == 4 && preB == 4 && vec_length == 4)
             warp_width = 64;
 
 	aligned_row_offsets[0] = aligned_num_item;
@@ -140,8 +141,6 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         int *aligned_col_indices = new int[aligned_num_item];
         int *aligned_col_indices_shuffle = new int[aligned_num_item];
 	for(int i = 0; i < aligned_num_item; i++){
-	    //aligned_col_indices[i] = 0;
-	    //aligned_col_indices_shuffle[i] = 0;
 	    aligned_col_indices[i] = -1;
 	    aligned_col_indices_shuffle[i] = -1;
 	}
@@ -216,7 +215,6 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	//}
 
         // Allocate the host output
-        //float *output_value_host = new float[m * k];
         int *output_value_host = new int[dimM * dimN];
         double flops = 0;
 
@@ -295,7 +293,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         cudaProfilerStart();
 	float spmm_ms_avg = 0.0f;
 	int NUM_PROFILES = 512;
-        if((kernel == 0) && (preA == 4) && (vec_length == 8)){
+        if((kernel == 0) && (preA == 4) && (preB == 4) && (vec_length == 8)){
             printf("Using WMMA \n");
 	    for(int iter=0; iter<NUM_PROFILES; ++iter){
 	        float spmm_ms = 0.0f;
@@ -312,8 +310,23 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
                 cudaEventDestroy(spmm_end);
                 spmm_ms_avg += spmm_ms;
 	    }
-            spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
-            std::cout << "performance GFLOP/s: " << flops/spmm_ms_avg << "\n";
+        }
+	else if((kernel == 0) && (preA == 8) && (preB == 8) && (vec_length == 4)){
+	    for(int iter=0; iter<NUM_PROFILES; ++iter){
+	        float spmm_ms = 0.0f;
+	        cudaEvent_t spmm_start;
+	        cudaEvent_t spmm_end;
+	        cudaEventCreate(&spmm_start);
+	        cudaEventCreate(&spmm_end);
+	        cudaEventRecord(spmm_start);
+                spmm::wmmaSpmm_8b4v(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_value, d_rhs_matrix, d_output_value);
+	        cudaEventRecord(spmm_end);
+	        cudaEventSynchronize(spmm_end);
+	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
+                cudaEventDestroy(spmm_start);
+                cudaEventDestroy(spmm_end);
+                spmm_ms_avg += spmm_ms;
+	    }
         }
 	else if(kernel == 0){
             //printf("Using WMMA \n");
@@ -334,8 +347,15 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	    //}
             //spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
             //std::cout << "performance GFLOP/s: " << flops/spmm_ms_avg << "\n";
-            printf("Supported type \n");
+            printf("Unsupported Kernel \n");
         }
+        else{
+            printf("Unsupported Kernel \n");
+        }
+        spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
+        std::cout << "performance GFLOP/s: " << flops/spmm_ms_avg << "\n";
+        cudaProfilerStop();
+
         //else if (kernel == 1){
         //    printf("Using CUDA \n");
         //    spmm::cudaSpmm(m_vec, vec_length, k, n, d_row_indices, d_row_offsets, d_col_indices, d_value, d_rhs_matrix, d_output_value);
@@ -407,10 +427,6 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         //    cusparseDestroySpMat(lhs_sparse);
         //    cusparseDestroy(handle);
         //}
-        else{
-            printf("Unsupported Kernel \n");
-        }
-        cudaProfilerStop();
 
 
         if (func){
@@ -423,7 +439,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
             for (int j=0; j < dimM * dimN; j++){
                 //if (j < 32) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                 //if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
-                //if (j < 1024) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
+                //if (j < 128) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
 		if (output_value_cuda[j] > 0) counter++;
                 if ((output_value_cuda[j] - output_value_host[j]) != 0){
                     //if (j > 1000000) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
@@ -737,6 +753,8 @@ int main(int argc, char **argv){
 	//if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
 	//else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimK, vec_length, kernel, sorted, func, sparse, preA, preB);
 	if ((preA == 4) && (preB == 4) && (vec_length == 8)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
+	else if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
+	//else if ((preA == 8) && (preB == 4) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else printf("Unsupported precision and vec_length!\n");
     }
     

@@ -279,7 +279,7 @@ namespace spmm {
 
     ////baseline with bank conflict
     //template <typename LoadType, int Tile_K, int Tile_N, int BlockWidth>
-    //struct wmmaDenseTile_4bit {
+    //struct wmmaDenseTile_4b {
     //    //
     //    // Static members
     //    //
@@ -301,7 +301,7 @@ namespace spmm {
     //    LoadType *dense_tile_;
 
     //    // Constructor. Set the initial pointer offsets
-    //    __device__ __forceinline__ wmmaDenseTile_4bit(
+    //    __device__ __forceinline__ wmmaDenseTile_4b(
     //        int rhs_columns, int offset, 
     //        int lane_id, 
     //        const int* __restrict__ matrix, 
@@ -343,10 +343,89 @@ namespace spmm {
     //    }
     //};
 
+    //Tile_N = 64 threads_per_block = 64
+    template <typename LoadType, int Tile_K, int Tile_N>
+    struct wmmaDenseTile_8b{
+
+        const int rhs_cols_;
+        const int lane_id_;
+        const int ints_per_row_;
+        const LoadType *matrix_base_;
+        const int *row_offsets_base_;
+        LoadType *dense_tile_;
+        int *rhs_prefetch_;
+
+        __device__ __forceinline__ wmmaDenseTile_8b(
+	    int rhs_cols,
+            int offset, 
+            int lane_id, 
+            const int* __restrict__ matrix, 
+            const int *row_offsets,
+            int * dense_tile,
+            int * rhs_prefetch):
+            rhs_cols_(rhs_cols),
+            lane_id_(lane_id),
+            ints_per_row_(Tile_N/4),
+            matrix_base_(reinterpret_cast<const LoadType *>(matrix + offset)),
+            row_offsets_base_(row_offsets),
+            dense_tile_(reinterpret_cast<LoadType *>(dense_tile)),
+            rhs_prefetch_(rhs_prefetch){}
+        
+
+        __device__ __forceinline__ void LoadRowfromRegister(int step){
+            for(int i=0; i<4; i++){
+                //const int pad_offset = i;
+                *(dense_tile_ + i*72 + lane_id_) = rhs_prefetch_[i];
+            }
+        }
+
+        __device__ __forceinline__ void Prefetch(int step){
+            const int *row_offsets = row_offsets_base_ + lane_id_/ints_per_row_ + (step % 2) * Tile_K;
+            const int bank_id = lane_id_%ints_per_row_;
+            for(int i=0; i<4; i++){
+                rhs_prefetch_[i] = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+            }
+        }
+
+        // Load the residual and compute the matrix product
+        __device__ __forceinline__ void ResidueLoad(int residue){
+            const int *row_offsets = row_offsets_base_ + lane_id_/ints_per_row_;
+            const int bank_id = lane_id_%ints_per_row_;
+            const int steps = residue / 4;
+            const int res_residue = residue % 4;
+
+	    int i = 0;
+            for(; i<steps; i++){
+                *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+            }
+
+            if(res_residue > 0){
+                if (*(row_offsets + i*4) >= 0)
+                    *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+            }
+            //if(residue >= Tile_K){
+            //    for(int i=0; i<4; i++){
+            //        *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+            //    }
+	    //}else{
+            //    const int steps = residue / 4;
+            //    const int res_residue = residue % 4;
+	    //    int i = 0;
+            //    for(; i<steps; i++){
+            //        *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+            //    }
+
+            //    if(res_residue > 0){
+            //        if (*(row_offsets + i*4) >= 0)
+            //            *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+	    //    }
+	    //}
+        }
+    };
 
     //larger Tile_N 128
     template <typename LoadType, int Tile_K, int Tile_N, int BlockWidth>
-    struct wmmaDenseTile_4bit {
+    struct wmmaDenseTile_4b{
         //
         // Static members
         //
@@ -371,7 +450,7 @@ namespace spmm {
         int *rhs_prefetch_;
 
         // Constructor. Set the initial pointer offsets
-        __device__ __forceinline__ wmmaDenseTile_4bit(
+        __device__ __forceinline__ wmmaDenseTile_4b(
 	    int rhs_cols,
             int offset, 
             int lane_id, 
@@ -404,14 +483,14 @@ namespace spmm {
 
         // Load the residual and compute the matrix product
         __device__ __forceinline__ void ResidueLoad(int residue){
-            const int step = (residue/8)*2;
+            const int steps = (residue/8)*2;
             const int res_residue = residue % 8;
             const int *row_offsets = row_offsets_base_ + lane_id_/16;
             const int bank_id = lane_id_%16;
 
             int pad_offset = 0;
             int i = 0;
-            for(; i<step; i++){
+            for(; i<steps; i++){
                 pad_offset = i/2;
                 *(dense_tile_ + pad_offset*8 + lane_id_ + i*64) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
             }
@@ -429,7 +508,7 @@ namespace spmm {
     };
 
     //template <typename LoadType, int Tile_K, int Tile_N, int BlockWidth>
-    //struct wmmaDenseTile_4bit {
+    //struct wmmaDenseTile_4b {
     //    //
     //    // Static members
     //    //
@@ -452,7 +531,7 @@ namespace spmm {
     //    LoadType *dense_tile_;
 
     //    // Constructor. Set the initial pointer offsets
-    //    __device__ __forceinline__ wmmaDenseTile_4bit(
+    //    __device__ __forceinline__ wmmaDenseTile_4b(
     //        int rhs_columns, int offset, 
     //        int lane_id, 
     //        const int* __restrict__ matrix, 

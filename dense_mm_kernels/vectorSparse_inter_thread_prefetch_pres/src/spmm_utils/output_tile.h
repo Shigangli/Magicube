@@ -27,13 +27,13 @@ namespace spmm{
 
         // Constructor
         __device__ __forceinline__ OutputTile(
-            int row_offset_vec, int column_offset,
+            int m_index_vec, int column_offset,
             int cols, int thread_idx_x,
             const float* output_fragment,
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<const LoadType *>(output_fragment);
-            const int output_offset = row_offset_vec * VecLength * cols + column_offset;
+            const int output_offset = m_index_vec * VecLength * cols + column_offset;
             output_matrix_ = reinterpret_cast<LoadType *>(output_matrix + output_offset) + thread_idx_x * kScaler_;
             rhs_columns_ = cols / kValuesPerStore_ * kScaler_;
         }
@@ -103,13 +103,13 @@ namespace spmm{
         // Constructor
         __device__ __forceinline__ wmmaOutputTile8(
             int lane_id, int thread_group, 
-            int row_offset_vec, int column_offset,
+            int m_index_vec, int column_offset,
             int cols, 
             float* output_fragment,
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<float2 *>(output_fragment);
-            const int output_offset = (row_offset_vec * 8 + lane_id + (thread_group / 4) * 4) * cols + column_offset + (thread_group % 4) * 8;
+            const int output_offset = (m_index_vec * 8 + lane_id + (thread_group / 4) * 4) * cols + column_offset + (thread_group % 4) * 8;
             output_matrix_ = reinterpret_cast<StoreType *>(output_matrix + output_offset);
             rhs_columns_ = cols / kValuesPerStore_;
             lane_id_ = lane_id;
@@ -152,9 +152,47 @@ namespace spmm{
         }
     };
 
-    //larger Tile_N = 128 4bit v=8
+
+
+    //larger Tile_N = 64 8b4v
     template<typename OutType>
-    struct wmmaOutputTile4_4bit_8v{
+    struct wmmaOutputTile_8b4v{
+        //
+        // Member variables
+        //
+        int lane_id_;
+        // The register file fragment with the results to store
+        unsigned long long* output_fragment_;
+        int4* output_matrix_;
+
+        // Constructor
+        __device__ __forceinline__ wmmaOutputTile_8b4v(
+            int lane_id,
+            int m_index_vec, int column_offset,
+            int cols,
+            int* output_fragment,
+            OutType* output_matrix)
+        {
+            output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
+	    //vec_length = 4 ???
+            const int output_offset = (m_index_vec * 4 + (lane_id % 32) / 4) * cols + column_offset;
+            output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
+	    lane_id_ = lane_id;
+        }
+
+        // Store
+        __device__ __forceinline__ void Store(){
+            int output_off = (lane_id_ % 4) * 2 + (lane_id_ / 32) * 8;
+	    if(lane_id_ % 32 < 16){
+                *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int4 *>(output_fragment_) + 0);
+                *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int4 *>(output_fragment_) + 1);
+	    }
+        }
+    };
+
+    //larger Tile_N = 128 4b8v
+    template<typename OutType>
+    struct wmmaOutputTile_4b8v{
         //
         // Member variables
         //
@@ -167,16 +205,16 @@ namespace spmm{
         //int thread_offset;
 
         // Constructor
-        __device__ __forceinline__ wmmaOutputTile4_4bit_8v(
+        __device__ __forceinline__ wmmaOutputTile_4b8v(
             int lane_id,
-            int row_offset_vec, int column_offset,
+            int m_index_vec, int column_offset,
             int cols,
             int* output_fragment,
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
 	    //vec_length = 8 ???
-            const int output_offset = (row_offset_vec * 8 + (lane_id % 32) / 4) * cols + column_offset;
+            const int output_offset = (m_index_vec * 8 + (lane_id % 32) / 4) * cols + column_offset;
             output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
 	    lane_id_ = lane_id;
             //rhs_columns_int4 = cols / 4;
@@ -209,6 +247,7 @@ namespace spmm{
             *(output_matrix_ + output_off + 3) = *(reinterpret_cast<int4 *>(output_fragment_) + 3);
         }
     };
+
     //larger Tile_N = 128
     template<typename OutType>
     struct wmmaOutputTile4_4bit{
@@ -226,14 +265,14 @@ namespace spmm{
         // Constructor
         __device__ __forceinline__ wmmaOutputTile4_4bit(
             int lane_id,
-            int row_offset_vec, int column_offset,
+            int m_index_vec, int column_offset,
             int cols,
             int* output_fragment,
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
-            //const int output_offset = (row_offset_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
-            const int output_offset = (row_offset_vec * 4 + lane_id / 4) * cols + column_offset;
+            //const int output_offset = (m_index_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
+            const int output_offset = (m_index_vec * 4 + lane_id / 4) * cols + column_offset;
             output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
             rhs_columns_int4 = cols / 4;
             lane_id_ = lane_id;
@@ -295,14 +334,14 @@ namespace spmm{
     //    // Constructor
     //    __device__ __forceinline__ wmmaOutputTile4_4bit(
     //        int lane_id,
-    //        int row_offset_vec, int column_offset,
+    //        int m_index_vec, int column_offset,
     //        int cols,
     //        int* output_fragment,
     //        OutType* output_matrix)
     //    {
     //        output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
-    //        //const int output_offset = (row_offset_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
-    //        const int output_offset = (row_offset_vec * 4 + lane_id / 4) * cols + column_offset;
+    //        //const int output_offset = (m_index_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
+    //        const int output_offset = (m_index_vec * 4 + lane_id / 4) * cols + column_offset;
     //        output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
     //        rhs_columns_int4 = cols / 4;
     //        lane_id_ = lane_id;
@@ -358,13 +397,13 @@ namespace spmm{
         // Constructor
         __device__ __forceinline__ wmmaOutputTile4_8bit(
             int lane_id,
-            int row_offset_vec, int column_offset,
+            int m_index_vec, int column_offset,
             int cols,
             int* output_fragment,
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
-            const int output_offset = (row_offset_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
+            const int output_offset = (m_index_vec * 4 + lane_id / 8 * 2) * cols + column_offset;
             output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
             rhs_columns_int4 = cols / 4;
             lane_id_ = lane_id;
@@ -423,13 +462,13 @@ namespace spmm{
         // Constructor
         __device__ __forceinline__ wmmaOutputTile4(
             int lane_id, int thread_group,
-            int row_offset_vec, int column_offset,
+            int m_index_vec, int column_offset,
             int cols,
             float* output_fragment,
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<float *>(output_fragment);
-            const int output_offset = (row_offset_vec * 4) * cols + column_offset + thread_group * 8 + lane_id;
+            const int output_offset = (m_index_vec * 4) * cols + column_offset + thread_group * 8 + lane_id;
             output_matrix_ = reinterpret_cast<OutType *>(output_matrix + output_offset);
             rhs_columns_ = cols;
             lane_id_ = lane_id;
@@ -478,13 +517,13 @@ namespace spmm{
         // Constructor
         __device__ __forceinline__ wmmaOutputTile2(
             int lane_id, int thread_group,
-            int row_offset_vec, int column_offset,
+            int m_index_vec, int column_offset,
             int cols,
             float* output_fragment,
             OutType* output_matrix)
         {
             output_fragment_ = reinterpret_cast<float *>(output_fragment);
-            const int output_offset = (row_offset_vec * 2) * cols + column_offset + thread_group * 8 + lane_id;
+            const int output_offset = (m_index_vec * 2) * cols + column_offset + thread_group * 8 + lane_id;
             output_matrix_ = reinterpret_cast<OutType *>(output_matrix + output_offset);
             rhs_columns_ = cols;
             lane_id_ = lane_id;
