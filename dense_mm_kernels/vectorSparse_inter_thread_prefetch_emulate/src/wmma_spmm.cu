@@ -364,8 +364,8 @@ __global__ void wmmaSpmm_kernel_8b2v(
     int* dense_tile = dense_tile_array;
 
     // Initialize the pointers to the sparse lhs matrix
-    // ToDo: VecType is useless?
-    wmmaSparseTile_8b2v<LoadType, VecType, VecLength, Tile_K, 16> sparse_tile_loader(
+    //one int32 has four 8-bit integers
+    wmmaSparseTile_8b<LoadType, VecType, Tile_K * VecLength / 4, Tile_K> sparse_tile_loader(
         row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
         values_tile, column_indices_tile
     );
@@ -382,7 +382,7 @@ __global__ void wmmaSpmm_kernel_8b2v(
 
     // Accumulator registers for the output values.
     __align__(16) int output_fragment[8] = {};
-    wmmaComputeUtils_8b2v<Tile_K> computer(values_tile, dense_tile, output_fragment, lane_id);
+    wmmaComputeUtils_8b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
 
     //
     // Begin kernel main loop
@@ -463,8 +463,8 @@ __global__ void wmmaSpmm_kernel_8b4v(
     int* dense_tile = dense_tile_array;
 
     // Initialize the pointers to the sparse lhs matrix
-    // ToDo: VecType is useless?
-    wmmaSparseTile_8b4v<LoadType, VecType, VecLength, Tile_K, 16> sparse_tile_loader(
+    //one int32 has four 8-bit integers
+    wmmaSparseTile_8b<LoadType, VecType, Tile_K * VecLength / 4, Tile_K> sparse_tile_loader(
         row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
         values_tile, column_indices_tile
     );
@@ -481,7 +481,7 @@ __global__ void wmmaSpmm_kernel_8b4v(
 
     // Accumulator registers for the output values.
     __align__(16) int output_fragment[8] = {};
-    wmmaComputeUtils_8b4v<Tile_K> computer(values_tile, dense_tile, output_fragment, lane_id);
+    wmmaComputeUtils_8b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
 
     //
     // Begin kernel main loop
@@ -563,8 +563,8 @@ __global__ void wmmaSpmm_kernel_8b8v(
     int* dense_tile = dense_tile_array;
 
     // Initialize the pointers to the sparse lhs matrix
-    // ToDo: VecType is useless?
-    wmmaSparseTile_8b8v<LoadType, VecType, VecLength, Tile_K, 16> sparse_tile_loader(
+    //one int32 has four 8-bit integers
+    wmmaSparseTile_8b<LoadType, VecType, Tile_K * VecLength / 4, Tile_K> sparse_tile_loader(
         row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
         values_tile, column_indices_tile
     );
@@ -581,7 +581,7 @@ __global__ void wmmaSpmm_kernel_8b8v(
 
     // Accumulator registers for the output values.
     __align__(16) int output_fragment[8] = {};
-    wmmaComputeUtils_8b8v<Tile_K> computer(values_tile, dense_tile, output_fragment, lane_id);
+    wmmaComputeUtils_8b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
 
     //
     // Begin kernel main loop
