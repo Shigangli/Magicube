@@ -137,6 +137,10 @@ void MakeDenseMatrix(int rows, int columns, ValueType *matrix,
             float temp = 2147483647.0*distribution(generator);
             matrix[i] = ValueType(temp);
 	}
+	else if(typeid(matrix[i]) == typeid(long long)){
+            double temp = 9223372036854775807.0 * double(distribution(generator));
+            matrix[i] = ValueType(temp);
+	}
 	else if(typeid(matrix[i]) == typeid(short)){
             float temp = 32767.0*distribution(generator);
             matrix[i] = ValueType(temp);
