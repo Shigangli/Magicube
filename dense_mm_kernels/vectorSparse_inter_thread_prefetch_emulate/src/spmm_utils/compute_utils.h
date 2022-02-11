@@ -896,6 +896,10 @@ namespace spmm{
             int rhs_fragment[4];
             int rhs_fragment_transpose[4];
 	    int chunk_id = lane_id_ % 4;
+
+	    // TODO:
+            // This is a conflict-free design for Tile_N=128 with four warps.
+	    // Should change these magic numbers for other Tile_N.
 	    int base_offset = chunk_id * 72 + (lane_id_ % 64) / 4 + (lane_id_ / 64) * 288;
 
             #pragma unroll
