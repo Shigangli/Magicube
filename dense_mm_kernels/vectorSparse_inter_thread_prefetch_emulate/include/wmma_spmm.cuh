@@ -28,47 +28,7 @@ cudaError_t wmmaSpmm_4b8v(int m_vec, int vec_length, int k, int n,
     const int* __restrict__ rhs_matrix,
     int* __restrict__ output_matrix);
 
-cudaError_t wmmaSpmm_4b8v(int m_vec, int vec_length, int k, int n, 
-    const int* __restrict__ row_indices, 
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const long long* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix);
-
-cudaError_t wmmaSpmm_8b4v(int m_vec, int vec_length, int n, int k,
-    const int* __restrict__ row_indices,
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const int* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix);
-
-cudaError_t wmmaSpmm_8b4v(int m_vec, int vec_length, int n, int k,
-    const int* __restrict__ row_indices,
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const long long* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix);
-
-cudaError_t wmmaSpmm_8b8v(int m_vec, int vec_length, int n, int k,
-    const int* __restrict__ row_indices,
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const int* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix);
-
-cudaError_t wmmaSpmm_8b8v(int m_vec, int vec_length, int n, int k,
-    const int* __restrict__ row_indices,
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const long long* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix);
-
-cudaError_t wmmaSpmm_8b4b4v(int m_vec, int vec_length, int n, int k,
+cudaError_t wmmaSpmm_8b(int m_vec, int vec_length, int n, int k,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
     const int* __restrict__ column_indices,
@@ -80,9 +40,20 @@ cudaError_t wmmaSpmm_8b4b4v(int m_vec, int vec_length, int n, int k,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
     const int* __restrict__ column_indices,
-    const long long* __restrict__ values,
+    const int* __restrict__ values,
     const int* __restrict__ rhs_matrix,
     int* __restrict__ output_matrix);
+
+//cudaError_t wmmaSpmm_8b4v(int m_vec, int vec_length, int n, int k,
+//    const int* __restrict__ row_indices,
+//    const int* __restrict__ row_offsets,
+//    const int* __restrict__ column_indices,
+//    const int* __restrict__ values,
+//    const int* __restrict__ rhs_matrix,
+//    int* __restrict__ output_matrix);
+
+
+
 //template <typename IndexType, typename VecType, int Tile_M, int Tile_N, int Tile_K, int BlockWidth>
 //cudaError_t wmmaSpmmEx_4bit(
 //    int m_vec, int vec_length, int k, int n,
