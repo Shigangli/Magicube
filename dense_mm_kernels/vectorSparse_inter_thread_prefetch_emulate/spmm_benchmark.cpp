@@ -321,7 +321,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         cudaProfilerStart();
 	float spmm_ms_avg = 0.0f;
 	int NUM_PROFILES = 512;
-        if((kernel == 0) && (preA == 4) && (preB == 4) && (vec_length == 8)){
+        if((kernel == 0) && (preA == 4) && (preB == 4)){
             printf("Using WMMA \n");
 	    for(int iter=0; iter<NUM_PROFILES; ++iter){
 	        float spmm_ms = 0.0f;
@@ -330,7 +330,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_4b8v(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_4b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);

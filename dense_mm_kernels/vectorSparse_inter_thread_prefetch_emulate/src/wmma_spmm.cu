@@ -219,110 +219,111 @@ namespace spmm{
 //}
 
 
-//4-bit 8-v integer larger Tile_N
-template <typename LoadType, typename IndexType, typename VecType, 
-          typename OutType, int Tile_K, 
-          int Tile_N, int BlockWidth, int VecLength>
-__global__ void wmmaSpmm_kernel_4b8v(
-    int m_vec, int dimN, int dimK, 
-    const int* __restrict__ row_indices, 
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const VecType* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    OutType* __restrict__ output_matrix)
-{
-    // For the wmma based implementation, we have Tile_M = 1
-    int m_index_vec = blockIdx.x;
-    int dimN_index = blockIdx.y * Tile_N;
-    const int lane_id = threadIdx.x;
-    //printf("land_id = %d\n", lane_id);
-    //printf("BlockWidth = %d\n", BlockWidth);
-    // Threads that work on different m-dim indices are independent
-    // If we're out of bounds in the m-dimension we can just return
-    if (m_index_vec >= m_vec) return;
-    m_index_vec = __ldg(row_indices + m_index_vec);
+////4-bit 8-v integer larger Tile_N
+//template <typename LoadType, typename IndexType, typename VecType, 
+//          typename OutType, int Tile_K, 
+//          int Tile_N, int BlockWidth, int VecLength>
+//__global__ void wmmaSpmm_kernel_4b8v(
+//    int m_vec, int dimN, int dimK, 
+//    const int* __restrict__ row_indices, 
+//    const int* __restrict__ row_offsets,
+//    const int* __restrict__ column_indices,
+//    const VecType* __restrict__ values,
+//    const int* __restrict__ rhs_matrix,
+//    OutType* __restrict__ output_matrix)
+//{
+//    // For the wmma based implementation, we have Tile_M = 1
+//    int m_index_vec = blockIdx.x;
+//    int dimN_index = blockIdx.y * Tile_N;
+//    const int lane_id = threadIdx.x;
+//    //printf("land_id = %d\n", lane_id);
+//    //printf("BlockWidth = %d\n", BlockWidth);
+//    // Threads that work on different m-dim indices are independent
+//    // If we're out of bounds in the m-dimension we can just return
+//    if (m_index_vec >= m_vec) return;
+//    m_index_vec = __ldg(row_indices + m_index_vec);
+//
+//    // Load the row offset and calculate the number of nonzeros in the row
+//    int row_offset_vec = __ldg(row_offsets + m_index_vec*2);
+//    int nonzeros = __ldg(row_offsets + m_index_vec*2 + 1) - row_offset_vec;
+//
+//    // Shared memory tiles for the lhs values and indices
+//    __shared__ int values_tile_array[Tile_K*2];
+//    __shared__ int column_indices_tile_array[Tile_K*2];
+//
+//    //padding to avoid bank conflict 
+//    __shared__ int dense_tile_array[Tile_N*Tile_K/8 + 8*3];
+//    //__shared__ int dense_tile_array[536];
+//    //__shared__ int dense_tile_array[Tile_N*Tile_K/8 + 8*7];
+//    //__shared__ int dense_tile_array[Tile_N*Tile_K/8];
+//
+//    // Pointers to the shared memory tiles
+//    int* values_tile = values_tile_array;
+//    int* column_indices_tile = column_indices_tile_array;
+//    int* dense_tile = dense_tile_array;
+//
+//    // Initialize the pointers to the sparse lhs matrix
+//    // ToDo: VecType is useless
+//    wmmaSparseTile_4b8v<LoadType, VecType, VecLength, Tile_K, BlockWidth> sparse_tile_loader(
+//        dimN/8, row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
+//        values_tile, column_indices_tile
+//    );
+//
+//    // Register fragment for the dense matrix values
+//    //constexpr int kDenseFragmentSize = Tile_K / 4 * 8;
+//    //__align__(16) half dense_matrix_fragment[kDenseFragmentSize];
+//
+//    __align__(16) int rhs_prefetch[8] = {};
+//    // Initialize the pointers to the dense rhs matrix
+//    wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
+//        dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
+//    );
+//
+//    // Accumulator registers for the output values.
+//    __align__(16) int output_fragment[16] = {};
+//    wmmaComputeUtils_4b8v<Tile_K> computer(values_tile, dense_tile, output_fragment, lane_id);
+//
+//    //
+//    // Begin kernel main loop
+//    //
+//
+//    //BlockWidth should be equal to Tile_K
+//    int steps = nonzeros / Tile_K;
+//    int residue = nonzeros % Tile_K;
+//
+//    if(steps > 0){
+//        sparse_tile_loader.Load(0);
+//        __syncthreads();
+//        dense_tile_loader.Prefetch(0);
+//
+//        int i = 1;
+//        #pragma unroll
+//        for(; i < steps; i++){
+//            dense_tile_loader.LoadRowfromRegister(i-1);
+//            sparse_tile_loader.Load(i);
+//            __syncthreads();
+//            dense_tile_loader.Prefetch(i);
+//            computer.TileMAC(i-1);
+//            __syncthreads();
+//        }
+//
+//        dense_tile_loader.LoadRowfromRegister(i-1);
+//        __syncthreads();
+//        computer.TileMAC(i-1);
+//    }
+//   
+//    if(residue > 0){
+//        sparse_tile_loader.Residue();
+//        __syncthreads();
+//        dense_tile_loader.ResidueLoad(residue);
+//        __syncthreads();
+//        computer.TileMACResidue();
+//    } 
+//
+//    wmmaOutputTile_4b8v<OutType> output_tile_storer(lane_id, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
+//    output_tile_storer.Store();
+//}
 
-    // Load the row offset and calculate the number of nonzeros in the row
-    int row_offset_vec = __ldg(row_offsets + m_index_vec*2);
-    int nonzeros = __ldg(row_offsets + m_index_vec*2 + 1) - row_offset_vec;
-
-    // Shared memory tiles for the lhs values and indices
-    __shared__ int values_tile_array[Tile_K*2];
-    __shared__ int column_indices_tile_array[Tile_K*2];
-
-    //padding to avoid bank conflict 
-    __shared__ int dense_tile_array[Tile_N*Tile_K/8 + 8*3];
-    //__shared__ int dense_tile_array[536];
-    //__shared__ int dense_tile_array[Tile_N*Tile_K/8 + 8*7];
-    //__shared__ int dense_tile_array[Tile_N*Tile_K/8];
-
-    // Pointers to the shared memory tiles
-    int* values_tile = values_tile_array;
-    int* column_indices_tile = column_indices_tile_array;
-    int* dense_tile = dense_tile_array;
-
-    // Initialize the pointers to the sparse lhs matrix
-    // ToDo: VecType is useless
-    wmmaSparseTile_4b8v<LoadType, VecType, VecLength, Tile_K, BlockWidth> sparse_tile_loader(
-        dimN/8, row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
-        values_tile, column_indices_tile
-    );
-
-    // Register fragment for the dense matrix values
-    //constexpr int kDenseFragmentSize = Tile_K / 4 * 8;
-    //__align__(16) half dense_matrix_fragment[kDenseFragmentSize];
-
-    __align__(16) int rhs_prefetch[8] = {};
-    // Initialize the pointers to the dense rhs matrix
-    wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
-        dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
-    );
-
-    // Accumulator registers for the output values.
-    __align__(16) int output_fragment[16] = {};
-    wmmaComputeUtils_4b8v<Tile_K> computer(values_tile, dense_tile, output_fragment, lane_id);
-
-    //
-    // Begin kernel main loop
-    //
-
-    //BlockWidth should be equal to Tile_K
-    int steps = nonzeros / Tile_K;
-    int residue = nonzeros % Tile_K;
-
-    if(steps > 0){
-        sparse_tile_loader.Load(0);
-        __syncthreads();
-        dense_tile_loader.Prefetch(0);
-
-        int i = 1;
-        #pragma unroll
-        for(; i < steps; i++){
-            dense_tile_loader.LoadRowfromRegister(i-1);
-            sparse_tile_loader.Load(i);
-            __syncthreads();
-            dense_tile_loader.Prefetch(i);
-            computer.TileMAC(i-1);
-            __syncthreads();
-        }
-
-        dense_tile_loader.LoadRowfromRegister(i-1);
-        __syncthreads();
-        computer.TileMAC(i-1);
-    }
-   
-    if(residue > 0){
-        sparse_tile_loader.Residue();
-        __syncthreads();
-        dense_tile_loader.ResidueLoad(residue);
-        __syncthreads();
-        computer.TileMACResidue();
-    } 
-
-    wmmaOutputTile_4b8v<OutType> output_tile_storer(lane_id, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
-    output_tile_storer.Store();
-}
 
 ////8-bit 2-v integer larger Tile_N
 //template <typename LoadType, typename IndexType, typename VecType, 
@@ -619,6 +620,110 @@ __global__ void wmmaSpmm_kernel_4b8v(
 //    output_tile_storer.Store();
 //}
 
+//4-bit Tile_N = 128 with 2 warps
+template <typename LoadType, typename IndexType, typename VecType, 
+          typename OutType, int Tile_K, 
+          int Tile_N, int Warps, int VecLength>
+__global__ void wmmaSpmm_kernel_4b(
+    int m_vec, int dimN, int dimK, 
+    const int* __restrict__ row_indices, 
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const VecType* __restrict__ values,
+    const int* __restrict__ rhs_matrix,
+    OutType* __restrict__ output_matrix)
+{
+    // For the wmma based implementation, we have Tile_M = 1
+    int m_index_vec = blockIdx.x;
+    int dimN_index = blockIdx.y * Tile_N;
+    const int lane_id = threadIdx.x;
+    // Threads that work on different m-dim indices are independent
+    // If we're out of bounds in the m-dimension we can just return
+    if (m_index_vec >= m_vec) return;
+    m_index_vec = __ldg(row_indices + m_index_vec);
+
+    // Load the row offset and calculate the number of nonzeros in the row
+    int row_offset_vec = __ldg(row_offsets + m_index_vec*2);
+    int nonzeros = __ldg(row_offsets + m_index_vec*2 + 1) - row_offset_vec;
+
+    // Shared memory tiles for the lhs values and indices
+    // Each int32 has 8 4-bit integers with double buffers
+    __shared__ int values_tile_array[Tile_K*VecLength/4];
+    __shared__ int column_indices_tile_array[Tile_K*2];
+
+    //padding to avoid bank conflict 
+    __shared__ int dense_tile_array[Tile_N*Tile_K/8 + 8*3];
+    //__shared__ int dense_tile_array[536];
+    //__shared__ int dense_tile_array[Tile_N*Tile_K/8 + 8*7];
+    //__shared__ int dense_tile_array[Tile_N*Tile_K/8];
+
+    // Pointers to the shared memory tiles
+    int* values_tile = values_tile_array;
+    int* column_indices_tile = column_indices_tile_array;
+    int* dense_tile = dense_tile_array;
+
+    // Initialize the pointers to the sparse lhs matrix
+    // ToDo: VecType is useless
+    wmmaSparseTile_4b8v<LoadType, VecType, VecLength, Tile_K, Tile_K> sparse_tile_loader(
+        dimN/8, row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
+        values_tile, column_indices_tile
+    );
+
+    // Register fragment for the dense matrix values
+    //constexpr int kDenseFragmentSize = Tile_K / 4 * 8;
+    //__align__(16) half dense_matrix_fragment[kDenseFragmentSize];
+
+    __align__(16) int rhs_prefetch[8] = {};
+    // Initialize the pointers to the dense rhs matrix
+    wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
+        dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
+    );
+
+    // Accumulator registers for the output values.
+    // Tile_N / warps / four threads in x-dim of output matrix
+    __align__(16) int output_fragment[Tile_N / Warps / 4] = {};
+    wmmaComputeUtils_4b8v<Tile_K> computer(values_tile, dense_tile, output_fragment, lane_id);
+
+    //
+    // Begin kernel main loop
+    //
+
+    int steps = nonzeros / Tile_K;
+    int residue = nonzeros % Tile_K;
+
+    if(steps > 0){
+        sparse_tile_loader.Load(0);
+        __syncthreads();
+        dense_tile_loader.Prefetch(0);
+
+        int i = 1;
+        #pragma unroll
+        for(; i < steps; i++){
+            dense_tile_loader.LoadRowfromRegister(i-1);
+            sparse_tile_loader.Load(i);
+            __syncthreads();
+            dense_tile_loader.Prefetch(i);
+            computer.TileMAC(i-1);
+            __syncthreads();
+        }
+
+        dense_tile_loader.LoadRowfromRegister(i-1);
+        __syncthreads();
+        computer.TileMAC(i-1);
+    }
+   
+    if(residue > 0){
+        sparse_tile_loader.Residue();
+        __syncthreads();
+        dense_tile_loader.ResidueLoad(residue);
+        __syncthreads();
+        computer.TileMACResidue();
+    } 
+
+    wmmaOutputTile_4b8v<OutType> output_tile_storer(lane_id, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
+    output_tile_storer.Store();
+}
+
 //8-bit Tile_N = 128 with 4 warps
 template <typename LoadType, typename IndexType, typename VecType, 
           typename OutType, int Tile_K, 
@@ -646,7 +751,6 @@ __global__ void wmmaSpmm_kernel_8b(
     int nonzeros = __ldg(row_offsets + m_index_vec*2 + 1) - row_offset_vec;
 
     // Shared memory tiles for the lhs values and indices
-    // Tile_K long long integers plus double buffer
     __shared__ int values_tile_array[Tile_K*VecLength/2];
     __shared__ int column_indices_tile_array[Tile_K*2];
 
@@ -925,7 +1029,7 @@ __global__ void wmmaSpmm_kernel_8b4b4v(
 //}
 
 //template <typename IndexType, int Tile_M, int Tile_K, int Tile_N, int BlockWidth>
-//cudaError_t wmmaSpmmEx_4bit(
+//cudaError_t wmmaSpmm_4b_template(
 //    int m_vec, int vec_length, int k, int n, 
 //    const int* __restrict__ row_indices, 
 //    const int* __restrict__ row_offsets,
@@ -959,69 +1063,8 @@ __global__ void wmmaSpmm_kernel_8b4b4v(
 //    return cudaGetLastError();
 //}
 
-template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth>
-cudaError_t wmmaSpmmEx_4bit(
-    int m_vec, int vec_length, int n, int k, 
-    const int* __restrict__ row_indices, 
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const VecType* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix)
-{
-    dim3 grid_dim(ceil(static_cast<float>(m_vec) / Tile_M), ceil(static_cast<float>(n) / Tile_N), 1);
-    dim3 block_dim(WarpWidth*2, Tile_M, 1);
-    switch(vec_length){
-        //case 2:
-        //    //printf("V=2\n");
-        //    wmmaSpmmKernel2<int, int, short, int4, Tile_K, Tile_N, WarpWidth, 2><<<grid_dim, block_dim>>>(
-        //        m_vec, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-        //    break;
-        case 8:
-            //printf("V=8\n");
-            wmmaSpmm_kernel_4b8v<int, int, VecType, int, Tile_K, Tile_N, WarpWidth, 8><<<grid_dim, block_dim>>>(
-                m_vec, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-            break;
-        default:
-            printf("Unsupported Vector Length!\n");
-    }
-
-    return cudaGetLastError();
-}
-
-// Function for 4-bit int 8v
-cudaError_t wmmaSpmm_4b8v(int m_vec, int vec_length, int n, int k, 
-    const int* __restrict__ row_indices, 
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const int* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix)
-{
-    //printf("4-bit wmmaSpmm\n");
-    //printf("4-bit 8v wmmaSpMM\n");
-    //return wmmaSpmmEx_4bit<int, 1, 64, 64, 32>(m_vec, vec_length, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-    return wmmaSpmmEx_4bit<int, int, 1, 32, 128, 32>(m_vec, vec_length, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-}
 
 
-template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
-cudaError_t wmmaSpmm_8b_template(
-    int m_vec, int vec_length, int n, int k, 
-    const int* __restrict__ row_indices, 
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const VecType* __restrict__ values,
-    const int* __restrict__ rhs_matrix,
-    int* __restrict__ output_matrix)
-{
-    dim3 grid_dim(ceil(static_cast<float>(m_vec) / Tile_M), ceil(static_cast<float>(n) / Tile_N), 1);
-    dim3 block_dim(WarpWidth * Warps, Tile_M, 1);
-
-    wmmaSpmm_kernel_8b<int, int, VecType, int, Tile_K, Tile_N, Warps, VecLength><<<grid_dim, block_dim>>>(
-        m_vec, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-    return cudaGetLastError();
-}
 
 //cudaError_t wmmaSpmm_8b4v(int m_vec, int vec_length, int n, int k, 
 //    const int* __restrict__ row_indices, 
@@ -1045,6 +1088,88 @@ cudaError_t wmmaSpmm_8b_template(
 //    return wmmaSpmm_8b_template<int, long long, 1, 16, 128, 32>(m_vec, vec_length, n, k, row_indices, row_offsets, column_indices, reinterpret_cast<const long long *>(values), rhs_matrix, output_matrix);
 //}
 
+//template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth>
+template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
+cudaError_t wmmaSpmm_4b_template(
+    int m_vec, int vec_length, int n, int k, 
+    const int* __restrict__ row_indices, 
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const VecType* __restrict__ values,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_matrix)
+{
+    dim3 grid_dim(ceil(static_cast<float>(m_vec) / Tile_M), ceil(static_cast<float>(n) / Tile_N), 1);
+    dim3 block_dim(WarpWidth * Warps, Tile_M, 1);
+    //switch(vec_length){
+    //    //case 2:
+    //    //    //printf("V=2\n");
+    //    //    wmmaSpmmKernel2<int, int, short, int4, Tile_K, Tile_N, WarpWidth, 2><<<grid_dim, block_dim>>>(
+    //    //        m_vec, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+    //    //    break;
+    //    case 8:
+    //        //printf("V=8\n");
+    //        break;
+    //    default:
+    //        printf("Unsupported Vector Length!\n");
+    //}
+    wmmaSpmm_kernel_4b<int, int, VecType, int, Tile_K, Tile_N, Warps, VecLength><<<grid_dim, block_dim>>>(
+        m_vec, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+
+    return cudaGetLastError();
+}
+
+//4-bit Tile_N = 128 with 2 warps
+cudaError_t wmmaSpmm_4b(int m_vec, int vec_length, int n, int k, 
+    const int* __restrict__ row_indices, 
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const int* __restrict__ values,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_matrix)
+{
+    //printf("4-bit wmmaSpmm\n");
+    //printf("4-bit 8v wmmaSpMM\n");
+    //return wmmaSpmm_4b_template<int, 1, 64, 64, 32>(m_vec, vec_length, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+    //return wmmaSpmm_4b_template<int, int, 1, 32, 128, 32>(m_vec, vec_length, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+    switch(vec_length){
+        case 2:
+            return wmmaSpmm_4b_template<int, char, 1, 32, 128, 32, 2, 2>(m_vec, vec_length, n, k, row_indices, 
+        		    row_offsets, column_indices, reinterpret_cast<const char *>(values), rhs_matrix, output_matrix);
+            break;
+        case 4:
+            return wmmaSpmm_4b_template<int, short, 1, 32, 128, 32, 2, 4>(m_vec, vec_length, n, k, row_indices, 
+        		    row_offsets, column_indices, reinterpret_cast<const short *>(values), rhs_matrix, output_matrix);
+            break;
+        case 8:
+            return wmmaSpmm_4b_template<int, int, 1, 32, 128, 32, 2, 8>(m_vec, vec_length, n, k, row_indices, 
+        		    row_offsets, column_indices, values, rhs_matrix, output_matrix);
+            break;
+        default:
+            printf("Unsupported Vector Length!\n");
+            return cudaGetLastError();
+    }
+}
+
+template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
+cudaError_t wmmaSpmm_8b_template(
+    int m_vec, int vec_length, int n, int k, 
+    const int* __restrict__ row_indices, 
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const VecType* __restrict__ values,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_matrix)
+{
+    dim3 grid_dim(ceil(static_cast<float>(m_vec) / Tile_M), ceil(static_cast<float>(n) / Tile_N), 1);
+    dim3 block_dim(WarpWidth * Warps, Tile_M, 1);
+
+    wmmaSpmm_kernel_8b<int, int, VecType, int, Tile_K, Tile_N, Warps, VecLength><<<grid_dim, block_dim>>>(
+        m_vec, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+    return cudaGetLastError();
+}
+
+//8-bit Tile_N = 128 with 4 warps
 cudaError_t wmmaSpmm_8b(int m_vec, int vec_length, int n, int k, 
     const int* __restrict__ row_indices, 
     const int* __restrict__ row_offsets,
@@ -1073,7 +1198,7 @@ cudaError_t wmmaSpmm_8b(int m_vec, int vec_length, int n, int k,
 }
 
 template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth>
-cudaError_t wmmaSpmmEx_8bit4bit(
+cudaError_t wmmaSpmm_8b4b_template(
     int m_vec, int vec_length, int n, int k, 
     const int* __restrict__ row_indices, 
     const int* __restrict__ row_offsets,
@@ -1109,7 +1234,7 @@ cudaError_t wmmaSpmm_8b4b4v(int m_vec, int vec_length, int n, int k,
     const int* __restrict__ rhs_matrix,
     int* __restrict__ output_matrix)
 {
-    return wmmaSpmmEx_8bit4bit<int, int, 1, 32, 128, 32>(m_vec, vec_length, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+    return wmmaSpmm_8b4b_template<int, int, 1, 32, 128, 32>(m_vec, vec_length, n, k, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
 }
 
 //cudaError_t wmmaSpmm_8b4b4v(int m_vec, int vec_length, int n, int k, 
@@ -1182,8 +1307,8 @@ cudaError_t wmmaSpmm_8b4b4v(int m_vec, int vec_length, int n, int k,
 //    int* __restrict__ output_matrix)
 //{
 //    //printf("4-bit wmmaSpmm\n");
-//    //return wmmaSpmmEx_4bit<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-//    return wmmaSpmmEx_4bit<int, 1, 64, 128, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+//    //return wmmaSpmm_4b_template<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+//    return wmmaSpmm_4b_template<int, 1, 64, 128, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
 //}
 //
 //// Function for 4-bit int 8v
@@ -1197,8 +1322,8 @@ cudaError_t wmmaSpmm_8b4b4v(int m_vec, int vec_length, int n, int k,
 //{
 //    //printf("4-bit wmmaSpmm\n");
 //    //printf("4-bit 8v wmmaSpMM\n");
-//    //return wmmaSpmmEx_4bit<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-//    return wmmaSpmmEx_4bit<int, int, 1, 32, 128, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+//    //return wmmaSpmm_4b_template<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+//    return wmmaSpmm_4b_template<int, int, 1, 32, 128, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
 //}
 //// Function for 4-bit int 4v
 //cudaError_t wmmaSpmm_4b8v(int m_vec, int vec_length, int k, int n, 
@@ -1210,8 +1335,8 @@ cudaError_t wmmaSpmm_8b4b4v(int m_vec, int vec_length, int n, int k,
 //    int* __restrict__ output_matrix)
 //{
 //    //printf("4-bit wmmaSpmm\n");
-//    //return wmmaSpmmEx_4bit<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
-//    return wmmaSpmmEx_4bit<int, short, 1, 64, 128, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+//    //return wmmaSpmm_4b_template<int, 1, 64, 64, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
+//    return wmmaSpmm_4b_template<int, short, 1, 64, 128, 32>(m_vec, vec_length, k, n, row_indices, row_offsets, column_indices, values, rhs_matrix, output_matrix);
 //}
 //// Function for mixed precision
 //cudaError_t wmmaSpmm(int m_vec, int vec_length, int k, int n, 
