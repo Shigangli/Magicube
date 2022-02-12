@@ -357,7 +357,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
                 spmm_ms_avg += spmm_ms;
 	    }
         }
-	else if((kernel == 0) && (preA == 8) && (preB == 4) && (vec_length == 4)){
+	else if((kernel == 0) && (preA == 8) && (preB == 4)){
 	    for(int iter=0; iter<NUM_PROFILES; ++iter){
 	        float spmm_ms = 0.0f;
 	        cudaEvent_t spmm_start;
@@ -365,7 +365,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_8b4b4v(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_8b4b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -803,9 +803,9 @@ int main(int argc, char **argv){
 	else if ((preA == 8) && (preB == 8) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else if ((preA == 8) && (preB == 8) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
-	//else if ((preA == 8) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
+	else if ((preA == 8) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else if ((preA == 8) && (preB == 4) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
-	//else if ((preA == 8) && (preB == 4) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
+	else if ((preA == 8) && (preB == 4) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preB);
 	else printf("Unsupported precision and vec_length!\n");
     }
     
