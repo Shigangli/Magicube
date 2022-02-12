@@ -829,8 +829,7 @@ namespace spmm{
     template <typename LoadType, typename VecType, int ValuesBlockWidth, int BlockWidth>
     struct wmmaSparseTile_8b4b8v{
 
-        const int in_warp_tid_;
-        const int warp_id_;
+        const int lane_id_;
         // The sparse matrix value array.
         const int * values_;
         // The sparse matrix column indices for each value
@@ -841,25 +840,24 @@ namespace spmm{
 
         // Constructor. Set the initial pointer offsets
         __device__ __forceinline__ wmmaSparseTile_8b4b8v(
-            int row_offset_vec, int in_warp_tid, int warp_id,
+            int row_offset_vec, int lane_id,
             const VecType * __restrict__ values,
             const int * __restrict__ column_idxs,
             int *values_tile, int * column_idxs_tile):
-            in_warp_tid_(in_warp_tid),
-            warp_id_(warp_id),
-            values_(reinterpret_cast<const int *>(values + row_offset_vec) + in_warp_tid),
-            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + in_warp_tid),
-            values_tile_base_(reinterpret_cast<int *>(values_tile) + in_warp_tid),
-            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + in_warp_tid){}
+            lane_id_(lane_id),
+            values_(reinterpret_cast<const int *>(values + row_offset_vec) + lane_id),
+            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + lane_id),
+            values_tile_base_(reinterpret_cast<int *>(values_tile) + lane_id),
+            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + lane_id){}
         
         // Load
         __device__ __forceinline__ void Load(int step){
             int * values_tile = values_tile_base_ + (step % 2) * ValuesBlockWidth;
             int * column_idxs_tile = column_idxs_tile_base_ + (step % 2) * BlockWidth;
 
-	    if(warp_id_ == 0 && in_warp_tid_ < ValuesBlockWidth)
+	    if(lane_id_ < ValuesBlockWidth)
                 *(values_tile) = __ldg(values_);
-	    else if(in_warp_tid_ < BlockWidth)
+	    if(lane_id_ < BlockWidth)
                 *(column_idxs_tile) = __ldg(column_idxs_);
             values_ += ValuesBlockWidth;
             column_idxs_ += BlockWidth;
@@ -870,9 +868,10 @@ namespace spmm{
         __device__ __forceinline__ void Residue(){
             int * values_tile = values_tile_base_;
             int * column_idxs_tile = column_idxs_tile_base_;
-	    if(warp_id_ == 0 && in_warp_tid_ < ValuesBlockWidth)
+
+	    if(lane_id_ < ValuesBlockWidth)
                 *(values_tile) = __ldg(values_);
-	    else if(in_warp_tid_ < BlockWidth)
+	    if(lane_id_ < BlockWidth)
                 *(column_idxs_tile) = __ldg(column_idxs_);
             asm(""); // without this, it is said that the loop cannot be unrolled.
         }
