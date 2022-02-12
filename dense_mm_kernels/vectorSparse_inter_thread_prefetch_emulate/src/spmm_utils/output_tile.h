@@ -263,6 +263,45 @@ namespace spmm{
 
     //larger Tile_N = 128 4b8v
     template<typename OutType>
+    struct wmmaOutputTile_4b{
+        //
+        // Member variables
+        //
+        int lane_id_;
+        int valid_tsize_;
+        // The register file fragment with the results to store
+        unsigned long long* output_fragment_;
+        int4* output_matrix_;
+
+        // Constructor
+        __device__ __forceinline__ wmmaOutputTile_4b(
+            int lane_id, int vec_length,
+            int m_index_vec, int column_offset,
+            int cols,
+            int* output_fragment,
+            OutType* output_matrix)
+        {
+            output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
+	    valid_tsize_ = 4 * vec_length; // =32/(8/vec_length);
+            const int output_offset = (m_index_vec * vec_length + (lane_id % 32) / 4) * cols + column_offset;
+            output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
+	    lane_id_ = lane_id;
+        }
+
+        // Store
+        __device__ __forceinline__ void Store(){
+            int output_off = (lane_id_ % 4) * 4 + (lane_id_ / 32) * 16;
+	    if(lane_id_ % 32 < valid_tsize_){
+                *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int4 *>(output_fragment_) + 0);
+                *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int4 *>(output_fragment_) + 1);
+                *(output_matrix_ + output_off + 2) = *(reinterpret_cast<int4 *>(output_fragment_) + 2);
+                *(output_matrix_ + output_off + 3) = *(reinterpret_cast<int4 *>(output_fragment_) + 3);
+	    }
+        }
+    };
+
+    //larger Tile_N = 128 4b8v
+    template<typename OutType>
     struct wmmaOutputTile_4b8v{
         //
         // Member variables

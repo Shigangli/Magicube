@@ -663,11 +663,15 @@ __global__ void wmmaSpmm_kernel_4b(
     int* dense_tile = dense_tile_array;
 
     // Initialize the pointers to the sparse lhs matrix
-    // ToDo: VecType is useless
-    wmmaSparseTile_4b8v<LoadType, VecType, VecLength, Tile_K, Tile_K> sparse_tile_loader(
-        dimN/8, row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
+    // One int32 has eight 4-bit integers
+    wmmaSparseTile_4b<LoadType, VecType, Tile_K * VecLength / 8, Tile_K> sparse_tile_loader(
+        row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
         values_tile, column_indices_tile
     );
+    //wmmaSparseTile_4b8v<LoadType, VecType, VecLength, Tile_K, Tile_K> sparse_tile_loader(
+    //    row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
+    //    values_tile, column_indices_tile
+    //);
 
     // Register fragment for the dense matrix values
     //constexpr int kDenseFragmentSize = Tile_K / 4 * 8;
@@ -682,11 +686,7 @@ __global__ void wmmaSpmm_kernel_4b(
     // Accumulator registers for the output values.
     // Tile_N / warps / four threads in x-dim of output matrix
     __align__(16) int output_fragment[Tile_N / Warps / 4] = {};
-    wmmaComputeUtils_4b8v<Tile_K> computer(values_tile, dense_tile, output_fragment, lane_id);
-
-    //
-    // Begin kernel main loop
-    //
+    wmmaComputeUtils_4b<Tile_K * VecLength / 8> computer(values_tile, dense_tile, output_fragment, lane_id);
 
     int steps = nonzeros / Tile_K;
     int residue = nonzeros % Tile_K;
@@ -720,7 +720,7 @@ __global__ void wmmaSpmm_kernel_4b(
         computer.TileMACResidue();
     } 
 
-    wmmaOutputTile_4b8v<OutType> output_tile_storer(lane_id, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
+    wmmaOutputTile_4b<OutType> output_tile_storer(lane_id, VecLength, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
     output_tile_storer.Store();
 }
 

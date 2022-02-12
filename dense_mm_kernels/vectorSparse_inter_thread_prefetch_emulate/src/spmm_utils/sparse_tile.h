@@ -403,88 +403,88 @@ namespace spmm{
         }
     };
 
-    template <typename LoadType, typename VecType, int VecLength, int Tile_K, int BlockWidth>
-    struct wmmaSparseTile_4b{
-        //
-        // Static members
-        //
+    //template <typename LoadType, typename VecType, int VecLength, int Tile_K, int BlockWidth>
+    //struct wmmaSparseTile_4b{
+    //    //
+    //    // Static members
+    //    //
 
-        static constexpr int kValuesPerLoad_ = sizeof(LoadType) / sizeof(char);
-        static constexpr int kThreadItemsK_ = Tile_K / BlockWidth;
+    //    static constexpr int kValuesPerLoad_ = sizeof(LoadType) / sizeof(char);
+    //    static constexpr int kThreadItemsK_ = Tile_K / BlockWidth;
 
-        //
-        // Member variables
-        //
+    //    //
+    //    // Member variables
+    //    //
 
-        // The number of columns in the rhs matrix
-        const int rhs_columns_;
-        // The sparse matrix value array.
-        const int * values_;
-        // The sparse matrix column indices for each value
-        const int * column_idxs_;
-        int * values_tile_base_;
-        // shared memory tile for sparse marix values
-        int * column_idxs_tile_base_;
+    //    // The number of columns in the rhs matrix
+    //    const int rhs_columns_;
+    //    // The sparse matrix value array.
+    //    const int * values_;
+    //    // The sparse matrix column indices for each value
+    //    const int * column_idxs_;
+    //    int * values_tile_base_;
+    //    // shared memory tile for sparse marix values
+    //    int * column_idxs_tile_base_;
 
-        // Constructor. Set the initial pointer offsets
-        __device__ __forceinline__ wmmaSparseTile_4b(
-            int rhs_columns, int row_offset_vec, int thread_id_x,
-            const VecType * __restrict__ values,
-            const int * __restrict__ column_idxs,
-            int *values_tile, int * column_idxs_tile):
-            rhs_columns_(rhs_columns / 8),
-            values_(reinterpret_cast<const int *>(values + row_offset_vec) + thread_id_x),
-            column_idxs_(reinterpret_cast<const int *>(column_idxs) + row_offset_vec + thread_id_x),
-            values_tile_base_(reinterpret_cast<int *>(values_tile) + thread_id_x),
-            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + thread_id_x){}
-        
-        // Load
-        __device__ __forceinline__ void Load(){
-            int * values_tile = values_tile_base_;
-            int * column_idxs_tile = column_idxs_tile_base_;
+    //    // Constructor. Set the initial pointer offsets
+    //    __device__ __forceinline__ wmmaSparseTile_4b(
+    //        int rhs_columns, int row_offset_vec, int thread_id_x,
+    //        const VecType * __restrict__ values,
+    //        const int * __restrict__ column_idxs,
+    //        int *values_tile, int * column_idxs_tile):
+    //        rhs_columns_(rhs_columns / 8),
+    //        values_(reinterpret_cast<const int *>(values + row_offset_vec) + thread_id_x),
+    //        column_idxs_(reinterpret_cast<const int *>(column_idxs) + row_offset_vec + thread_id_x),
+    //        values_tile_base_(reinterpret_cast<int *>(values_tile) + thread_id_x),
+    //        column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + thread_id_x){}
+    //    
+    //    // Load
+    //    __device__ __forceinline__ void Load(){
+    //        int * values_tile = values_tile_base_;
+    //        int * column_idxs_tile = column_idxs_tile_base_;
 
-            #pragma unroll
-            for (int n_item_idx = 0; n_item_idx < kThreadItemsK_/2; n_item_idx++){
-                *(values_tile) = __ldg(values_);
-                values_ += BlockWidth;
-                values_tile += BlockWidth;
-            }
+    //        #pragma unroll
+    //        for (int n_item_idx = 0; n_item_idx < kThreadItemsK_/2; n_item_idx++){
+    //            *(values_tile) = __ldg(values_);
+    //            values_ += BlockWidth;
+    //            values_tile += BlockWidth;
+    //        }
 
-            #pragma unroll
-            for (int n_item_idx = 0; n_item_idx < kThreadItemsK_; n_item_idx++){
-                *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
-                column_idxs_ += BlockWidth;
-                column_idxs_tile += BlockWidth;
-            }
-        }
+    //        #pragma unroll
+    //        for (int n_item_idx = 0; n_item_idx < kThreadItemsK_; n_item_idx++){
+    //            *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
+    //            column_idxs_ += BlockWidth;
+    //            column_idxs_tile += BlockWidth;
+    //        }
+    //    }
 
-        // Load Residual
-        __device__ __forceinline__ void Residue(int residue){
-            int * values_tile = values_tile_base_;
-            int * column_idxs_tile = column_idxs_tile_base_;
-	    int intra_residue = residue;
+    //    // Load Residual
+    //    __device__ __forceinline__ void Residue(int residue){
+    //        int * values_tile = values_tile_base_;
+    //        int * column_idxs_tile = column_idxs_tile_base_;
+    //        int intra_residue = residue;
 
-            #pragma unroll
-            for (int n_item_idx = 0; n_item_idx < kThreadItemsK_/2; n_item_idx++){
-		if(intra_residue <= 0) break;
-                *(values_tile) = __ldg(values_);
-                values_ += BlockWidth;
-                values_tile += BlockWidth;
-		intra_residue -= (2*BlockWidth);
-            }
+    //        #pragma unroll
+    //        for (int n_item_idx = 0; n_item_idx < kThreadItemsK_/2; n_item_idx++){
+    //    	if(intra_residue <= 0) break;
+    //            *(values_tile) = __ldg(values_);
+    //            values_ += BlockWidth;
+    //            values_tile += BlockWidth;
+    //    	intra_residue -= (2*BlockWidth);
+    //        }
 
-	    intra_residue = residue;
-            #pragma unroll
-            for (int n_item_idx = 0; n_item_idx < kThreadItemsK_; n_item_idx++){
-		if(intra_residue <= 0) break;
-                *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
-                column_idxs_ += BlockWidth;
-                column_idxs_tile += BlockWidth;
-		intra_residue -= BlockWidth;
-            }
-            asm(""); // without this, it is said that the loop cannot be unrolled.
-        }
-    };
+    //        intra_residue = residue;
+    //        #pragma unroll
+    //        for (int n_item_idx = 0; n_item_idx < kThreadItemsK_; n_item_idx++){
+    //    	if(intra_residue <= 0) break;
+    //            *(column_idxs_tile) = rhs_columns_ * __ldg(column_idxs_);
+    //            column_idxs_ += BlockWidth;
+    //            column_idxs_tile += BlockWidth;
+    //    	intra_residue -= BlockWidth;
+    //        }
+    //        asm(""); // without this, it is said that the loop cannot be unrolled.
+    //    }
+    //};
 
     //template <typename LoadType, typename VecType, int VecLength, int BlockWidth>
     //struct wmmaSparseTile_8b8v{
@@ -669,10 +669,10 @@ namespace spmm{
     //    }
     //};
 
+    //8-bit 4 warps
     template <typename LoadType, typename VecType, int ValuesBlockWidth, int BlockWidth>
     struct wmmaSparseTile_8b{
 
-        // The number of columns in the rhs matrix
         const int in_warp_tid_;
         const int warp_id_;
         // The sparse matrix value array.
@@ -717,6 +717,58 @@ namespace spmm{
 	    if(warp_id_ == 0 && in_warp_tid_ < ValuesBlockWidth)
                 *(values_tile) = __ldg(values_);
 	    else if(warp_id_ == 1 && in_warp_tid_ < BlockWidth)
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            asm(""); // without this, it is said that the loop cannot be unrolled.
+        }
+    };
+
+    //4-bit 2 warps
+    template <typename LoadType, typename VecType, int ValuesBlockWidth, int BlockWidth>
+    struct wmmaSparseTile_4b{
+
+        const int in_warp_tid_;
+        const int warp_id_;
+        // The sparse matrix value array.
+        const int * values_;
+        // The sparse matrix column indices for each value
+        const int * column_idxs_;
+        int * values_tile_base_;
+        // shared memory tile for sparse marix values
+        int * column_idxs_tile_base_;
+
+        // Constructor. Set the initial pointer offsets
+        __device__ __forceinline__ wmmaSparseTile_4b(
+            int row_offset_vec, int in_warp_tid, int warp_id,
+            const VecType * __restrict__ values,
+            const int * __restrict__ column_idxs,
+            int *values_tile, int * column_idxs_tile):
+            in_warp_tid_(in_warp_tid),
+            warp_id_(warp_id),
+            values_(reinterpret_cast<const int *>(values + row_offset_vec) + in_warp_tid),
+            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + in_warp_tid),
+            values_tile_base_(reinterpret_cast<int *>(values_tile) + in_warp_tid),
+            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + in_warp_tid){}
+        
+        // Load
+        __device__ __forceinline__ void Load(int step){
+            int * values_tile = values_tile_base_ + (step % 2) * ValuesBlockWidth;
+            int * column_idxs_tile = column_idxs_tile_base_ + (step % 2) * BlockWidth;
+
+	    if(warp_id_ == 0 && in_warp_tid_ < ValuesBlockWidth)
+                *(values_tile) = __ldg(values_);
+	    else if(in_warp_tid_ < BlockWidth)
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            values_ += ValuesBlockWidth;
+            column_idxs_ += BlockWidth;
+        }
+
+        // Load Residual
+        __device__ __forceinline__ void Residue(){
+            int * values_tile = values_tile_base_;
+            int * column_idxs_tile = column_idxs_tile_base_;
+	    if(warp_id_ == 0 && in_warp_tid_ < ValuesBlockWidth)
+                *(values_tile) = __ldg(values_);
+	    else if(in_warp_tid_ < BlockWidth)
                 *(column_idxs_tile) = __ldg(column_idxs_);
             asm(""); // without this, it is said that the loop cannot be unrolled.
         }
@@ -782,64 +834,62 @@ namespace spmm{
         }
     };
 
-    template <typename LoadType, typename VecType, int VecLength, int Tile_K, int BlockWidth>
-    struct wmmaSparseTile_4b8v{
-        //
-        // Static members
-        //
+    //template <typename LoadType, typename VecType, int VecLength, int Tile_K, int BlockWidth>
+    //struct wmmaSparseTile_4b8v{
+    //    //
+    //    // Static members
+    //    //
 
-        //
-        // Member variables
-        //
+    //    //
+    //    // Member variables
+    //    //
 
-        // The number of columns in the rhs matrix
-        const int rhs_columns_;
-        const int warp_id_;
-        // The sparse matrix value array.
-        const int * values_;
-        // The sparse matrix column indices for each value
-        const int * column_idxs_;
-        int * values_tile_base_;
-        // shared memory tile for sparse marix values
-        int * column_idxs_tile_base_;
+    //    // The number of columns in the rhs matrix
+    //    const int warp_id_;
+    //    // The sparse matrix value array.
+    //    const int * values_;
+    //    // The sparse matrix column indices for each value
+    //    const int * column_idxs_;
+    //    int * values_tile_base_;
+    //    // shared memory tile for sparse marix values
+    //    int * column_idxs_tile_base_;
 
-        // Constructor. Set the initial pointer offsets
-        __device__ __forceinline__ wmmaSparseTile_4b8v(
-            int rhs_columns, int row_offset_vec, int in_warp_tid, int warp_id,
-            const VecType * __restrict__ values,
-            const int * __restrict__ column_idxs,
-            int *values_tile, int * column_idxs_tile):
-            rhs_columns_(rhs_columns),
-            warp_id_(warp_id),
-            values_(reinterpret_cast<const int *>(values + row_offset_vec) + in_warp_tid),
-            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + in_warp_tid),
-            values_tile_base_(reinterpret_cast<int *>(values_tile) + in_warp_tid),
-            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + in_warp_tid){}
-        
-        // Load
-        __device__ __forceinline__ void Load(int step){
-            int * values_tile = values_tile_base_ + (step % 2) * BlockWidth;
-            int * column_idxs_tile = column_idxs_tile_base_ + (step % 2) * BlockWidth;
+    //    // Constructor. Set the initial pointer offsets
+    //    __device__ __forceinline__ wmmaSparseTile_4b8v(
+    //        int row_offset_vec, int in_warp_tid, int warp_id,
+    //        const VecType * __restrict__ values,
+    //        const int * __restrict__ column_idxs,
+    //        int *values_tile, int * column_idxs_tile):
+    //        warp_id_(warp_id),
+    //        values_(reinterpret_cast<const int *>(values + row_offset_vec) + in_warp_tid),
+    //        column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + in_warp_tid),
+    //        values_tile_base_(reinterpret_cast<int *>(values_tile) + in_warp_tid),
+    //        column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + in_warp_tid){}
+    //    
+    //    // Load
+    //    __device__ __forceinline__ void Load(int step){
+    //        int * values_tile = values_tile_base_ + (step % 2) * BlockWidth;
+    //        int * column_idxs_tile = column_idxs_tile_base_ + (step % 2) * BlockWidth;
 
-	    if(warp_id_ == 0)
-                *(values_tile) = __ldg(values_);
-	    else
-                *(column_idxs_tile) = __ldg(column_idxs_);
-            values_ += BlockWidth;
-            column_idxs_ += BlockWidth;
-        }
+    //        if(warp_id_ == 0)
+    //            *(values_tile) = __ldg(values_);
+    //        else
+    //            *(column_idxs_tile) = __ldg(column_idxs_);
+    //        values_ += BlockWidth;
+    //        column_idxs_ += BlockWidth;
+    //    }
 
 
-        // Load Residual
-        __device__ __forceinline__ void Residue(){
-            int * values_tile = values_tile_base_;
-            int * column_idxs_tile = column_idxs_tile_base_;
-	    if(warp_id_ == 0)
-                *(values_tile) = __ldg(values_);
-	    else
-                *(column_idxs_tile) = __ldg(column_idxs_);
-            asm(""); // without this, it is said that the loop cannot be unrolled.
-        }
-    };
+    //    // Load Residual
+    //    __device__ __forceinline__ void Residue(){
+    //        int * values_tile = values_tile_base_;
+    //        int * column_idxs_tile = column_idxs_tile_base_;
+    //        if(warp_id_ == 0)
+    //            *(values_tile) = __ldg(values_);
+    //        else
+    //            *(column_idxs_tile) = __ldg(column_idxs_);
+    //        asm(""); // without this, it is said that the loop cannot be unrolled.
+    //    }
+    //};
 }
 #endif
