@@ -241,6 +241,47 @@ namespace spmm{
         }
     };
 
+    // 4 warps Tile_N = 128 16-bit 8-bit v=8
+    template<typename OutType>
+    struct wmmaOutputTile_16b8b8v{
+        //
+        // Member variables
+        //
+
+        int lane_id_;
+        // The register file fragment with the results to store
+        int* output_fragment_0_;
+        int* output_fragment_1_;
+        int4* output_matrix_;
+
+        // Constructor
+        __device__ __forceinline__ wmmaOutputTile_16b8b8v(
+            int lane_id, int vec_length,
+            int m_index_vec, int column_offset,
+            int cols,
+            int* output_fragment_0,
+            int* output_fragment_1,
+            OutType* output_matrix)
+        {
+            output_fragment_0_ = output_fragment_0;
+            output_fragment_1_ = output_fragment_1;
+            const int output_offset = (m_index_vec * vec_length + (lane_id % 32) / 4) * cols + column_offset;
+            output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
+	    lane_id_ = lane_id;
+        }
+
+        // Store
+        __device__ __forceinline__ void Store(){
+	    for(int i = 0; i < 8; i++)
+                output_fragment_0_[i] += (output_fragment_1_[i] * 256);
+
+            int output_off = (lane_id_ % 4) * 2 + (lane_id_ / 32) * 8;
+            *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 0);
+            *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 1);
+	    
+        }
+    };
+
     //template<typename OutType>
     //struct wmmaOutputTile_8b8v{
     //    //

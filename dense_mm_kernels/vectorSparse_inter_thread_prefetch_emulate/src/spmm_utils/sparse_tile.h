@@ -931,6 +931,58 @@ namespace spmm{
         }
     };
 
+    // 4 warps
+    // TODO: Same as wmmaSparseTile_8b?
+    template <typename LoadType, typename VecType, int ValuesBlockWidth, int BlockWidth>
+    struct wmmaSparseTile_16b8b8v{
+
+        const int lane_id_;
+        // The sparse matrix value array.
+        const int * values_;
+        // The sparse matrix column indices for each value
+        const int * column_idxs_;
+        int * values_tile_base_;
+        // shared memory tile for sparse marix values
+        int * column_idxs_tile_base_;
+
+        // Constructor. Set the initial pointer offsets
+        __device__ __forceinline__ wmmaSparseTile_16b8b8v(
+            int row_offset_vec, int lane_id,
+            const VecType * __restrict__ values,
+            const int * __restrict__ column_idxs,
+            int *values_tile, int * column_idxs_tile):
+            lane_id_(lane_id),
+            values_(reinterpret_cast<const int *>(values + row_offset_vec*2) + lane_id),
+            values_tile_base_(reinterpret_cast<int *>(values_tile) + lane_id),
+            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + lane_id - ValuesBlockWidth),
+            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + lane_id - ValuesBlockWidth){}
+        
+        // Load
+        __device__ __forceinline__ void Load(int step){
+            int * values_tile = values_tile_base_ + (step % 2) * ValuesBlockWidth;
+            int * column_idxs_tile = column_idxs_tile_base_ + (step % 2) * BlockWidth;
+
+	    if(lane_id_ < ValuesBlockWidth)
+                *(values_tile) = __ldg(values_);
+	    else if((lane_id_ - ValuesBlockWidth) < BlockWidth)
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            values_ += ValuesBlockWidth;
+            column_idxs_ += BlockWidth;
+        }
+
+        // Load Residual
+        __device__ __forceinline__ void Residue(){
+            int * values_tile = values_tile_base_;
+            int * column_idxs_tile = column_idxs_tile_base_;
+
+	    if(lane_id_ < ValuesBlockWidth)
+                *(values_tile) = __ldg(values_);
+	    else if((lane_id_ - ValuesBlockWidth) < BlockWidth)
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            asm(""); // without this, it is said that the loop cannot be unrolled.
+        }
+    };
+
     //template <typename LoadType, typename VecType, int VecLength, int Tile_K, int BlockWidth>
     //struct wmmaSparseTile_4b8v{
     //    //
