@@ -220,17 +220,22 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	TypeB *rhs_matrix;
         // Initialize the input operands
 	//if (mixed == 2){
-	int type_width_A = sizeof(TypeA)*8/preA;
-	int type_width_B = sizeof(TypeB)*8/preB;
+	//int type_width_A = sizeof(TypeA)*8/preA;
+	//int type_width_B = sizeof(TypeB)*8/preB;
 
         // scaleA > 1 when vector size larger than long long
-	assert(type_width_A * scaleA == vec_length);
+	//assert(type_width_A * scaleA == vec_length);
+	assert(sizeof(TypeA) * 8 * scaleA / preA == vec_length);
 
-        values = new TypeA[nonzeros * scaleA / type_width_A];
-        rhs_matrix = new TypeB[dimK * dimN / type_width_B];
+        //values = new TypeA[nonzeros * scaleA / type_width_A];
+        //rhs_matrix = new TypeB[dimK * dimN / type_width_B];
+        values = new TypeA[nonzeros * scaleA * preA / (sizeof(TypeA)*8)];
+        rhs_matrix = new TypeB[dimK * dimN * preB / (sizeof(TypeB)*8)];
 
-        MakeDenseMatrix<TypeA>(1, nonzeros * scaleA / type_width_A, values, generator);
-        MakeDenseMatrix<TypeB>(dimK, dimN / type_width_B, rhs_matrix, generator);
+        //MakeDenseMatrix<TypeA>(1, nonzeros * scaleA / type_width_A, values, generator);
+        //MakeDenseMatrix<TypeB>(dimK, dimN / type_width_B, rhs_matrix, generator);
+        MakeDenseMatrix<TypeA>(1, nonzeros * scaleA * preA / (sizeof(TypeA)*8), values, generator);
+        MakeDenseMatrix<TypeB>(dimK, dimN * preB / (sizeof(TypeB)*8), rhs_matrix, generator);
 
         aligned_values = new TypeA[aligned_num_item * scaleA];
         aligned_values_transpose = new TypeA[aligned_num_item * scaleA];
