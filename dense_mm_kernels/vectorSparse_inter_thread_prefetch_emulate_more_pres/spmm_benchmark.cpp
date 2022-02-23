@@ -305,6 +305,41 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 		    }
                 }
 	}
+	else if(preA_cut == 16 && mma_k_dim == 32){
+	    for(int i = 0; i < aligned_num_item*vec_length; i+=(mma_k_dim*vec_length))
+	        for(int j = 0; j < mma_k_dim; j++)
+	            for(int v = 0; v < vec_length; v++)
+	                aligned_values_transpose_short[i+v*mma_k_dim+j] = aligned_values_short[i+j*vec_length+v];
+
+            unsigned short mask = 15;
+            for(int i = 0; i < aligned_num_item*vec_length; i+=(mma_k_dim*vec_length))
+                for(int j = 0; j < mma_k_dim*vec_length; j++){
+		    if(j%4 == 0){
+            	        aligned_values_transpose_decompose_short[i+j/4] |= (aligned_values_transpose_short[i+j] & mask);
+            	        aligned_values_transpose_decompose_short[i+mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 4)) >> 4);
+            	        aligned_values_transpose_decompose_short[i+2*mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 8)) >> 8);
+            	        aligned_values_transpose_decompose_short[i+3*mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 12)) >> 12);
+		    }
+		    if(j%4 == 1){
+            	        aligned_values_transpose_decompose_short[i+j/4] |= ((aligned_values_transpose_short[i+j] & mask) << 4);
+            	        aligned_values_transpose_decompose_short[i+mma_k_dim*vec_length/4+j/4] |= (aligned_values_transpose_short[i+j] & (mask << 4));
+            	        aligned_values_transpose_decompose_short[i+2*mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 8)) >> 4);
+            	        aligned_values_transpose_decompose_short[i+3*mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 12)) >> 8);
+		    }
+		    if(j%4 == 2){
+            	        aligned_values_transpose_decompose_short[i+j/4] |= ((aligned_values_transpose_short[i+j] & mask) << 8);
+            	        aligned_values_transpose_decompose_short[i+mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 4)) << 4);
+            	        aligned_values_transpose_decompose_short[i+2*mma_k_dim*vec_length/4+j/4] |= (aligned_values_transpose_short[i+j] & (mask << 8));
+            	        aligned_values_transpose_decompose_short[i+3*mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 12)) >> 4);
+		    }
+		    if(j%4 == 3){
+            	        aligned_values_transpose_decompose_short[i+j/4] |= ((aligned_values_transpose_short[i+j] & mask) << 12);
+            	        aligned_values_transpose_decompose_short[i+mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 4)) << 8);
+            	        aligned_values_transpose_decompose_short[i+2*mma_k_dim*vec_length/4+j/4] |= ((aligned_values_transpose_short[i+j] & (mask << 8)) << 4);
+            	        aligned_values_transpose_decompose_short[i+3*mma_k_dim*vec_length/4+j/4] |= (aligned_values_transpose_short[i+j] & (mask << 12));
+		    }
+                }
+	}
 	else if(preA_cut == 16 && mma_k_dim == 16){
 	    for(int i = 0; i < aligned_num_item*vec_length*2; i+=(mma_k_dim*vec_length*2))
 	        for(int j = 0; j < mma_k_dim; j++)
@@ -464,6 +499,23 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
                 spmm_ms_avg += spmm_ms;
 	    }
         }
+	else if((kernel == 0) && (preA_cut == 16) && (preB == 4)){
+	    for(int iter=0; iter<NUM_PROFILES; ++iter){
+	        float spmm_ms = 0.0f;
+	        cudaEvent_t spmm_start;
+	        cudaEvent_t spmm_end;
+	        cudaEventCreate(&spmm_start);
+	        cudaEventCreate(&spmm_end);
+	        cudaEventRecord(spmm_start);
+                spmm::wmmaSpmm_16b4b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+	        cudaEventRecord(spmm_end);
+	        cudaEventSynchronize(spmm_end);
+	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
+                cudaEventDestroy(spmm_start);
+                cudaEventDestroy(spmm_end);
+                spmm_ms_avg += spmm_ms;
+	    }
+        }
 	else if((kernel == 0) && (preA_cut == 8) && (preB == 8)){
 	    for(int iter=0; iter<NUM_PROFILES; ++iter){
 	        float spmm_ms = 0.0f;
@@ -615,7 +667,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
                 //if (j > 2048 && j < 3072) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
 		if (output_value_cuda[j] > 0) counter++;
                 if ((output_value_cuda[j] - output_value_host[j]) != 0){
-                    printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
+                    //printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
                     //if (j > 1000000) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                     errors ++;
                 }
@@ -705,9 +757,9 @@ int main(int argc, char **argv){
 	else if ((preA == 12) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 2);
 	else if ((preA == 12) && (preB == 4) && (vec_length == 4)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 1);
 	else if ((preA == 12) && (preB == 4) && (vec_length == 2)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 1);
-	//else if ((preA == 16) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 2);
-	//else if ((preA == 16) && (preB == 4) && (vec_length == 4)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	//else if ((preA == 16) && (preB == 4) && (vec_length == 2)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 16) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 2);
+	else if ((preA == 16) && (preB == 4) && (vec_length == 4)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 16) && (preB == 4) && (vec_length == 2)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
 	else if ((preA == 8) && (preB == 8) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
 	else if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
 	else if ((preA == 8) && (preB == 8) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);

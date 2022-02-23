@@ -486,6 +486,60 @@ namespace spmm{
         }
     };
 
+    //template<typename OutType>
+    //struct wmmaOutputTile_12b4b2v{
+    //    //
+    //    // Member variables
+    //    //
+    //    int lane_id_;
+    //    int valid_tsize_;
+    //    int intra_warp_tid_;
+    //    // The register file fragment with the results to store
+    //    unsigned long long* output_fragment_;
+    //    int4* output_matrix_;
+
+    //    // Constructor
+    //    __device__ __forceinline__ wmmaOutputTile_12b4b2v(
+    //        int lane_id, int vec_length,
+    //        int m_index_vec, int column_offset,
+    //        int cols,
+    //        int* output_fragment,
+    //        OutType* output_matrix)
+    //    {
+    //        output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment);
+    //        valid_tsize_ = 32 * vec_length / 8;
+    //        const int output_offset = (m_index_vec * vec_length + (lane_id % valid_tsize_) / 4) * cols + column_offset; 
+    //        output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
+    //        lane_id_ = lane_id;
+    //        intra_warp_tid_ = lane_id % 32;
+    //    }
+
+    //    // Store
+    //    __device__ __forceinline__ void Store(){
+    //        output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 0] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 0], valid_tsize_, 32);
+    //        output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 1], valid_tsize_, 32);
+    //        output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 2] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 2], valid_tsize_, 32);
+    //        output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 3] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 3], valid_tsize_, 32);
+
+    //        int *final_output_fragment_ = reinterpret_cast<int *>(output_fragment_);
+    //        if(intra_warp_tid_ < valid_tsize_*2){
+    //            for(int i = 0; i < 8; i++)
+    //                final_output_fragment_[i] += (final_output_fragment_[i+8] * 16);
+    //        }else{
+    //            for(int i = 0; i < 8; i++)
+    //                final_output_fragment_[i] = final_output_fragment_[i] * 256;
+    //        }
+    //        output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 0] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 0], valid_tsize_*2, 32);
+    //        output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 1], valid_tsize_*2, 32);
+
+    //        for(int i = 0; i < 4; i++)
+    //            final_output_fragment_[i] += final_output_fragment_[i+4];
+
+    //        int output_off = (intra_warp_tid_ % 4) * 4 + (intra_warp_tid_ / valid_tsize_) % 2 * 2 + intra_warp_tid_ / valid_tsize_ / 2 + (lane_id_ / 32) * 16;
+    //        *(output_matrix_ + output_off) = *(reinterpret_cast<int4 *>(output_fragment_));
+    //    }
+    //};
+
     template<typename OutType>
     struct wmmaOutputTile_12b4b2v{
         //
@@ -527,7 +581,7 @@ namespace spmm{
                     final_output_fragment_[i] += (final_output_fragment_[i+8] * 16);
 	    }else{
 	        for(int i = 0; i < 8; i++)
-                    final_output_fragment_[i] = final_output_fragment_[i] * 256;
+                    final_output_fragment_[i] = final_output_fragment_[i] * 256 + final_output_fragment_[i+8] * 4096;
 	    }
             output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 0] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 0], valid_tsize_*2, 32);
             output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/(valid_tsize_*2)+1)%2)*2 + 1], valid_tsize_*2, 32);
@@ -635,6 +689,117 @@ namespace spmm{
 
 	    for(int i = 0; i < 16; i++)
                 output_fragment_0_[i] += (output_fragment_1_[i] * 16 + output_fragment_2_[i] * 256);
+
+            int output_off = (intra_warp_tid_ % 4) * 4 + (lane_id_ / 32) * 16;
+            *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 0);
+            *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 1);
+            *(output_matrix_ + output_off + 2) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 2);
+            *(output_matrix_ + output_off + 3) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 3);
+        }
+    };
+
+    template<typename OutType>
+    struct wmmaOutputTile_16b4b4v{
+        //
+        // Member variables
+        //
+        int lane_id_;
+        int valid_tsize_;
+        int intra_warp_tid_;
+        // The register file fragment with the results to store
+        int* output_fragment_0_;
+        int* output_fragment_1_;
+        int4* output_matrix_;
+
+        // Constructor
+        __device__ __forceinline__ wmmaOutputTile_16b4b4v(
+            int lane_id, int vec_length,
+            int m_index_vec, int column_offset,
+            int cols,
+            int* output_fragment_0,
+            int* output_fragment_1,
+            OutType* output_matrix)
+        {
+            output_fragment_0_ = output_fragment_0;
+            output_fragment_1_ = output_fragment_1;
+
+	    valid_tsize_ = 32 * vec_length / 8;
+            const int output_offset = (m_index_vec * vec_length + (lane_id % valid_tsize_) / 4) * cols + column_offset; 
+            output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
+	    lane_id_ = lane_id;
+            intra_warp_tid_ = lane_id % 32;
+        }
+
+        // Store
+        __device__ __forceinline__ void Store(){
+
+	    if(intra_warp_tid_ < valid_tsize_){
+	        for(int i = 0; i < 16; i++)
+                    output_fragment_0_[i] += (output_fragment_1_[i] * 256);
+	    }else{
+	        for(int i = 0; i < 16; i++)
+                    output_fragment_0_[i] = output_fragment_0_[i] * 16 + output_fragment_1_[i] * 4096;
+	    }
+
+
+            unsigned long long* output_fragment_ = reinterpret_cast<unsigned long long *>(output_fragment_0_);
+            output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 0] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 0], valid_tsize_, 32);
+            output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 1], valid_tsize_, 32);
+            output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 2] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 2], valid_tsize_, 32);
+            output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 3] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/valid_tsize_+1)%2)*4 + 3], valid_tsize_, 32);
+
+	    for(int i = 0; i < 8; i++)
+                output_fragment_0_[i] += output_fragment_0_[i+8];
+
+            int output_off = (intra_warp_tid_ % 4) * 4 + (intra_warp_tid_ / valid_tsize_) * 2 + (lane_id_ / 32) * 16;
+            *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 0);
+            *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 1);
+        }
+    };
+
+    template<typename OutType>
+    struct wmmaOutputTile_16b4b8v{
+        //
+        // Member variables
+        //
+        int lane_id_;
+        int valid_tsize_;
+        int intra_warp_tid_;
+        // The register file fragment with the results to store
+        int* output_fragment_0_;
+        int* output_fragment_1_;
+        int* output_fragment_2_;
+        int* output_fragment_3_;
+        int4* output_matrix_;
+
+        // Constructor
+        __device__ __forceinline__ wmmaOutputTile_16b4b8v(
+            int lane_id, int vec_length,
+            int m_index_vec, int column_offset,
+            int cols,
+            int* output_fragment_0,
+            int* output_fragment_1,
+            int* output_fragment_2,
+            int* output_fragment_3,
+            OutType* output_matrix)
+        {
+            output_fragment_0_ = output_fragment_0;
+            output_fragment_1_ = output_fragment_1;
+            output_fragment_2_ = output_fragment_2;
+            output_fragment_3_ = output_fragment_3;
+
+	    valid_tsize_ = 32 * vec_length / 8;
+            const int output_offset = (m_index_vec * vec_length + (lane_id % valid_tsize_) / 4) * cols + column_offset; 
+            output_matrix_ = reinterpret_cast<int4 *>(output_matrix + output_offset);
+	    lane_id_ = lane_id;
+            intra_warp_tid_ = lane_id % 32;
+        }
+
+        // Store
+        __device__ __forceinline__ void Store(){
+
+	    for(int i = 0; i < 16; i++)
+                output_fragment_0_[i] += (output_fragment_1_[i] * 16 + output_fragment_2_[i] * 256 + output_fragment_3_[i] * 4096);
 
             int output_off = (intra_warp_tid_ % 4) * 4 + (lane_id_ / 32) * 16;
             *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int4 *>(output_fragment_0_) + 0);
