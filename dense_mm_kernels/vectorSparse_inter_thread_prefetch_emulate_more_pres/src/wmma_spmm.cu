@@ -1212,8 +1212,8 @@ __global__ void wmmaSpmm_kernel_12b4b4v(
     int* dense_tile = dense_tile_array;
 
     // Initialize the pointers to the sparse lhs matrix
-    wmmaSparseTile_12b4b2v<LoadType, VecType, Tile_K * VecLength / 2, Tile_K> sparse_tile_loader(
-        row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
+    wmmaSparseTile_12b4b4v<LoadType, VecType, Tile_K * VecLength / 2, Tile_K> sparse_tile_loader(
+        row_offset_vec, lane_id, values, column_indices,
         values_tile, column_indices_tile
     );
 
@@ -1224,8 +1224,9 @@ __global__ void wmmaSpmm_kernel_12b4b4v(
     );
 
     // Accumulator registers for the output values.
-    __align__(16) int output_fragment[Tile_N / Warps / 4] = {};
-    wmmaComputeUtils_12b4b2v<Tile_K * VecLength / 2> computer(values_tile, dense_tile, output_fragment, lane_id);
+    __align__(16) int output_fragment_0[Tile_N / Warps / 4] = {};
+    __align__(16) int output_fragment_1[Tile_N / Warps / 4] = {};
+    wmmaComputeUtils_12b4b4v<Tile_K * VecLength / 2> computer(values_tile, dense_tile, output_fragment_0, output_fragment_1, lane_id);
 
     int steps = nonzeros / Tile_K;
     int residue = nonzeros % Tile_K;
@@ -1259,7 +1260,7 @@ __global__ void wmmaSpmm_kernel_12b4b4v(
         computer.TileMACResidue();
     } 
 
-    wmmaOutputTile_12b4b2v<OutType> output_tile_storer(lane_id, VecLength, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
+    wmmaOutputTile_12b4b4v<OutType> output_tile_storer(lane_id, VecLength, m_index_vec, dimN_index, dimN, output_fragment_0, output_fragment_1, output_matrix);
     output_tile_storer.Store();
 }
 
@@ -1280,6 +1281,7 @@ __global__ void wmmaSpmm_kernel_12b4b8v(
     int m_index_vec = blockIdx.x;
     int dimN_index = blockIdx.y * Tile_N;
     const int lane_id = threadIdx.x;
+    const int lane_size = blockDim.x;
     // Threads that work on different m-dim indices are independent
     // If we're out of bounds in the m-dimension we can just return
     if (m_index_vec >= m_vec) return;
@@ -1290,7 +1292,7 @@ __global__ void wmmaSpmm_kernel_12b4b8v(
     int nonzeros = __ldg(row_offsets + m_index_vec*2 + 1) - row_offset_vec;
 
     // Shared memory tiles for the lhs values and indices, double buffers
-    __shared__ int values_tile_array[Tile_K*VecLength];
+    __shared__ int values_tile_array[Tile_K*6]; //8v 12bit only requires Tile_k * 6
     __shared__ int column_indices_tile_array[Tile_K*2];
 
     // each int value has four 4-bit values, padding to avoid bank conflict 
@@ -1302,8 +1304,8 @@ __global__ void wmmaSpmm_kernel_12b4b8v(
     int* dense_tile = dense_tile_array;
 
     // Initialize the pointers to the sparse lhs matrix
-    wmmaSparseTile_12b4b2v<LoadType, VecType, Tile_K * VecLength / 2, Tile_K> sparse_tile_loader(
-        row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
+    wmmaSparseTile_12b4b8v<LoadType, VecType, Tile_K * 3, Tile_K * VecLength / 2, Tile_K> sparse_tile_loader(
+        row_offset_vec, lane_id, lane_size, values, column_indices,
         values_tile, column_indices_tile
     );
 
@@ -1314,8 +1316,10 @@ __global__ void wmmaSpmm_kernel_12b4b8v(
     );
 
     // Accumulator registers for the output values.
-    __align__(16) int output_fragment[Tile_N / Warps / 4] = {};
-    wmmaComputeUtils_12b4b2v<Tile_K * VecLength / 2> computer(values_tile, dense_tile, output_fragment, lane_id);
+    __align__(16) int output_fragment_0[Tile_N / Warps / 4] = {};
+    __align__(16) int output_fragment_1[Tile_N / Warps / 4] = {};
+    __align__(16) int output_fragment_2[Tile_N / Warps / 4] = {};
+    wmmaComputeUtils_12b4b8v<Tile_K * 3> computer(values_tile, dense_tile, output_fragment_0, output_fragment_1, output_fragment_2, lane_id);
 
     int steps = nonzeros / Tile_K;
     int residue = nonzeros % Tile_K;
@@ -1349,7 +1353,7 @@ __global__ void wmmaSpmm_kernel_12b4b8v(
         computer.TileMACResidue();
     } 
 
-    wmmaOutputTile_12b4b2v<OutType> output_tile_storer(lane_id, VecLength, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
+    wmmaOutputTile_12b4b8v<OutType> output_tile_storer(lane_id, VecLength, m_index_vec, dimN_index, dimN, output_fragment_0, output_fragment_1, output_fragment_2, output_matrix);
     output_tile_storer.Store();
 }
 

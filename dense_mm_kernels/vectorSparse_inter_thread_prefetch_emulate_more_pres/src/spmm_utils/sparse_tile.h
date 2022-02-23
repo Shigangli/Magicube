@@ -879,6 +879,109 @@ namespace spmm{
     };
 
     template <typename LoadType, typename VecType, int ValuesBlockWidth, int BlockWidth>
+    struct wmmaSparseTile_12b4b4v{
+
+        const int lane_id_;
+        // The sparse matrix value array.
+        const int * values_;
+        // The sparse matrix column indices for each value
+        const int * column_idxs_;
+        int * values_tile_base_;
+        // shared memory tile for sparse marix values
+        int * column_idxs_tile_base_;
+
+        // Constructor. Set the initial pointer offsets
+        __device__ __forceinline__ wmmaSparseTile_12b4b4v(
+            int row_offset_vec, int lane_id,
+            const VecType * __restrict__ values,
+            const int * __restrict__ column_idxs,
+            int *values_tile, int * column_idxs_tile):
+            lane_id_(lane_id),
+            values_(reinterpret_cast<const int *>(values + row_offset_vec) + lane_id),
+            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + lane_id),
+            values_tile_base_(reinterpret_cast<int *>(values_tile) + lane_id),
+            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + lane_id){}
+        
+        // Load
+        __device__ __forceinline__ void Load(int step){
+            int * values_tile = values_tile_base_ + (step % 2) * ValuesBlockWidth;
+            int * column_idxs_tile = column_idxs_tile_base_ + (step % 2) * BlockWidth;
+
+	    if(lane_id_ < ValuesBlockWidth)
+                *(values_tile) = __ldg(values_);
+	    if(lane_id_ < BlockWidth)
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            values_ += ValuesBlockWidth;
+            column_idxs_ += BlockWidth;
+        }
+
+        // Load Residual
+        __device__ __forceinline__ void Residue(){
+            int * values_tile = values_tile_base_;
+            int * column_idxs_tile = column_idxs_tile_base_;
+	    if(lane_id_ < ValuesBlockWidth)
+                *(values_tile) = __ldg(values_);
+	    if(lane_id_ < BlockWidth)
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            asm(""); // without this, it is said that the loop cannot be unrolled.
+        }
+    };
+
+    template <typename LoadType, typename VecType, int ValuesBlockWidth, int RoundValuesBlockWidth, int BlockWidth>
+    struct wmmaSparseTile_12b4b8v{
+
+        const int lane_id_;
+        const int lane_size_;
+        // The sparse matrix value array.
+        const int * values_;
+        // The sparse matrix column indices for each value
+        const int * column_idxs_;
+        int * values_tile_base_;
+        // shared memory tile for sparse marix values
+        int * column_idxs_tile_base_;
+
+        // Constructor. Set the initial pointer offsets
+        __device__ __forceinline__ wmmaSparseTile_12b4b8v(
+            int row_offset_vec, int lane_id, int lane_size,
+            const VecType * __restrict__ values,
+            const int * __restrict__ column_idxs,
+            int *values_tile, int * column_idxs_tile):
+            lane_id_(lane_id),
+            lane_size_(lane_size),
+            values_(reinterpret_cast<const int *>(values + row_offset_vec * 2) + lane_id), // scale = 2
+            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + lane_id - (ValuesBlockWidth-lane_size)),
+            values_tile_base_(reinterpret_cast<int *>(values_tile) + lane_id),
+            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + lane_id - (ValuesBlockWidth-lane_size)){}
+        
+        // Load
+        __device__ __forceinline__ void Load(int step){
+            int * values_tile = values_tile_base_ + (step % 2) * ValuesBlockWidth;
+            int * column_idxs_tile = column_idxs_tile_base_ + (step % 2) * BlockWidth;
+
+	    //if(lane_id_ < ValuesBlockWidth)
+            *(values_tile) = __ldg(values_);
+	    if(lane_id_ + lane_size_ < ValuesBlockWidth)
+                *(values_tile + lane_size_) = __ldg(values_ + lane_size_);
+	    else
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            values_ += RoundValuesBlockWidth;
+            column_idxs_ += BlockWidth;
+        }
+
+        // Load Residual
+        __device__ __forceinline__ void Residue(){
+            int * values_tile = values_tile_base_;
+            int * column_idxs_tile = column_idxs_tile_base_;
+            *(values_tile) = __ldg(values_);
+	    if(lane_id_ + lane_size_ < ValuesBlockWidth)
+                *(values_tile + lane_size_) = __ldg(values_ + lane_size_);
+	    else
+                *(column_idxs_tile) = __ldg(column_idxs_);
+            asm(""); // without this, it is said that the loop cannot be unrolled.
+        }
+    };
+
+    template <typename LoadType, typename VecType, int ValuesBlockWidth, int BlockWidth>
     struct wmmaSparseTile_8b4b8v{
 
         const int lane_id_;
