@@ -144,7 +144,10 @@ void MakeDenseMatrix(int rows, int columns, ValueType *matrix,
             matrix[i] = 0x1111111111111111 + int(117.0*distribution(generator));
 	}
 	else if(typeid(matrix[i]) == typeid(short)){
-            float temp = 32767.0*distribution(generator);
+            //std::uniform_real_distribution<float> distribution1(-1.0, 1.0);
+            //float temp = 1024.0*distribution1(generator);
+            //float temp = 32767.0*distribution(generator);
+            float temp = 10240.0*distribution(generator);
             matrix[i] = ValueType(temp);
 	}
 	else if(typeid(matrix[i]) == typeid(char)){
@@ -154,9 +157,9 @@ void MakeDenseMatrix(int rows, int columns, ValueType *matrix,
 	else{
 	    printf("Unsupported datatype for matrix elements!\n");
 	}
-	if(matrix[i] < 0){
-            printf("Matrix generate error!\n");	
-	}
+	//if(matrix[i] < 0){
+        //    printf("Matrix generate error!\n");	
+	//}
     }
 }
 
