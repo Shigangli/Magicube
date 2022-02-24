@@ -1861,8 +1861,8 @@ __global__ void wmmaSpmm_kernel_16b8v(
 
     // Initialize the pointers to the sparse lhs matrix
     // One int32 has two 16-bit integers
-    wmmaSparseTile_16b8b<LoadType, VecType, Tile_K * VecLength / 2, Tile_K> sparse_tile_loader(
-        row_offset_vec, threadIdx.x % 32, threadIdx.x / 32, values, column_indices,
+    wmmaSparseTile_16b8b8v<LoadType, VecType, Tile_K * VecLength / 2, Tile_K> sparse_tile_loader(
+        row_offset_vec, lane_id, values, column_indices,
         values_tile, column_indices_tile
     );
 
@@ -1876,8 +1876,9 @@ __global__ void wmmaSpmm_kernel_16b8v(
     // Accumulator registers for the output values.
     // Tile_N / warps / four threads in x-dim of output matrix
     // 16-bit decomposes into two 8-bits, x2
-    __align__(16) int output_fragment[Tile_N / Warps / 2] = {};
-    wmmaComputeUtils_16b<Tile_K * VecLength / 2> computer(values_tile, dense_tile, output_fragment, lane_id);
+    __align__(16) int output_fragment_0[Tile_N / Warps / 2] = {};
+    __align__(16) int output_fragment_1[Tile_N / Warps / 2] = {};
+    wmmaComputeUtils_16b8v<Tile_K * VecLength / 2> computer(values_tile, dense_tile, output_fragment_0, output_fragment_1, lane_id);
 
     int steps = nonzeros / Tile_K;
     int residue = nonzeros % Tile_K;
@@ -1911,7 +1912,7 @@ __global__ void wmmaSpmm_kernel_16b8v(
         computer.TileMACResidue();
     } 
 
-    wmmaOutputTile_16b<OutType> output_tile_storer(lane_id, VecLength, m_index_vec, dimN_index, dimN, output_fragment, output_matrix);
+    wmmaOutputTile_16b8v<OutType> output_tile_storer(lane_id, VecLength, m_index_vec, dimN_index, dimN, output_fragment_0, output_fragment_1, output_matrix);
     output_tile_storer.Store();
 }
 
