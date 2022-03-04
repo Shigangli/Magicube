@@ -18,6 +18,8 @@ __device__ void print_val_h(int blockid, int threadid, half value){
     if (blockid == 0 && threadid == 16) printf("tid: %d, value is: %.4f\n", threadid, float(value));
 }
 
+
+
 // This is the shared memory based wmmaSddmmKernel
 template <typename LoadType, typename OutType, typename StoreType, int Residual=false, int VecLength=8, int Tile_X=32, int Tile_K=64>
 __global__ void wmmaSddmmKernel8(int m_vec, int k, int n, 
