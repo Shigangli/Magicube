@@ -199,29 +199,7 @@ void Host_sddmm(int m_vec, int k, int VecLength, const int* col_offsets, const i
 }
 */
 
-template <typename ValueType, typename OutType>
-void Host_sddmm(int m_vec, int k, int VecLength, const int* row_offsets, const int* col_indices, const ValueType* lhs_matrix,
-                const ValueType* rhs_matrix, OutType* output_values){
-    // Loop over all the rows
-    for (int i = 0; i < m_vec; ++i){
-        // Loop over all the nonzero columns of the column
-        for (int j = row_offsets[i]; j < row_offsets[i+1]; ++j){
-            // Loop over all the values in the vector
-            for (int v = 0; v < VecLength; v ++){
-                // set the accumulator
-                float accumulator = 0.0;
-                // compute the index to the real m and n
-                int idx_n = col_indices[j];
-                int idx_m = i * VecLength + v;
-                for (int l=0; l < k; ++l){
-                    accumulator += (float)lhs_matrix[idx_m * k + l] * (float)rhs_matrix[idx_n * k + l];
-                }
-                // Write the output
-                output_values[j * VecLength + v] = (OutType)accumulator;
-            }
-        }
-    }
-}
+
 
 
 void IdentityRowSwizzle(int rows, int *row_indices){

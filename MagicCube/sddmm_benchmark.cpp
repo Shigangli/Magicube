@@ -29,6 +29,34 @@ namespace sputnik {
         }
 }
 
+template <typename ValueType, typename OutType>
+double Host_sddmm(int m_vec, int k, int VecLength, const int* row_offsets, const int* col_indices, const ValueType* lhs_matrix,
+                const ValueType* rhs_matrix, OutType* output_values){
+
+    double flops = 0;
+    // Loop over all the rows
+    for (int i = 0; i < m_vec; ++i){
+        // Loop over all the nonzero columns of the column
+        for (int j = row_offsets[i]; j < row_offsets[i+1]; ++j){
+            // Loop over all the values in the vector
+            for (int v = 0; v < VecLength; v ++){
+                // set the accumulator
+                float accumulator = 0.0;
+                // compute the index to the real m and n
+                int idx_n = col_indices[j];
+                int idx_m = i * VecLength + v;
+                for (int l=0; l < k; ++l){
+                    accumulator += (float)lhs_matrix[idx_m * k + l] * (float)rhs_matrix[idx_n * k + l];
+                    flops += 2.0;
+                }
+                // Write the output
+                output_values[j * VecLength + v] = (OutType)accumulator;
+            }
+        }
+    }
+}
+
+
 void cusparseSDDMM_(
     int m, int k, int n, int nonzeros,
     int* d_row_indices,
@@ -215,9 +243,10 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, int alg, 
         // Step 3: generate the output matrix
         OutType *output_values = new OutType[nonzeros];
 
+        double flops = 0.0;
         if (func){
             // Step 4: Do the SDDMM on host
-            Host_sddmm<InType, OutType>(m_vec, k, vec_length, row_offsets, col_indices, lhs_matrix, rhs_matrix, output_values);
+            flops = Host_sddmm<InType, OutType>(m_vec, k, vec_length, row_offsets, col_indices, lhs_matrix, rhs_matrix, output_values);
         }
 
         // Device
@@ -250,12 +279,26 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, int alg, 
         checkCuda(cudaMemcpy(d_row_indices, row_indices, m_vec * sizeof(int), cudaMemcpyHostToDevice));
 
         cudaProfilerStart();
-
+        int NUM_PROFILES = 512;
+        float sddmm_ms_avg = 0.0f;
         // TODO: Launch kernel
         if (kernel == 0){
             printf("Using WMMA \n");
-            sddmm::wmmaSddmm(m_vec, k, n, nonzeros_vec, d_row_indices, d_row_offsets, d_col_indices, d_lhs_matrix, d_rhs_matrix, d_output_value, vec_length, 0, alg);
-            // TODO: wmma
+            for(int iter=0; iter<NUM_PROFILES; ++iter){
+                float sddmm_ms = 0.0f;
+                cudaEvent_t sddmm_start;
+                cudaEvent_t sddmm_end;
+                cudaEventCreate(&sddmm_start);
+                cudaEventCreate(&sddmm_end);
+                cudaEventRecord(sddmm_start);
+                sddmm::wmmaSddmm(m_vec, k, n, nonzeros_vec, d_row_indices, d_row_offsets, d_col_indices, d_lhs_matrix, d_rhs_matrix, d_output_value, vec_length, 0, alg);
+                cudaEventRecord(sddmm_end);
+                cudaEventSynchronize(sddmm_end);
+                cudaEventElapsedTime(&sddmm_ms, sddmm_start, sddmm_end);
+                cudaEventDestroy(sddmm_start);
+                cudaEventDestroy(sddmm_end);
+                sddmm_ms_avg += sddmm_ms;
+            }
         }
         else if (kernel == 1){
             printf("Using CUDA \n");
@@ -273,6 +316,9 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, int alg, 
             printf("unsupported kernel\n");
             // TODO: sputnik
         }
+
+        sddmm_ms_avg = sddmm_ms_avg/(float)NUM_PROFILES/1000.0;
+        std::cout << "SDDMM performance GFLOP/s: " << flops/sddmm_ms_avg << "\n";
 
         cudaProfilerStop();
 
