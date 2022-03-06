@@ -3007,22 +3007,22 @@ cudaError_t wmmaSddmmEx(
         case 8:
             switch (algorithm){
                 case 0:
-                    printf("wmma\n");
+                    //printf("wmma\n");
                     wmmaSddmmKernel8<LoadType, float, float2, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 1:
-                    printf("mma_reg\n");
+                    //printf("mma_reg\n");
                     mmaSddmmKernel8reg<LoadType, float, float2, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 2:
-                    printf("mma_shfl\n");
+                    //printf("mma_shfl\n");
                     mmaSddmmKernel8shfl<LoadType, float, float2, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 3:
-                    printf("mma_arch\n");
+                    //printf("mma_arch\n");
                     mmaSddmmKernel8fake<LoadType, float, float2, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
@@ -3031,22 +3031,22 @@ cudaError_t wmmaSddmmEx(
         case 4:
             switch (algorithm){
                 case 0:
-                    printf("wmma\n");
+                    //printf("wmma\n");
                     wmmaSddmmKernel4<LoadType, float, float4, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 1:
-                    printf("mma_reg\n");
+                    //printf("mma_reg\n");
                     mmaSddmmKernel4reg<LoadType, float, float4, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 2:
-                    printf("mma_shfl\n");
+                    //printf("mma_shfl\n");
                     mmaSddmmKernel4shfl<LoadType, float, float4, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 3:
-                    printf("mma_arch\n");
+                    //printf("mma_arch\n");
                     mmaSddmmKernel4fake<LoadType, float, float4, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
@@ -3055,22 +3055,22 @@ cudaError_t wmmaSddmmEx(
         case 2:
             switch (algorithm){
                 case 0:
-                    printf("wmma\n");
+                    //printf("wmma\n");
                     wmmaSddmmKernel2<LoadType, float, float2, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 1:
-                    printf("mma_reg\n");
+                    //printf("mma_reg\n");
                     mmaSddmmKernel2reg<LoadType, float, float2, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 2:
-                    printf("mma_shfl\n");
+                    //printf("mma_shfl\n");
                     mmaSddmmKernel2shfl<LoadType, float, float2, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 3:
-                    printf("mma_arch\n");
+                    //printf("mma_arch\n");
                     mmaSddmmKernel2fake<LoadType, float, float2, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
@@ -3098,22 +3098,22 @@ cudaError_t wmmaSddmmEx(
         case 8:
             switch (algorithm){
                 case 0:
-                    printf("wmma\n");
+                    //printf("wmma\n");
                     wmmaSddmmKernel8<LoadType, half, float, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 1:
-                    printf("mma_reg\n");
+                    //printf("mma_reg\n");
                     mmaSddmmKernel8reg<LoadType, half, float, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 2:
-                    printf("mma_shfl\n");
+                    //printf("mma_shfl\n");
                     mmaSddmmKernel8shfl<LoadType, half, float, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 3:
-                    printf("mma_arch\n");
+                    //printf("mma_arch\n");
                     mmaSddmmKernel8fake<LoadType, half, float, Residual, 8><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
@@ -3122,22 +3122,22 @@ cudaError_t wmmaSddmmEx(
         case 4:
             switch (algorithm){
                 case 0:
-                    printf("wmma\n");
+                    //printf("wmma\n");
                     wmmaSddmmKernel4<LoadType, half, float2, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 1:
-                    printf("mma_reg\n");
+                    //printf("mma_reg\n");
                     mmaSddmmKernel4reg<LoadType, half, float2, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 2:
-                    printf("mma_shfl\n");
+                    //printf("mma_shfl\n");
                     mmaSddmmKernel4shfl<LoadType, half, float2, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 3:
-                    printf("mma_arch\n");
+                    //printf("mma_arch\n");
                     mmaSddmmKernel4fake<LoadType, half, float2, Residual, 4><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
@@ -3146,22 +3146,22 @@ cudaError_t wmmaSddmmEx(
         case 2:
             switch (algorithm){
                 case 0:
-                    printf("wmma\n");
+                    //printf("wmma\n");
                     wmmaSddmmKernel2<LoadType, half, float, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 1:
-                    printf("mma_reg\n");
+                    //printf("mma_reg\n");
                     mmaSddmmKernel2reg<LoadType, half, float, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 2:
-                    printf("mma_shfl\n");
+                    //printf("mma_shfl\n");
                     mmaSddmmKernel2shfl<LoadType, half, float, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;
                 case 3:
-                    printf("mma_arch\n");
+                    //printf("mma_arch\n");
                     mmaSddmmKernel2fake<LoadType, half, float, Residual, 2><<<grid_dim, block_dim>>>(
                         m, k, n, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
                     break;

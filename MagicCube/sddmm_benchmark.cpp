@@ -13,6 +13,7 @@
 #include <cublas_v2.h>
 #include "sputnik/sputnik.h"
 #include <cusparse.h>
+#include <iostream>
 
 
 // Overloading the sputnik::CudaSddmm to support half precision
@@ -54,6 +55,7 @@ double Host_sddmm(int m_vec, int k, int VecLength, const int* row_offsets, const
             }
         }
     }
+    return flops;
 }
 
 
@@ -317,8 +319,9 @@ void BmFN(std::string benchmark, int dimK, int vec_length, int kernel, int alg, 
             // TODO: sputnik
         }
 
+	flops = flops/1024.0/1024.0/1024.0;
         sddmm_ms_avg = sddmm_ms_avg/(float)NUM_PROFILES/1000.0;
-        std::cout << "SDDMM performance GFLOP/s: " << flops/sddmm_ms_avg << "\n";
+        std::cout << "SDDMM FLOPS: " << flops << "  performance GFLOP/s: " << flops/sddmm_ms_avg << "\n";
 
         cudaProfilerStop();
 
@@ -476,6 +479,25 @@ int main(int argc, char **argv){
         int func = std::atoi(argv[7]);
         int sparse = std::atoi(argv[8]);
         int mixed = std::atoi(argv[9]);
+	if(kernel == 0){
+	    switch (alg){
+                case 0:
+                    printf("wmma\n");
+                    break;
+                case 1:
+                    printf("mma_reg\n");
+                    break;
+                case 2:
+                    printf("mma_shfl\n");
+                    break;
+                case 3:
+                    printf("mma_arch\n");
+                    break;
+                default:
+                    printf("Unsupported Algorithm!\n");
+            }
+	}
+
         if (mixed)BmFN<half, half>(benchmark, dimK, vec_length, kernel, alg, sorted, func, sparse);
         else BmFN<float, float>(benchmark, dimK, vec_length, kernel, alg, sorted, func, sparse);
     }
