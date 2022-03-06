@@ -4,33 +4,32 @@
 
 namespace sddmm{
 
-cudaError_t wmmaSddmm(int m_vec, int k, int n, int nonzeros_vec,
+cudaError_t wmmaSddmm_4b(int m_vec, int k, int n,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
     const int* __restrict__ col_indices,
-    const half* __restrict__ lhs_matrix,
-    const half* __restrict__ rhs_matrix,
-    float* __restrict__ output_values, 
-    int vec_length, cudaStream_t stream, int algorithm) ;
+    const int* __restrict__ lhs_matrix,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_values, 
+    int vec_length);
 
-
-cudaError_t wmmaSddmm(int m_vec, int k, int n, int nonzeros_vec,
+cudaError_t wmmaSddmm_8b(int m_vec, int k, int n,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
     const int* __restrict__ col_indices,
-    const half* __restrict__ lhs_matrix,
-    const half* __restrict__ rhs_matrix,
-    half* __restrict__ output_values, 
-    int vec_length, cudaStream_t stream, int algorithm) ;
+    const int* __restrict__ lhs_matrix,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_values, 
+    int vec_length);
 
-cudaError_t wmmaSddmm(int m_vec, int k, int n, int nonzeros_vec,
+cudaError_t wmmaSddmm_16b(int m_vec, int k, int n,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
     const int* __restrict__ col_indices,
-    const float* __restrict__ lhs_matrix,
-    const float* __restrict__ rhs_matrix,
-    float* __restrict__ output_values, 
-    int vec_length, cudaStream_t stream, int algorithm) ;
+    const int* __restrict__ lhs_matrix,
+    const int* __restrict__ rhs_matrix,
+    int* __restrict__ output_values, 
+    int vec_length);
 
 } // namespace sddmm
 
