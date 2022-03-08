@@ -35,9 +35,9 @@ double Host_sddmm_integers(int *lhs_matrix, int *rhs_matrix, int *ref_C, int M_G
         // Loop over all the nonzero columns of the column
         for (int j = row_offsets[i*2]; j < row_offsets[i*2+1]; j++){
             // Loop over all the values in the vector
-            for (int v = 0; v < VecLength; v++){
+            for (int v = 0; v < vec_length; v++){
                 int accumulator = 0;
-                int idx_m = i * VecLength + v;
+                int idx_m = i * vec_length + v;
                 int idx_n = col_indices[j];
   
 	        assert(a_tiles == b_tiles);
@@ -53,7 +53,7 @@ double Host_sddmm_integers(int *lhs_matrix, int *rhs_matrix, int *ref_C, int M_G
 	            }
                 }
                 // Write the output
-                ref_C[(j/alignment)*alignment*VecLength + alignment*v + j%alignment] = accumulator;
+                ref_C[(j/alignment)*alignment*vec_length + alignment*v + j%alignment] = accumulator;
             }
         }
     }
@@ -82,7 +82,7 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
 
     int alignment = 8;
 
-    printf("Problem size: M: %d, N: %d, nnz: %d, K: %d\n", m, n, nonzeros, k);
+    printf("Problem size: M: %d, M_vec: %d, N: %d, nnz: %d, K: %d\n", m, m_vec, n, nonzeros, k);
 
     std::default_random_engine generator;
 
@@ -161,11 +161,11 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
         checkCuda(cudaMalloc(&d_output_values, aligned_num_item*vec_length*sizeof(int)));
         checkCuda(cudaMalloc(&d_row_indices, m_vec * sizeof(int)));
 
-        checkCuda(cudaMemcpy(d_row_offsets, row_offsets, (m_vec*2)*sizeof(int), cudaMemcpyHostToDevice));
-        checkCuda(cudaMemcpy(d_col_indices, col_indices, aligned_num_item*sizeof(int), cudaMemcpyHostToDevice));
+        checkCuda(cudaMemcpy(d_row_offsets, aligned_row_offsets, (m_vec*2)*sizeof(int), cudaMemcpyHostToDevice));
+        checkCuda(cudaMemcpy(d_col_indices, aligned_col_indices, aligned_num_item*sizeof(int), cudaMemcpyHostToDevice));
         checkCuda(cudaMemcpy(d_lhs_matrix, lhs_matrix, m*k*preA/8, cudaMemcpyHostToDevice));
         checkCuda(cudaMemcpy(d_rhs_matrix, rhs_matrix, n*k*preB/8, cudaMemcpyHostToDevice));
-        checkCuda(cudaMemcpy(d_output_values, output_values, aligned_num_item*vec_length, cudaMemcpyHostToDevice));
+        checkCuda(cudaMemcpy(d_output_values, output_values, aligned_num_item*vec_length*sizeof(int), cudaMemcpyHostToDevice));
 
         int *row_indices = new int[m_vec];
         if (sorted) {
@@ -255,12 +255,13 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
             int errors = 0;
             for (int j=0; j < aligned_num_item*vec_length; j++){
                 if ((output_value_cuda[j] - h_output_values[j]) != 0){
-                    printf("item %d, expect %d, got %d\n", j, h_output_value_host[j], output_value_cuda[j]);
+		    if(j<256)
+                        printf("item %d, expect %d, got %d\n", j, h_output_values[j], output_value_cuda[j]);
                     errors ++;
                 }
             }
             if (errors > 0) {
-                printf("SDDMM does not agree with SEQUENTIAL! %d errors!\n", errors);
+                printf("SDDMM does not agree with SEQUENTIAL! Total %d, %d errors!\n", aligned_num_item*vec_length, errors);
             }else {
                 printf("Results verified: they agree.\n");
             }
