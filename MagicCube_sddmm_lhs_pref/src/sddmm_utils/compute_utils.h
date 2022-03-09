@@ -251,6 +251,8 @@ namespace sddmm{
 	        if(lane_id_ % 32 < ValuesBlockWidth){
                     #pragma unroll
 	            for(int i=0; i<Blocks; i++){
+	                //lhs_fragment[i*2 + 0] = lhs_tile_[i*(ValuesBlockWidth+2) + lane_id_ % (ValuesBlockWidth/2)*2 + lane_id_ % (ValuesBlockWidth/2)/16 + (step % 2) * (ValuesBlockWidth * Blocks + 4)];
+	                //lhs_fragment[i*2 + 1] = lhs_tile_[i*(ValuesBlockWidth+2) + lane_id_ % (ValuesBlockWidth/2)*2 + lane_id_ % (ValuesBlockWidth/2)/16 + 1 + (step % 2) * (ValuesBlockWidth * Blocks + 4)];
 	                lhs_fragment[i*2 + 0] = lhs_tile_[i*ValuesBlockWidth + lane_id_ % (ValuesBlockWidth/2)*2 + (step % 2) * ValuesBlockWidth * Blocks];
 	                lhs_fragment[i*2 + 1] = lhs_tile_[i*ValuesBlockWidth + lane_id_ % (ValuesBlockWidth/2)*2 + 1 + (step % 2) * ValuesBlockWidth * Blocks];
 	            }

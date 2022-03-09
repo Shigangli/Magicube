@@ -309,6 +309,7 @@ __global__ void wmmaSddmm_kernel_16b8v(int m_vec, int n, int k,
     const int lane_id = threadIdx.x;
 
     // Each int32 has 2 16-bit integers and double buffers
+    //__shared__ int lhs_tile_array[Tile_K*VecLength + 7]; //padding
     __shared__ int lhs_tile_array[Tile_K*VecLength];
     __shared__ int column_indices_tile_array[Tile_N];
 
