@@ -144,8 +144,8 @@ void MakeDenseMatrix(int rows, int columns, ValueType *matrix,
     for(int64_t i = 0; i < static_cast<int64_t>(rows) * columns; ++i){
         if(typeid(matrix[i]) == typeid(int)){
             float temp = 2147483647.0*distribution(generator);
-            matrix[i] = ValueType(temp);
-            //matrix[i] = 0x11111111 + int(117.0*distribution(generator));
+            //matrix[i] = ValueType(temp);
+            matrix[i] = 0x11111111 + int(117.0*distribution(generator));
         }
         else if(typeid(matrix[i]) == typeid(long long)){
             double temp = 9223372036854775807.0 * double(distribution(generator));
