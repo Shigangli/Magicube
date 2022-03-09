@@ -103,7 +103,6 @@ namespace sddmm {
             lhs_prefetch_(lhs_prefetch),
             lhs_tile_(lhs_tile){}
         
-
         __device__ __forceinline__ void LoadRowfromRegister(int step){
 	    if(lane_id_ < BlockWidth){
 		lhs_tile_[lane_id_ + (step % 2) * BlockWidth] = lhs_prefetch_[0];

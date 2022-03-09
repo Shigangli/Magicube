@@ -254,6 +254,8 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
             // Verify the result
             int errors = 0;
             for (int j=0; j < aligned_num_item*vec_length; j++){
+		//if(j<256)
+                //    printf("item %d, expect %d, got %d\n", j, h_output_values[j], output_value_cuda[j]);
                 if ((output_value_cuda[j] - h_output_values[j]) != 0){
 		    if(j<256)
                         printf("item %d, expect %d, got %d\n", j, h_output_values[j], output_value_cuda[j]);

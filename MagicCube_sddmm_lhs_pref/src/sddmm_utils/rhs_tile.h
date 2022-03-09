@@ -76,7 +76,7 @@ namespace sddmm {
         const int lane_id_;
         const int *rhs_matrix_base_;
         const int *column_indices_tile_;
-        int *rhs_prefetch_;
+        unsigned long long *rhs_prefetch_;
 
         __device__ __forceinline__ wmma_rhs_16b(
             int workset, 
@@ -87,14 +87,16 @@ namespace sddmm {
             workset_(workset),
             lane_id_(lane_id),
             rhs_matrix_base_(rhs_matrix + column_indices_tile[lane_id/MMA_Dim_K_int]),
-            rhs_prefetch_(rhs_prefetch){}
+            rhs_prefetch_(reinterpret_cast<unsigned long long *>(rhs_prefetch)){}
         
 
         __device__ __forceinline__ void Fetch(int step){
 	    if(lane_id_/MMA_Dim_K_int < workset_){
+                #pragma unroll
                 for(int i=0; i<Blocks; i++){
-                    rhs_prefetch_[i * 2] = __ldg(rhs_matrix_base_ + step * Tile_K + i * MMA_Dim_K_int * 2 + lane_id_ % MMA_Dim_K_int * 2);
-                    rhs_prefetch_[i * 2 + 1] = __ldg(rhs_matrix_base_ + step * Tile_K + i * MMA_Dim_K_int * 2 + lane_id_ % MMA_Dim_K_int * 2 + 1);
+                    //rhs_prefetch_[i * 2] = __ldg(rhs_matrix_base_ + step * Tile_K + i * MMA_Dim_K_int * 2 + lane_id_ % MMA_Dim_K_int * 2);
+                    //rhs_prefetch_[i * 2 + 1] = __ldg(rhs_matrix_base_ + step * Tile_K + i * MMA_Dim_K_int * 2 + lane_id_ % MMA_Dim_K_int * 2 + 1);
+                    rhs_prefetch_[i] = *(reinterpret_cast<const unsigned long long *>(rhs_matrix_base_ + step * Tile_K + i * MMA_Dim_K_int * 2 + lane_id_ % MMA_Dim_K_int * 2));
                 }
 	    }
         }
