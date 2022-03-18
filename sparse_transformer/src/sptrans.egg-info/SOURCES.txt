@@ -1,0 +1,12 @@
+setup.py
+cuda/sddmm.cpp
+cuda/sddmm_kernel.cu
+cuda/softmax.cpp
+cuda/softmax_kernel.cu
+cuda/spmm.cpp
+cuda/spmm_kernel.cu
+sptrans.egg-info/PKG-INFO
+sptrans.egg-info/SOURCES.txt
+sptrans.egg-info/dependency_links.txt
+sptrans.egg-info/requires.txt
+sptrans.egg-info/top_level.txt
