@@ -1,3 +1,4 @@
+#include <cuda_fp16.h>
 namespace sddmm{
     template<int VecLength>
     struct wmmaOutputTile_4b{
@@ -38,8 +39,8 @@ namespace sddmm{
         __device__ __forceinline__ void Store(){
             if(warp_id_ < active_warp_num_){
 	        if(lane_id_ % 32 < active_thread_num_){
-		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = (half)((float)(output_fragment_[0]) / scale_);
-		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + VecLength + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = (half)((float)(output_fragment_[1]) / scale_);
+		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = __float2half((float)(output_fragment_[0]) / scale_);
+		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + VecLength + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = __float2half((float)(output_fragment_[1]) / scale_);
 		}
 	    }
         }
@@ -84,8 +85,8 @@ namespace sddmm{
         __device__ __forceinline__ void Store(){
             if(warp_id_ < active_warp_num_){
 	        if(lane_id_ % 32 < active_thread_num_){
-		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = (half)((float)(output_fragment_[0]) / scale_);
-		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + VecLength + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = (half)((float)(output_fragment_[1]) / scale_);
+		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = __float2half((float)(output_fragment_[0]) / scale_);
+		    *(output_values_base_ + (lane_id_ % 4) * VecLength * 2 + VecLength + (lane_id_ % 32) / 4 + warp_id_ * output_warp_width_) = __float2half((float)(output_fragment_[1]) / scale_);
 		}
 	    }
         }
