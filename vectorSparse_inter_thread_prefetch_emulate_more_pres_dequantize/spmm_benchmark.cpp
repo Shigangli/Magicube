@@ -15,6 +15,7 @@
 #include "sputnik/sputnik.h"
 #include <cusparse.h>
 #include <iostream>
+#include <cuda_fp16.h>
 
 int power2n(int n){
     int exp=1;
@@ -426,7 +427,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         int *d_row_offsets, *d_col_indices, *d_row_indices;
         IndexType *d_col_indices_sputnik;
         int *d_values; 
-	TypeB *d_rhs_matrix;
+        TypeB *d_rhs_matrix;
         OutType *d_output_value;
 	int *aligned_values_transpose_decompose_int = reinterpret_cast<int *>(aligned_values_transpose_decompose);
 	int *aligned_values_transpose_int = reinterpret_cast<int *>(aligned_values_transpose);
@@ -469,7 +470,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_4b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_4b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -486,41 +487,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_8b4b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
-	        cudaEventRecord(spmm_end);
-	        cudaEventSynchronize(spmm_end);
-	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
-                cudaEventDestroy(spmm_start);
-                cudaEventDestroy(spmm_end);
-                spmm_ms_avg += spmm_ms;
-	    }
-        }
-	else if((kernel == 0) && (preA_cut == 12) && (preB == 4)){
-	    for(int iter=0; iter<NUM_PROFILES; ++iter){
-	        float spmm_ms = 0.0f;
-	        cudaEvent_t spmm_start;
-	        cudaEvent_t spmm_end;
-	        cudaEventCreate(&spmm_start);
-	        cudaEventCreate(&spmm_end);
-	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_12b4b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
-	        cudaEventRecord(spmm_end);
-	        cudaEventSynchronize(spmm_end);
-	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
-                cudaEventDestroy(spmm_start);
-                cudaEventDestroy(spmm_end);
-                spmm_ms_avg += spmm_ms;
-	    }
-        }
-	else if((kernel == 0) && (preA_cut == 16) && (preB == 4)){
-	    for(int iter=0; iter<NUM_PROFILES; ++iter){
-	        float spmm_ms = 0.0f;
-	        cudaEvent_t spmm_start;
-	        cudaEvent_t spmm_end;
-	        cudaEventCreate(&spmm_start);
-	        cudaEventCreate(&spmm_end);
-	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_16b4b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_8b4b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -537,25 +504,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                //spmm::wmmaSpmm_8b4v(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
-                spmm::wmmaSpmm_8b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
-	        cudaEventRecord(spmm_end);
-	        cudaEventSynchronize(spmm_end);
-	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
-                cudaEventDestroy(spmm_start);
-                cudaEventDestroy(spmm_end);
-                spmm_ms_avg += spmm_ms;
-	    }
-        }
-	else if((kernel == 0) && (preA_cut == 12) && (preB == 8)){
-	    for(int iter=0; iter<NUM_PROFILES; ++iter){
-	        float spmm_ms = 0.0f;
-	        cudaEvent_t spmm_start;
-	        cudaEvent_t spmm_end;
-	        cudaEventCreate(&spmm_start);
-	        cudaEventCreate(&spmm_end);
-	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_12b8b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_8b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -572,24 +521,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_16b8b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
-	        cudaEventRecord(spmm_end);
-	        cudaEventSynchronize(spmm_end);
-	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
-                cudaEventDestroy(spmm_start);
-                cudaEventDestroy(spmm_end);
-                spmm_ms_avg += spmm_ms;
-	    }
-        }
-	else if((kernel == 0) && (preA_cut == 16) && (preB == 16)){
-	    for(int iter=0; iter<NUM_PROFILES; ++iter){
-	        float spmm_ms = 0.0f;
-	        cudaEvent_t spmm_start;
-	        cudaEvent_t spmm_end;
-	        cudaEventCreate(&spmm_start);
-	        cudaEventCreate(&spmm_end);
-	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_16b(m_vec, vec_length, dimN, dimK, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_16b8b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -712,9 +644,10 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
                 //if (j < 10240) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
                 //printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
                 //if (j > 2048 && j < 3072) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
-		if (output_value_cuda[j] > 0) counter++;
-                if ((output_value_cuda[j] - output_value_host[j]) != 0){
-                    printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
+                if (output_value_cuda[j] > 0) counter++;
+                if ((output_value_cuda[j] - __float2half((float)(output_value_host[j])/1024.0)) != 0.0){
+                    if(j<256)
+                        printf("item %d, expect %f, got %f\n", j, __float2half((float)(output_value_host[j])/1024.0), output_value_cuda[j]);
                     //if (j > 1000000) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                     errors ++;
                 }
@@ -795,33 +728,18 @@ int main(int argc, char **argv){
         int preA = std::atoi(argv[8]);
         int preB = std::atoi(argv[9]);
 
-	if ((preA == 4) && (preB == 4) && (vec_length == 8)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 4) && (preB == 4) && (vec_length == 2)) BmFN<char, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 8) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 8) && (preB == 4) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 8) && (preB == 4) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 12) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 2);
-	else if ((preA == 12) && (preB == 4) && (vec_length == 4)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 1);
-	else if ((preA == 12) && (preB == 4) && (vec_length == 2)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 1);
-	else if ((preA == 16) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 2);
-	else if ((preA == 16) && (preB == 4) && (vec_length == 4)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 16) && (preB == 4) && (vec_length == 2)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 8) && (preB == 8) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 8) && (preB == 8) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 12) && (preB == 8) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 2);
-	else if ((preA == 12) && (preB == 8) && (vec_length == 4)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 1);
-	else if ((preA == 12) && (preB == 8) && (vec_length == 2)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, 16, preA, preB, 1);
-	else if ((preA == 16) && (preB == 8) && (vec_length == 8)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 2);
-	else if ((preA == 16) && (preB == 8) && (vec_length == 4)) BmFN<long long, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	else if ((preA == 16) && (preB == 8) && (vec_length == 2)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
-	//else if ((preA == 16) && (preB == 8) && (vec_length == 8)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 8);
-	//else if ((preA == 16) && (preB == 8) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 4);
-	//else if ((preA == 16) && (preB == 8) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 2);
-	else if ((preA == 16) && (preB == 16) && (vec_length == 8)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 8);
-	else if ((preA == 16) && (preB == 16) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 4);
-	else if ((preA == 16) && (preB == 16) && (vec_length == 2)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 2);
+	if ((preA == 4) && (preB == 4) && (vec_length == 8)) BmFN<int, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 4) && (preB == 4) && (vec_length == 2)) BmFN<char, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 8) && (preB == 4) && (vec_length == 8)) BmFN<long long, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 8) && (preB == 4) && (vec_length == 4)) BmFN<int, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 8) && (preB == 4) && (vec_length == 2)) BmFN<short, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 8) && (preB == 8) && (vec_length == 8)) BmFN<long long, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 8) && (preB == 8) && (vec_length == 4)) BmFN<int, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 8) && (preB == 8) && (vec_length == 2)) BmFN<short, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 16) && (preB == 8) && (vec_length == 8)) BmFN<long long, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 2);
+	else if ((preA == 16) && (preB == 8) && (vec_length == 4)) BmFN<long long, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
+	else if ((preA == 16) && (preB == 8) && (vec_length == 2)) BmFN<int, int, half, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
 	else printf("Unsupported precision and vec_length!\n");
     }
     
