@@ -39,9 +39,10 @@ namespace spmm{
             
             half deq_results[8] = {};
 
-            #pragma unroll
-            for(int i=0; i<8; i++){
-                deq_results[i] = __float2half((float)(output_fragment_[i]) / scale_);
+            if(lane_id_ % 32 < valid_tsize_){
+                for(int i=0; i<8; i++){
+                    deq_results[i] = __float2half((float)(output_fragment_[i]) / scale_);
+                }
             }
 
             int output_off = (lane_id_ % 4) * 2 + (lane_id_ / 32) * 8;
