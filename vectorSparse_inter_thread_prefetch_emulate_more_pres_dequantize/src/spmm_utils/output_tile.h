@@ -93,15 +93,13 @@ namespace spmm{
             output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*2 + 1], half_valid_tsize_, 32);
 
             int *final_output_fragment_ = reinterpret_cast<int *>(output_fragment_);
-            if(lane_id_ % 32 < valid_tsize_){
-                for(int i = 0; i < 4; i++)
-                    final_output_fragment_[i] += (final_output_fragment_[i+4] * 256);
-            }
-
             half deq_results[4] = {};
-            #pragma unroll
-            for(int i=0; i<4; i++){
-                deq_results[i] = __float2half((float)(final_output_fragment_[i]) / scale_);
+
+            if(lane_id_ % 32 < valid_tsize_){
+                for(int i = 0; i < 4; i++){
+                    final_output_fragment_[i] += (final_output_fragment_[i+4] * 256);
+                    deq_results[i] = __float2half((float)(final_output_fragment_[i]) / scale_);
+                }
             }
 
             int output_off = (intra_warp_tid_ % 4) * 2 + (intra_warp_tid_ / half_valid_tsize_) + (lane_id_ / 32) * 8;
@@ -195,9 +193,11 @@ namespace spmm{
         __device__ __forceinline__ void Store(){
 
             half deq_results[16] = {};
-            #pragma unroll
-            for(int i=0; i<16; i++){
-                deq_results[i] = __float2half((float)(output_fragment_[i]) / scale_);
+            
+            if(lane_id_ % 32 < valid_tsize_){
+                for(int i=0; i<16; i++){
+                    deq_results[i] = __float2half((float)(output_fragment_[i]) / scale_);
+                }
             }
 
             int output_off = (lane_id_ % 4) * 4 + (lane_id_ / 32) * 16;
