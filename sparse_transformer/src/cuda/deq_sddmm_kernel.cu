@@ -1,4 +1,3 @@
-#include "../include/wmma_sddmm.cuh"
 #include "sddmm_utils/lhs_tile.h"
 #include "sddmm_utils/rhs_tile.h"
 #include "sddmm_utils/compute_utils.h"
@@ -6,14 +5,18 @@
 #include <cstdint>
 #include <stdio.h>
 #include <mma.h>
+#include <cuda.h>
+#include "cuda_fp16.h"
+#include <torch/extension.h>
+#include <cuda_runtime.h>
+#include <cmath>
+
 
 using namespace nvcuda;
 
 
-namespace sddmm{
-
 template <int Tile_K=64, int Tile_N=64, int VecLength=8>
-__global__ void wmmaSddmm_kernel_4b(int m_vec, int n, int k, 
+__device__ void wmmaSddmm_kernel_4b_(int m_vec, int n, int k, 
     float scale,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
@@ -110,7 +113,7 @@ __global__ void wmmaSddmm_kernel_4b(int m_vec, int n, int k,
 }
 
 template <int Tile_K=64, int Tile_N=64, int VecLength=8>
-__global__ void wmmaSddmm_kernel_8b(int m_vec, int n, int k, 
+__device__ void wmmaSddmm_kernel_8b_(int m_vec, int n, int k, 
     float scale,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
@@ -196,7 +199,7 @@ __global__ void wmmaSddmm_kernel_8b(int m_vec, int n, int k,
 }
 
 template <int Tile_K=64, int Tile_N=64, int VecLength=2>
-__global__ void wmmaSddmm_kernel_16b(int m_vec, int n, int k, 
+__device__ void wmmaSddmm_kernel_16b_(int m_vec, int n, int k, 
     float scale,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
@@ -281,7 +284,7 @@ __global__ void wmmaSddmm_kernel_16b(int m_vec, int n, int k,
 }
 
 template <int Tile_K=32, int Tile_N=64, int VecLength=8>
-__global__ void wmmaSddmm_kernel_16b8v(int m_vec, int n, int k, 
+__device__ void wmmaSddmm_kernel_16b8v_(int m_vec, int n, int k, 
     float scale,
     const int* __restrict__ row_indices,
     const int* __restrict__ row_offsets,
@@ -368,6 +371,107 @@ __global__ void wmmaSddmm_kernel_16b8v(int m_vec, int n, int k,
 }
 
 
+
+template <int Tile_K=64, int Tile_N=64, int VecLength=8>
+__global__ void wmmaSddmm_kernel_4b(int m_vec, int n, int k, 
+    float scale,
+    const int* __restrict__ row_indices,
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const int* __restrict__ lhs_matrix,
+    const int* __restrict__ rhs_matrix,
+    half* __restrict__ output_values){
+
+    wmmaSddmm_kernel_4b_<Tile_K, Tile_N, VecLength>(m_vec, n, k, 
+    scale,
+    row_indices,
+    row_offsets,
+    column_indices,
+    lhs_matrix,
+    rhs_matrix,
+    output_values);
+}
+
+
+template <int Tile_K=64, int Tile_N=64, int VecLength=8>
+__global__ void batched_wmmaSddmm_kernel_4b(int m_vec, int n, int k, 
+    float scale,
+    const int* __restrict__ row_indices,
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const int* __restrict__ lhs_matrix_b,
+    int lhs_stride,
+    const int* __restrict__ rhs_matrix_b,
+    int rhs_stride,
+    half* __restrict__ output_values_b,
+    int output_stride){
+
+    int entry_idx = blockIdx.z;
+    const int* lhs_matrix = lhs_matrix_b + entry_idx * lhs_stride;
+    const int* rhs_matrix = rhs_matrix_b + entry_idx * rhs_stride;
+    half* output_values = output_values_b + entry_idx * output_stride;
+
+    wmmaSddmm_kernel_4b_<Tile_K, Tile_N, VecLength>(m_vec, n, k, 
+    scale,
+    row_indices,
+    row_offsets,
+    column_indices,
+    lhs_matrix,
+    rhs_matrix,
+    output_values);
+}
+
+
+template <int Tile_K=64, int Tile_N=64, int VecLength=8>
+__global__ void wmmaSddmm_kernel_8b(int m_vec, int n, int k, 
+    float scale,
+    const int* __restrict__ row_indices,
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const int* __restrict__ lhs_matrix,
+    const int* __restrict__ rhs_matrix,
+    half* __restrict__ output_values){
+
+    wmmaSddmm_kernel_8b_<Tile_K, Tile_N, VecLength>(m_vec, n, k, 
+    scale,
+    row_indices,
+    row_offsets,
+    column_indices,
+    lhs_matrix,
+    rhs_matrix,
+    output_values);
+}
+
+
+template <int Tile_K=64, int Tile_N=64, int VecLength=8>
+__global__ void batched_wmmaSddmm_kernel_8b(int m_vec, int n, int k, 
+    float scale,
+    const int* __restrict__ row_indices,
+    const int* __restrict__ row_offsets,
+    const int* __restrict__ column_indices,
+    const int* __restrict__ lhs_matrix_b,
+    int lhs_stride,
+    const int* __restrict__ rhs_matrix_b,
+    int rhs_stride,
+    half* __restrict__ output_values_b,
+    int output_stride){
+
+    int entry_idx = blockIdx.z;
+    const int* lhs_matrix = lhs_matrix_b + entry_idx * lhs_stride;
+    const int* rhs_matrix = rhs_matrix_b + entry_idx * rhs_stride;
+    half* output_values = output_values_b + entry_idx * output_stride;
+
+    wmmaSddmm_kernel_8b_<Tile_K, Tile_N, VecLength>(m_vec, n, k, 
+    scale,
+    row_indices,
+    row_offsets,
+    column_indices,
+    lhs_matrix,
+    rhs_matrix,
+    output_values);
+}
+
+
 template <int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t wmmaSddmm_4b_template(
     int m_vec, int n, int k, 
@@ -386,35 +490,156 @@ cudaError_t wmmaSddmm_4b_template(
     return cudaGetLastError();
 }
 
-//4-bit Tile_K = 64 Tile_N = 32 with 4 warps
-cudaError_t wmmaSddmm_4b(int m_vec, int k, int n, 
+
+//4-bit Tile_K = 64 Tile_N = 64 with 8 warps
+torch::Tensor deq_sddmm_mma_4b(
+    torch::Tensor row_indices,
+    torch::Tensor row_offsets,
+    torch::Tensor column_indices,
+    torch::Tensor lhs_matrix,
+    torch::Tensor rhs_matrix,
+    int vec_length,
+    int bits,
+    float scale)
+{
+    //lhs shape {m, k}
+    //rhs shape {n, k}
+
+    int m = lhs_matrix.size(-2);
+    int k = lhs_matrix.size(-1);
+    int n = rhs_matrix.size(-2);
+
+    int m_vec = m / vec_length;
+    int nnz = column_indices.numel();
+
+
+    auto options = torch::TensorOptions().dtype(torch::kFloat16).device(lhs_matrix.device());
+
+    auto output_vals = torch::empty({nnz * vec_length, }, options);
+
+    switch(vec_length){
+        case 2:
+            wmmaSddmm_4b_template<1, 64, 64, 32, 8, 2>(m_vec, n, k, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()));
+        break;
+        case 4:
+            wmmaSddmm_4b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()),
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()));                
+        break;
+        case 8:
+            wmmaSddmm_4b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()), 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()));   
+        break;
+        default:
+            printf("Unsupported Vector Length!\n");
+    }
+
+    return output_vals;
+
+}
+
+
+template <int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
+cudaError_t batched_wmmaSddmm_4b_template(
+    int m_vec, int n, int k, int batch_size,
     float scale,
     const int* __restrict__ row_indices, 
     const int* __restrict__ row_offsets,
     const int* __restrict__ column_indices,
-    const int* __restrict__ lhs_matrix,
-    const int* __restrict__ rhs_matrix,
-    half* __restrict__ output_values,
-    int vec_length)
+    const int* __restrict__ lhs_matrix_b,
+    int lhs_stride,
+    const int* __restrict__ rhs_matrix_b,
+    int rhs_stride,
+    half* __restrict__ output_values_b,
+    int output_stride)
 {
+    dim3 grid_dim(ceil(static_cast<float>(m_vec) / Tile_M), ceil(static_cast<float>(n) / Tile_N), batch_size);
+    dim3 block_dim(WarpWidth * Warps, Tile_M, 1);
+    batched_wmmaSddmm_kernel_4b<Tile_K, Tile_N, VecLength><<<grid_dim, block_dim>>>(
+        m_vec, n, k, scale, row_indices, row_offsets, column_indices, lhs_matrix_b, lhs_stride, rhs_matrix_b, rhs_stride, output_values_b, output_stride);
+    return cudaGetLastError();
+}
+
+//4-bit Tile_K = 64 Tile_N = 64 with 8 warps
+torch::Tensor batched_deq_sddmm_mma_4b(
+    torch::Tensor row_indices,
+    torch::Tensor row_offsets,
+    torch::Tensor column_indices,
+    torch::Tensor lhs_matrix,
+    torch::Tensor rhs_matrix,
+    int vec_length,
+    int bits,
+    float scale)
+{
+    //lhs shape {batch, m, k}
+    //rhs shape {batch, n, k}
+
+    int m = lhs_matrix.size(-2);
+    int k = lhs_matrix.size(-1);
+    int n = rhs_matrix.size(-2);
+    int batch_size = lhs_matrix.numel() / (m * k);
+
+    int m_vec = m / vec_length;
+    int nnz = column_indices.numel();
+
+    int num_items_per_int32 = 32 / bits;
+
+    int lhs_stride = m * k / num_items_per_int32;
+    int rhs_stride = n * k / num_items_per_int32;
+    int output_stride = nnz * vec_length;
+
+    auto options = torch::TensorOptions().dtype(torch::kFloat16).device(lhs_matrix.device());
+
+    auto output_vals = torch::empty({batch_size, nnz * vec_length, }, options);
+
     switch(vec_length){
         case 2:
-            return wmmaSddmm_4b_template<1, 64, 64, 32, 8, 2>(m_vec, n, k, scale, row_indices, 
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            batched_wmmaSddmm_4b_template<1, 64, 64, 32, 8, 2>(m_vec, n, k, batch_size, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                lhs_stride, 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                rhs_stride, 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
+                output_stride);
+        break;
         case 4:
-            return wmmaSddmm_4b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, scale, row_indices, 
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            batched_wmmaSddmm_4b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, batch_size, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                lhs_stride, 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                rhs_stride, 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
+                output_stride);                
+        break;
         case 8:
-            return wmmaSddmm_4b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, scale, row_indices, 
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            batched_wmmaSddmm_4b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, batch_size, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                lhs_stride, 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                rhs_stride, 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
+                output_stride);   
+        break;
         default:
             printf("Unsupported Vector Length!\n");
-            return cudaGetLastError();
     }
+
+    return output_vals;
+
 }
+
 
 template <int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t wmmaSddmm_8b_template(
@@ -434,84 +659,153 @@ cudaError_t wmmaSddmm_8b_template(
     return cudaGetLastError();
 }
 
-cudaError_t wmmaSddmm_8b(int m_vec, int k, int n, 
-    float scale,
-    const int* __restrict__ row_indices, 
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const int* __restrict__ lhs_matrix,
-    const int* __restrict__ rhs_matrix,
-    half* __restrict__ output_values,
-    int vec_length)
+
+//8-bit Tile_K = 64 Tile_N = 64 with 8 warps
+torch::Tensor deq_sddmm_mma_8b(
+    torch::Tensor row_indices,
+    torch::Tensor row_offsets,
+    torch::Tensor column_indices,
+    torch::Tensor lhs_matrix,
+    torch::Tensor rhs_matrix,
+    int vec_length,
+    int bits,
+    float scale)
 {
+    //lhs shape {m, k}
+    //rhs shape {n, k}
+
+    int m = lhs_matrix.size(-2);
+    int k = lhs_matrix.size(-1);
+    int n = rhs_matrix.size(-2);
+
+    int m_vec = m / vec_length;
+    int nnz = column_indices.numel();
+
+
+    auto options = torch::TensorOptions().dtype(torch::kFloat16).device(lhs_matrix.device());
+
+    auto output_vals = torch::empty({nnz * vec_length, }, options);
+
     switch(vec_length){
         case 2:
-            return wmmaSddmm_8b_template<1, 64, 64, 32, 8, 2>(m_vec, n, k, scale, row_indices, 
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            wmmaSddmm_8b_template<1, 64, 64, 32, 8, 2>(m_vec, n, k, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()));
+        break;
         case 4:
-            return wmmaSddmm_8b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, scale, row_indices,
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            wmmaSddmm_8b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()),
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()));                
+        break;
         case 8:
-            return wmmaSddmm_8b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, scale, row_indices,
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            wmmaSddmm_8b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()), 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()));   
+        break;
         default:
             printf("Unsupported Vector Length!\n");
-            return cudaGetLastError();
     }
+
+    return output_vals;
+
 }
 
+
+
 template <int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
-cudaError_t wmmaSddmm_16b_template(
-    int m_vec, int n, int k, int vec_length,
+cudaError_t batched_wmmaSddmm_8b_template(
+    int m_vec, int n, int k, int batch_size,
     float scale,
     const int* __restrict__ row_indices, 
     const int* __restrict__ row_offsets,
     const int* __restrict__ column_indices,
-    const int* __restrict__ lhs_matrix,
-    const int* __restrict__ rhs_matrix,
-    half* __restrict__ output_values)
+    const int* __restrict__ lhs_matrix_b,
+    int lhs_stride,
+    const int* __restrict__ rhs_matrix_b,
+    int rhs_stride,
+    half* __restrict__ output_values_b,
+    int output_stride)
 {
-    dim3 grid_dim(ceil(static_cast<float>(m_vec) / Tile_M), ceil(static_cast<float>(n) / Tile_N), 1);
+    dim3 grid_dim(ceil(static_cast<float>(m_vec) / Tile_M), ceil(static_cast<float>(n) / Tile_N), batch_size);
     dim3 block_dim(WarpWidth * Warps, Tile_M, 1);
-    if(vec_length == 8)
-        wmmaSddmm_kernel_16b8v<Tile_K, Tile_N, VecLength><<<grid_dim, block_dim>>>(
-            m_vec, n, k, scale, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-    else
-        wmmaSddmm_kernel_16b<Tile_K, Tile_N, VecLength><<<grid_dim, block_dim>>>(
-            m_vec, n, k, scale, row_indices, row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
+    batched_wmmaSddmm_kernel_8b<Tile_K, Tile_N, VecLength><<<grid_dim, block_dim>>>(
+        m_vec, n, k, scale, row_indices, row_offsets, column_indices, lhs_matrix_b, lhs_stride, rhs_matrix_b, rhs_stride, output_values_b, output_stride);
     return cudaGetLastError();
 }
 
-cudaError_t wmmaSddmm_16b(int m_vec, int k, int n, 
-    float scale,
-    const int* __restrict__ row_indices, 
-    const int* __restrict__ row_offsets,
-    const int* __restrict__ column_indices,
-    const int* __restrict__ lhs_matrix,
-    const int* __restrict__ rhs_matrix,
-    half* __restrict__ output_values,
-    int vec_length)
+//8-bit Tile_K = 64 Tile_N = 64 with 8 warps
+torch::Tensor batched_deq_sddmm_mma_8b(
+    torch::Tensor row_indices,
+    torch::Tensor row_offsets,
+    torch::Tensor column_indices,
+    torch::Tensor lhs_matrix,
+    torch::Tensor rhs_matrix,
+    int vec_length,
+    int bits,
+    float scale)
 {
+    //lhs shape {batch, m, k}
+    //rhs shape {batch, n, k}
+
+    int m = lhs_matrix.size(-2);
+    int k = lhs_matrix.size(-1);
+    int n = rhs_matrix.size(-2);
+    int batch_size = lhs_matrix.numel() / (m * k);
+
+    int m_vec = m / vec_length;
+    int nnz = column_indices.numel();
+
+    int num_items_per_int32 = 32 / bits;
+
+    int lhs_stride = m * k / num_items_per_int32;
+    int rhs_stride = n * k / num_items_per_int32;
+    int output_stride = nnz * vec_length;
+
+    auto options = torch::TensorOptions().dtype(torch::kFloat16).device(lhs_matrix.device());
+
+    auto output_vals = torch::empty({batch_size, nnz * vec_length, }, options);
+
     switch(vec_length){
         case 2:
-            return wmmaSddmm_16b_template<1, 64, 64, 32, 8, 2>(m_vec, n, k, vec_length, scale, row_indices, 
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            batched_wmmaSddmm_8b_template<1, 64, 64, 32, 8, 2>(m_vec, n, k, batch_size, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                lhs_stride, 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                rhs_stride, 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
+                output_stride);
+        break;
         case 4:
-            return wmmaSddmm_16b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, vec_length, scale, row_indices, 
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            batched_wmmaSddmm_8b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, batch_size, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                lhs_stride, 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                rhs_stride, 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
+                output_stride);                
+        break;
         case 8:
-            return wmmaSddmm_16b_template<1, 32, 64, 32, 8, 8>(m_vec, n, k, vec_length, scale, row_indices, 
-            	   row_offsets, column_indices, lhs_matrix, rhs_matrix, output_values);
-	    break;
+            batched_wmmaSddmm_8b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, batch_size, scale,
+                row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
+                reinterpret_cast<int *>(lhs_matrix.data<int>()), 
+                lhs_stride, 
+                reinterpret_cast<int *>(rhs_matrix.data<int>()),  
+                rhs_stride, 
+                reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
+                output_stride);   
+        break;
         default:
             printf("Unsupported Vector Length!\n");
-            return cudaGetLastError();
     }
-}
+
+    return output_vals;
 
 }
