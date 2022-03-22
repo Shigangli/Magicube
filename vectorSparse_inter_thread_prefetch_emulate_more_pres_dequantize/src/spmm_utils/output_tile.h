@@ -4,6 +4,82 @@
 #include <cuda_fp16.h>
 
 namespace spmm{
+    template <typename LoadType, typename OutType, int Tile_K, int BlockWidth, int VecLength>
+    struct OutputTile{
+
+        //
+        // Static members
+        //
+
+        static constexpr int kValuesPerStore_ = sizeof(LoadType) / sizeof(OutType);
+        static constexpr int kValuesPerLoad = sizeof(LoadType) / sizeof(half);
+        static constexpr int kThreadItemsK_ = Tile_K / BlockWidth / kValuesPerStore_;
+        static constexpr int kScaler_ = sizeof(OutType)/sizeof(half);
+
+        //
+        // Member variables
+        //
+
+        // The register file fragment with the results to store
+        const LoadType* output_fragment_;
+        // The output matrix pointer in global memory
+        LoadType* output_matrix_;
+        // The number of columns in the rhs matrix
+        int rhs_columns_;
+
+        // Constructor
+        __device__ __forceinline__ OutputTile(
+            int m_index_vec, int column_offset,
+            int cols, int thread_idx_x,
+            const float* output_fragment,
+            OutType* output_matrix)
+        {
+            output_fragment_ = reinterpret_cast<const LoadType *>(output_fragment);
+            const int output_offset = m_index_vec * VecLength * cols + column_offset;
+            output_matrix_ = reinterpret_cast<LoadType *>(output_matrix + output_offset) + thread_idx_x * kScaler_;
+            rhs_columns_ = cols / kValuesPerStore_ * kScaler_;
+        }
+
+        // Store
+        __device__ __forceinline__ void Store(){
+            if (kValuesPerLoad == kValuesPerStore_){
+                #pragma unroll
+                for (int v = 0; v < VecLength; v++){
+                    const LoadType * output_fragment_t = output_fragment_ + v * 2 * kThreadItemsK_;
+                    LoadType * output_matrix_t = output_matrix_ + v * rhs_columns_;
+                    #pragma unroll
+                    for (int k_item_idx = 0; k_item_idx < kThreadItemsK_; k_item_idx ++){
+                        float values [kValuesPerStore_];
+                        LoadType * values_loadType = reinterpret_cast<LoadType *>(values);
+                        OutType *values_outType = reinterpret_cast<OutType *>(values);
+                        *(values_loadType) = *(output_fragment_t);
+                        *(values_loadType + 1) = *(output_fragment_t + 1);
+                        #pragma unroll 
+                        for (int dv = 0; dv < kValuesPerStore_; dv ++){
+                            values_outType[dv] = (OutType)values[dv];
+                        }
+                        *(output_matrix_t) = *(values_loadType);
+                        output_fragment_t += 2;
+                        output_matrix_t +=BlockWidth;
+                    }
+                }
+            }
+            else{
+                #pragma unroll
+                for (int v = 0; v < VecLength; v++){
+                    const LoadType * output_fragment_t = output_fragment_ + v * 2 * kThreadItemsK_;
+                    LoadType * output_matrix_t = output_matrix_ + v * rhs_columns_;
+                    #pragma unroll
+                    for (int k_item_idx = 0; k_item_idx < kThreadItemsK_; k_item_idx ++){
+                        *(output_matrix_t) = *(output_fragment_t);
+                        *(output_matrix_t + 1) = *(output_fragment_t + 1);
+                        output_matrix_t +=BlockWidth * 2;
+                        output_fragment_t += 2;
+                    }
+                }
+            }
+        }
+    };
     
     // 4 warps Tile_N = 128 8-bit v=2 4 8
     struct wmmaOutputTile_8b{
