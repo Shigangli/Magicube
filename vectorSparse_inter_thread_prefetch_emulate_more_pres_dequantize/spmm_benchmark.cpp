@@ -470,7 +470,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_4b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_4b(m_vec, vec_length, dimN, dimK, 10000.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -487,7 +487,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_8b4b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_8b4b(m_vec, vec_length, dimN, dimK, 10000.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -504,7 +504,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_8b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_8b(m_vec, vec_length, dimN, dimK, 10000.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -521,7 +521,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	        cudaEventCreate(&spmm_start);
 	        cudaEventCreate(&spmm_end);
 	        cudaEventRecord(spmm_start);
-                spmm::wmmaSpmm_16b8b(m_vec, vec_length, dimN, dimK, 1024.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
+                spmm::wmmaSpmm_16b8b(m_vec, vec_length, dimN, dimK, 10000.0, d_row_indices, d_row_offsets, d_col_indices, d_values, d_rhs_matrix, d_output_value);
 	        cudaEventRecord(spmm_end);
 	        cudaEventSynchronize(spmm_end);
 	        cudaEventElapsedTime(&spmm_ms, spmm_start, spmm_end);
@@ -645,9 +645,9 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
                 //printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
                 //if (j > 2048 && j < 3072) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
                 if (output_value_cuda[j] > 0) counter++;
-                if ((output_value_cuda[j] - __float2half((float)(output_value_host[j])/1024.0)) != 0.0){
+                if ((output_value_cuda[j] - __float2half((float)(output_value_host[j])/10000.0)) != 0.0){
                     if(j<256)
-                        printf("item %d, expect %f, got %f\n", j, __float2half((float)(output_value_host[j])/1024.0), output_value_cuda[j]);
+                        printf("item %d, expect %f, got %f\n", j, __float2half((float)(output_value_host[j])/10000.0), output_value_cuda[j]);
                     //if (j > 1000000) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                     errors ++;
                 }
