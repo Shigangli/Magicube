@@ -173,18 +173,26 @@ def sp_multi_head_attention_forward(
                 key_padding_mask = torch.nn.functional.pad(key_padding_mask, (0, 1))
 
     with nvtx.annotate("QKV quantization"):
+        #print("q shape: ", q.size())
+        #print("k shape: ", k.size())
+        #print("v shape: ", v.size())
         q = bquantization(q, 8, scale_qkv)
         k = bquantization(k, 8, scale_qkv)
         v = bquantization(v, 8, scale_qkv)
+        #print("quantized q shape: ", q.size())
+        #print("quantized k shape: ", k.size())
+        #print("quantized v shape: ", v.size())
     
     # batched matrix multiplication
     with nvtx.annotate("sp QK^T"):
         #attn_output_weights = bsddmm(row_indices, row_offsets, column_indices, q, k, vec_length)
         attn_output_weights = bsddmm_8b(row_indices, row_offsets, column_indices, q, k, vec_length, 8, scale_qkv*scale_qkv)
+        #print("attn_output_weights shape: ", attn_output_weights.size())
     
     with nvtx.annotate("sp Softmax"):
         #attn_output_weights = bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, vec_length, batch_size)
         attn_output_weights = q_bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, scale_sfmx, vec_length, batch_size, 8)
+        #print("attn_output_weights softmax shape: ", attn_output_weights.size())
     
     # Apply dropout
     #with nvtx.annotate("sp dropout"):
@@ -194,6 +202,7 @@ def sp_multi_head_attention_forward(
     with nvtx.annotate("sp AV"):
         #attn_output = bspmm(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length)
         attn_output = bspmm_8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, 8, 8, scale_qkv*scale_sfmx)
+        #print("bspmm output shape: ", attn_output.size())
     
     # transpose the output and concatenate the heads
     with nvtx.annotate("sp Output transpose"):
