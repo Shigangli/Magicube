@@ -47,9 +47,12 @@ class SparseTransformerBlock(nn.Module):
 
         m = int(seq_len / 8)
         n = seq_len
+        mma_k_dim = 16
 
         self.self_attention = spMultiheadAttention(embed_dim=embed_dim, num_heads=num_heads, dropout=0).cuda()
-        self.column_indices, self.row_offsets, self.row_indices = static_random_mask(m, n, sparsity)
+        #self.column_indices, self.row_offsets, self.row_indices = static_random_mask(m, n, sparsity)
+        self.column_indices, self.column_indices_shuffle, self.row_offsets, self.row_indices, self.aligned_num_item = static_random_mask_aligned(m, n, sparsity, mma_k_dim);
+
         self.layer_norm1 = nn.LayerNorm(normalized_shape=embed_dim)
         self.layer_norm2 = nn.LayerNorm(normalized_shape=embed_dim)
         self.linear1 = nn.Linear(embed_dim, mlp_dim)

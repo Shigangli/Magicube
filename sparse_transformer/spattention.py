@@ -2,9 +2,15 @@ import torch
 from typing import Tuple, Optional
 import warnings
 import nvtx
-from sptrans.sddmm import bsddmm
-from sptrans.spmm import bspmm
-from sptrans.softmax import bcsr_softmax
+
+from sptrans.quantization import bquantization
+#from sptrans.sddmm import bsddmm
+#from sptrans.spmm import bspmm
+#from sptrans.softmax import bcsr_softmax
+
+from sptrans.deq_sddmm import bsddmm_8b
+from sptrans.deq_spmm import bspmm_8b
+from sptrans.q_softmax import q_bcsr_softmax
 
 
 def sp_multi_head_attention_forward(
@@ -35,6 +41,9 @@ def sp_multi_head_attention_forward(
     static_k: Optional[torch.Tensor] = None,            # TODO
     static_v: Optional[torch.Tensor] = None,            # TODO
 ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+
+    scale_qkv = 36.0
+    scale_sfmx = 255.0
 
     # Get problem size
     tgt_len, bsz, embed_dim = query.size()
@@ -162,21 +171,29 @@ def sp_multi_head_attention_forward(
             v = torch.cat([v, torch.zeros((v.size(0), 1) + v.size()[2:], dtype=v.dtype, device=v.device)], dim=1)
             if key_padding_mask is not None:
                 key_padding_mask = torch.nn.functional.pad(key_padding_mask, (0, 1))
+
+    with nvtx.annotate("QKV quantization"):
+        q = bquantization(q, 8, scale_qkv)
+        k = bquantization(k, 8, scale_qkv)
+        v = bquantization(v, 8, scale_qkv)
     
     # batched matrix multiplication
     with nvtx.annotate("sp QK^T"):
-        attn_output_weights = bsddmm(row_indices, row_offsets, column_indices, q, k, vec_length)
+        #attn_output_weights = bsddmm(row_indices, row_offsets, column_indices, q, k, vec_length)
+        attn_output_weights = bsddmm_8b(row_indices, row_offsets, column_indices, q, k, vec_length, 8, scale_qkv*scale_qkv)
     
     with nvtx.annotate("sp Softmax"):
-        attn_output_weights = bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, vec_length, batch_size)
+        #attn_output_weights = bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, vec_length, batch_size)
+        attn_output_weights = q_bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, scale_sfmx, vec_length, batch_size, 8)
     
     # Apply dropout
-    with nvtx.annotate("sp dropout"):
-        attn_output_weights = torch.nn.functional.dropout(attn_output_weights, p=dropout_p, training=training)
+    #with nvtx.annotate("sp dropout"):
+    #    attn_output_weights = torch.nn.functional.dropout(attn_output_weights, p=dropout_p, training=training)
     
     # batch multiplication with the value
     with nvtx.annotate("sp AV"):
-        attn_output = bspmm(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length)
+        #attn_output = bspmm(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length)
+        attn_output = bspmm_8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, 8, 8, scale_qkv*scale_sfmx)
     
     # transpose the output and concatenate the heads
     with nvtx.annotate("sp Output transpose"):
