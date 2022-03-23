@@ -505,8 +505,12 @@ torch::Tensor deq_sddmm_mma_4b(
     //lhs shape {m, k}
     //rhs shape {n, k}
 
+    int num_items_per_int32 = 32 / bits;
+    int k_int32 = lhs_matrix.size(-1);
+    int k = k_int32 * num_items_per_int32;
+
     int m = lhs_matrix.size(-2);
-    int k = lhs_matrix.size(-1);
+    //int k = lhs_matrix.size(-1);
     int n = rhs_matrix.size(-2);
 
     int m_vec = m / vec_length;
@@ -584,17 +588,22 @@ torch::Tensor batched_deq_sddmm_mma_4b(
     //rhs shape {batch, n, k}
 
     int m = lhs_matrix.size(-2);
-    int k = lhs_matrix.size(-1);
+
+    int num_items_per_int32 = 32 / bits;
+    int k_int32 = lhs_matrix.size(-1);
+    int k = k_int32 * num_items_per_int32;
+
     int n = rhs_matrix.size(-2);
-    int batch_size = lhs_matrix.numel() / (m * k);
+
+    //int batch_size = lhs_matrix.numel() / (m * k);
+    int batch_size = lhs_matrix.size(-3);
 
     int m_vec = m / vec_length;
     int nnz = column_indices.numel();
 
-    int num_items_per_int32 = 32 / bits;
 
-    int lhs_stride = m * k / num_items_per_int32;
-    int rhs_stride = n * k / num_items_per_int32;
+    int lhs_stride = m * k_int32;
+    int rhs_stride = n * k_int32;
     int output_stride = nnz * vec_length;
 
     auto options = torch::TensorOptions().dtype(torch::kFloat16).device(lhs_matrix.device());
@@ -673,9 +682,12 @@ torch::Tensor deq_sddmm_mma_8b(
 {
     //lhs shape {m, k}
     //rhs shape {n, k}
+    int num_items_per_int32 = 32 / bits;
+    int k_int32 = lhs_matrix.size(-1);
+    int k = k_int32 * num_items_per_int32;
 
     int m = lhs_matrix.size(-2);
-    int k = lhs_matrix.size(-1);
+    //int k = lhs_matrix.size(-1);
     int n = rhs_matrix.size(-2);
 
     int m_vec = m / vec_length;
@@ -750,9 +762,12 @@ torch::Tensor batched_deq_sddmm_mma_8b(
 {
     //lhs shape {batch, m, k}
     //rhs shape {batch, n, k}
+    int num_items_per_int32 = 32 / bits;
+    int k_int32 = lhs_matrix.size(-1);
+    int k = k_int32 * num_items_per_int32;
 
     int m = lhs_matrix.size(-2);
-    int k = lhs_matrix.size(-1);
+    //int k = lhs_matrix.size(-1);
     int n = rhs_matrix.size(-2);
     //int batch_size = lhs_matrix.numel() / (m * k);
     int batch_size = rhs_matrix.size(-3);
@@ -762,8 +777,8 @@ torch::Tensor batched_deq_sddmm_mma_8b(
 
     int num_items_per_int32 = 32 / bits;
 
-    int lhs_stride = m * k / num_items_per_int32;
-    int rhs_stride = n * k / num_items_per_int32;
+    int lhs_stride = m * k_int32;
+    int rhs_stride = n * k_int32;
     int output_stride = nnz * vec_length;
 
     auto options = torch::TensorOptions().dtype(torch::kFloat16).device(lhs_matrix.device());
