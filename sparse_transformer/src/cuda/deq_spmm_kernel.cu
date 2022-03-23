@@ -1069,9 +1069,10 @@ torch::Tensor batched_deq_spmm_mma_16b8b(
 
     int m_vec = row_offsets.size(-1)/2;
     int m = m_vec * vec_length;
-    int n = rhs_matrix.size(-1);
 
-    int n_int32 = n/rhs_num_items_per_int32;
+    int n_int32 = rhs_matrix.size(-1);
+
+    int n = n_int32 * rhs_num_items_per_int32;
 
     int k = rhs_matrix.size(-2);
 
@@ -1147,9 +1148,10 @@ torch::Tensor batched_deq_spmm_mma_4b(
 
     int m_vec = row_offsets.size(-1)/2;
     int m = m_vec * vec_length;
-    int n = rhs_matrix.size(-1);
 
-    int n_int32 = n/rhs_num_items_per_int32;
+    int n_int32 = rhs_matrix.size(-1);
+
+    int n = n_int32 * rhs_num_items_per_int32;
 
     int k = rhs_matrix.size(-2);
 
@@ -1223,9 +1225,10 @@ torch::Tensor batched_deq_spmm_mma_8b4b(
 
     int m_vec = row_offsets.size(-1)/2;
     int m = m_vec * vec_length;
-    int n = rhs_matrix.size(-1);
 
-    int n_int32 = n/rhs_num_items_per_int32;
+    int n_int32 = rhs_matrix.size(-1);
+
+    int n = n_int32 * rhs_num_items_per_int32;
 
     int k = rhs_matrix.size(-2);
 
@@ -1297,9 +1300,10 @@ torch::Tensor batched_deq_spmm_mma_8b(
 
     int m_vec = row_offsets.size(-1)/2;
     int m = m_vec * vec_length;
-    int n = rhs_matrix.size(-1);
 
-    int n_int32 = n/rhs_num_items_per_int32;
+    int n_int32 = rhs_matrix.size(-1);
+
+    int n = n_int32 * rhs_num_items_per_int32;
 
     int k = rhs_matrix.size(-2);
 
