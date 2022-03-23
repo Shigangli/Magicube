@@ -528,21 +528,21 @@ torch::Tensor deq_sddmm_mma_4b(
                 reinterpret_cast<int *>(lhs_matrix.data<int>()), 
                 reinterpret_cast<int *>(rhs_matrix.data<int>()),  
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()));
-        break;
+            break;
         case 4:
             wmmaSddmm_4b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(lhs_matrix.data<int>()),
                 reinterpret_cast<int *>(rhs_matrix.data<int>()),
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()));                
-        break;
+            break;
         case 8:
             wmmaSddmm_4b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(lhs_matrix.data<int>()), 
                 reinterpret_cast<int *>(rhs_matrix.data<int>()), 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()));   
-        break;
+            break;
         default:
             printf("Unsupported Vector Length!\n");
     }
@@ -620,7 +620,7 @@ torch::Tensor batched_deq_sddmm_mma_4b(
                 rhs_stride, 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
                 output_stride);
-        break;
+            break;
         case 4:
             batched_wmmaSddmm_4b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
@@ -630,7 +630,7 @@ torch::Tensor batched_deq_sddmm_mma_4b(
                 rhs_stride, 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
                 output_stride);                
-        break;
+            break;
         case 8:
             batched_wmmaSddmm_4b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
@@ -640,7 +640,7 @@ torch::Tensor batched_deq_sddmm_mma_4b(
                 rhs_stride, 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
                 output_stride);   
-        break;
+            break;
         default:
             printf("Unsupported Vector Length!\n");
     }
@@ -705,21 +705,21 @@ torch::Tensor deq_sddmm_mma_8b(
                 reinterpret_cast<int *>(lhs_matrix.data<int>()), 
                 reinterpret_cast<int *>(rhs_matrix.data<int>()),  
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()));
-        break;
+            break;
         case 4:
             wmmaSddmm_8b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(lhs_matrix.data<int>()),
                 reinterpret_cast<int *>(rhs_matrix.data<int>()),
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()));                
-        break;
+            break;
         case 8:
             wmmaSddmm_8b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(lhs_matrix.data<int>()), 
                 reinterpret_cast<int *>(rhs_matrix.data<int>()), 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()));   
-        break;
+            break;
         default:
             printf("Unsupported Vector Length!\n");
     }
@@ -795,7 +795,7 @@ torch::Tensor batched_deq_sddmm_mma_8b(
                 rhs_stride, 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
                 output_stride);
-        break;
+            break;
         case 4:
             batched_wmmaSddmm_8b_template<1, 64, 64, 32, 8, 4>(m_vec, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
@@ -805,7 +805,7 @@ torch::Tensor batched_deq_sddmm_mma_8b(
                 rhs_stride, 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
                 output_stride);                
-        break;
+            break;
         case 8:
             batched_wmmaSddmm_8b_template<1, 64, 64, 32, 8, 8>(m_vec, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
@@ -815,7 +815,7 @@ torch::Tensor batched_deq_sddmm_mma_8b(
                 rhs_stride, 
                 reinterpret_cast<half *>(output_vals.data<torch::Half>()), 
                 output_stride);   
-        break;
+            break;
         default:
             printf("Unsupported Vector Length!\n");
     }
