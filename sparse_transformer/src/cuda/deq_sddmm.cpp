@@ -93,8 +93,8 @@ torch::Tensor bsddmm_8b(
 }
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m){
-    m.def("sddmm_4b", &sddmm_4b, "Custom SDDMM kernel with 4-bit outputs");
-    m.def("sddmm_8b", &sddmm_8b, "Custom SDDMM kernel with 8-bit outputs");
-    m.def("bsddmm_4b", &bsddmm_4b, "Custom batched SDDMM kernel with 4-bit outputs");
-    m.def("bsddmm_8b", &bsddmm_8b, "Custom batched SDDMM kernel with 8-bit outputs");
+    m.def("sddmm_4b", &sddmm_4b, "Custom SDDMM kernel with 4-bit inputs");
+    m.def("sddmm_8b", &sddmm_8b, "Custom SDDMM kernel with 8-bit inputs");
+    m.def("bsddmm_4b", &bsddmm_4b, "Custom batched SDDMM kernel with 4-bit inputs");
+    m.def("bsddmm_8b", &bsddmm_8b, "Custom batched SDDMM kernel with 8-bit inputs");
 }
