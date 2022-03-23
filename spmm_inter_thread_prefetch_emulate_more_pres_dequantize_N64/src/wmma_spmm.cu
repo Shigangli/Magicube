@@ -11,7 +11,7 @@ using namespace nvcuda;
 namespace spmm{
 
 
-//4-bit Tile_N = 128 with 2 warps
+//4-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_4b(
@@ -56,7 +56,7 @@ __global__ void wmmaSpmm_kernel_4b(
         values_tile, column_indices_tile
     );
 
-    __align__(16) int rhs_prefetch[8] = {};
+    __align__(16) int rhs_prefetch[4] = {};
     // Initialize the pointers to the dense rhs matrix
     wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
         dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
@@ -103,7 +103,7 @@ __global__ void wmmaSpmm_kernel_4b(
     output_tile_storer.Store();
 }
 
-//8-bit Tile_N = 128 with 4 warps
+//8-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_8b(
@@ -134,7 +134,7 @@ __global__ void wmmaSpmm_kernel_8b(
 
     // One int32 has four 8-bit integers
     // Padding to avoid bank conflict 
-    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*7];
+    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*3];
 
     // Pointers to the shared memory tiles
     int* values_tile = values_tile_array;
@@ -195,7 +195,7 @@ __global__ void wmmaSpmm_kernel_8b(
     output_tile_storer.Store();
 }
 
-//16-bit 8-bit Tile_N = 128 with 4 warps
+//16-bit 8-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_16b8b(
@@ -226,7 +226,7 @@ __global__ void wmmaSpmm_kernel_16b8b(
 
     // One int32 has four 8-bit integers
     // Padding to avoid bank conflict 
-    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*7];
+    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*3];
 
     // Pointers to the shared memory tiles
     int* values_tile = values_tile_array;
@@ -288,7 +288,7 @@ __global__ void wmmaSpmm_kernel_16b8b(
 }
 
 
-//16-bit 8-bit Tile_N = 128 with 4 warps 8v
+//16-bit 8-bit Tile_N = 64 with 2 warps 8v
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_16b8b8v(
@@ -319,7 +319,7 @@ __global__ void wmmaSpmm_kernel_16b8b8v(
 
     // One int32 has four 8-bit integers
     // Padding to avoid bank conflict 
-    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*7];
+    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*3];
 
     // Pointers to the shared memory tiles
     int* values_tile = values_tile_array;
@@ -381,7 +381,7 @@ __global__ void wmmaSpmm_kernel_16b8b8v(
     output_tile_storer.Store();
 }
 
-//8-bit A 4-bit B Tile_N = 128 warps = 2
+//8-bit A 4-bit B Tile_N = 64 warps = 2
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_8b4b(
@@ -471,7 +471,7 @@ __global__ void wmmaSpmm_kernel_8b4b(
 }
 
 
-//8-bit A 4-bit B Tile_N = 128 warps = 2, 8v
+//8-bit A 4-bit B Tile_N = 64 warps = 2, 8v
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_8b4b8v(
@@ -580,7 +580,7 @@ cudaError_t wmmaSpmm_4b_template(
     return cudaGetLastError();
 }
 
-//4-bit Tile_N = 128 with 2 warps
+//4-bit Tile_N = 64 with 2 warps
 cudaError_t wmmaSpmm_4b(int m_vec, int vec_length, int n, int k, float scale,
     const int* __restrict__ row_indices, 
     const int* __restrict__ row_offsets,
@@ -591,15 +591,15 @@ cudaError_t wmmaSpmm_4b(int m_vec, int vec_length, int n, int k, float scale,
 {
     switch(vec_length){
         case 2:
-            return wmmaSpmm_4b_template<int, char, 1, 32, 128, 32, 2, 2>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_4b_template<int, char, 1, 32, 64, 32, 2, 2>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const char *>(values), rhs_matrix, output_matrix);
             break;
         case 4:
-            return wmmaSpmm_4b_template<int, short, 1, 32, 128, 32, 2, 4>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_4b_template<int, short, 1, 32, 64, 32, 2, 4>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const short *>(values), rhs_matrix, output_matrix);
             break;
         case 8:
-            return wmmaSpmm_4b_template<int, int, 1, 32, 128, 32, 2, 8>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_4b_template<int, int, 1, 32, 64, 32, 2, 8>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, values, rhs_matrix, output_matrix);
             break;
         default:
@@ -626,7 +626,7 @@ cudaError_t wmmaSpmm_8b_template(
     return cudaGetLastError();
 }
 
-//8-bit Tile_N = 128 with 4 warps
+//8-bit Tile_N = 64 with 2 warps
 cudaError_t wmmaSpmm_8b(int m_vec, int vec_length, int n, int k, float scale,
     const int* __restrict__ row_indices, 
     const int* __restrict__ row_offsets,
@@ -637,15 +637,15 @@ cudaError_t wmmaSpmm_8b(int m_vec, int vec_length, int n, int k, float scale,
 {
     switch(vec_length){
         case 2:
-            return wmmaSpmm_8b_template<int, short, 1, 16, 128, 32, 4, 2>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_8b_template<int, short, 1, 16, 64, 32, 2, 2>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const short *>(values), rhs_matrix, output_matrix);
             break;
         case 4:
-            return wmmaSpmm_8b_template<int, int, 1, 16, 128, 32, 4, 4>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_8b_template<int, int, 1, 16, 64, 32, 2, 4>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, values, rhs_matrix, output_matrix);
             break;
         case 8:
-            return wmmaSpmm_8b_template<int, long long, 1, 16, 128, 32, 4, 8>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_8b_template<int, long long, 1, 16, 64, 32, 2, 8>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const long long *>(values), rhs_matrix, output_matrix);
             break;
         default:
@@ -656,7 +656,7 @@ cudaError_t wmmaSpmm_8b(int m_vec, int vec_length, int n, int k, float scale,
 
 
 
-//8-bit 4-bit Tile_N = 128 with 2 warps
+//8-bit 4-bit Tile_N = 64 with 2 warps
 template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t wmmaSpmm_8b4b_template(
     int m_vec, int vec_length, int n, int k, float scale,
@@ -688,15 +688,15 @@ cudaError_t wmmaSpmm_8b4b(int m_vec, int vec_length, int n, int k, float scale,
 {
     switch(vec_length){
         case 2:
-            return wmmaSpmm_8b4b_template<int, short, 1, 32, 128, 32, 2, 2>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_8b4b_template<int, short, 1, 32, 64, 32, 2, 2>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const short *>(values), rhs_matrix, output_matrix);
             break;
         case 4:
-            return wmmaSpmm_8b4b_template<int, int, 1, 32, 128, 32, 2, 4>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_8b4b_template<int, int, 1, 32, 64, 32, 2, 4>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, values, rhs_matrix, output_matrix);
             break;
         case 8:
-            return wmmaSpmm_8b4b_template<int, long long, 1, 32, 128, 32, 2, 8>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_8b4b_template<int, long long, 1, 32, 64, 32, 2, 8>(m_vec, vec_length, n, k, scale, row_indices, 
                 row_offsets, column_indices, reinterpret_cast<const long long *>(values), rhs_matrix, output_matrix);
             break;
         default:
@@ -705,7 +705,7 @@ cudaError_t wmmaSpmm_8b4b(int m_vec, int vec_length, int n, int k, float scale,
     }
 }
 
-//16-bit 8-bit Tile_N = 128 with 4 warps
+//16-bit 8-bit Tile_N = 64 with 2 warps
 template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t wmmaSpmm_16b8b_template(
     int m_vec, int vec_length, int n, int k, float scale,
@@ -737,15 +737,15 @@ cudaError_t wmmaSpmm_16b8b(int m_vec, int vec_length, int n, int k, float scale,
 {
     switch(vec_length){
         case 2:
-            return wmmaSpmm_16b8b_template<int, int, 1, 16, 128, 32, 4, 2>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_16b8b_template<int, int, 1, 16, 64, 32, 2, 2>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const int *>(values), rhs_matrix, output_matrix);
             break;
         case 4:
-            return wmmaSpmm_16b8b_template<int, long long, 1, 16, 128, 32, 4, 4>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_16b8b_template<int, long long, 1, 16, 64, 32, 2, 4>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const long long *>(values), rhs_matrix, output_matrix);
             break;
         case 8:
-            return wmmaSpmm_16b8b_template<int, long long, 1, 16, 128, 32, 4, 8>(m_vec, vec_length, n, k, scale, row_indices, 
+            return wmmaSpmm_16b8b_template<int, long long, 1, 16, 64, 32, 2, 8>(m_vec, vec_length, n, k, scale, row_indices, 
         		    row_offsets, column_indices, reinterpret_cast<const long long *>(values), rhs_matrix, output_matrix);
             break;
         default:

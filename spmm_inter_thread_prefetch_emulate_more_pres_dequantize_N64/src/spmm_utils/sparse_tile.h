@@ -1207,8 +1207,8 @@ namespace spmm{
             lane_id_(lane_id),
             values_(reinterpret_cast<const int *>(values + row_offset_vec * 2) + lane_id), //scaleA = 2
             values_tile_base_(reinterpret_cast<int *>(values_tile) + lane_id),
-            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + lane_id - ValuesBlockWidth),
-            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + lane_id - ValuesBlockWidth){}
+            column_idxs_(reinterpret_cast<const int *>(column_idxs + row_offset_vec) + lane_id),
+            column_idxs_tile_base_(reinterpret_cast<int *>(column_idxs_tile) + lane_id){}
         
         // Load
         __device__ __forceinline__ void Load(int step){
@@ -1217,7 +1217,7 @@ namespace spmm{
 
 	    if(lane_id_ < ValuesBlockWidth)
                 *(values_tile) = __ldg(values_);
-	    else if((lane_id_ - ValuesBlockWidth) < BlockWidth)
+	    if(lane_id_ < BlockWidth)
                 *(column_idxs_tile) = __ldg(column_idxs_);
             values_ += ValuesBlockWidth;
             column_idxs_ += BlockWidth;
@@ -1230,7 +1230,7 @@ namespace spmm{
 
 	    if(lane_id_ < ValuesBlockWidth)
                 *(values_tile) = __ldg(values_);
-	    else if((lane_id_ - ValuesBlockWidth) < BlockWidth)
+	    if(lane_id_ < BlockWidth)
                 *(column_idxs_tile) = __ldg(column_idxs_);
             asm(""); // without this, it is said that the loop cannot be unrolled.
         }
