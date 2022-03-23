@@ -1,7 +1,6 @@
 #ifndef MEMORY_ALIGNER_H
 #define MEMORY_ALIGNER_H
 
-namespace spmm{
 template <typename LoadType, int BlockWidth, int VecLength>
 struct MemoryAligner{
     // the number of values we need to align the pointers to
@@ -58,6 +57,5 @@ struct MemoryAligner{
     
 };
 
-}
 
 #endif

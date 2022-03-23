@@ -17,7 +17,7 @@ torch::Tensor q_csr_softmax(
     float sqrt_dk,
     float scale,
     int vec_length,
-    int bits);
+    int bits)
 {
     return q_csr_softmax_cuda(row_indices, row_offsets, values, sqrt_dk, scale, vec_length, bits);
 }

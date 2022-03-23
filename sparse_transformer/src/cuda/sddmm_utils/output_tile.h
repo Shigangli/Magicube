@@ -1,5 +1,4 @@
 #include <cuda_fp16.h>
-namespace sddmm{
     template<int VecLength>
     struct wmmaOutputTile_4b{
         //
@@ -196,4 +195,3 @@ namespace sddmm{
 	    }
         }
     };
-}

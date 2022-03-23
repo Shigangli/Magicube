@@ -1,4 +1,3 @@
-namespace sddmm{
     template <int ValuesBlockWidth, int Blocks>
     struct wmmaComputeUtils_4b{
 
@@ -327,4 +326,3 @@ namespace sddmm{
 	//    printf("Residue not supported\n");
         //}
     };
-}

@@ -3,7 +3,6 @@
 
 #include <cstdint>
 
-namespace spmm{
 
 __device__ constexpr uint32_t StaticPow(uint32_t base, uint32_t exponent) {
   return exponent == 0 ? 1 : base * StaticPow(base, exponent - 1);
@@ -30,5 +29,4 @@ struct Barrier{
         }
     }
 };
-}
 #endif

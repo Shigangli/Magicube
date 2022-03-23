@@ -3,7 +3,6 @@
 
 #include <cuda_fp16.h>
 
-namespace spmm{
     template <typename LoadType, typename OutType, int Tile_K, int BlockWidth, int VecLength>
     struct OutputTile{
 
@@ -396,6 +395,5 @@ namespace spmm{
         }
     };
 
-}
 
 #endif

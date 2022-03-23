@@ -14,7 +14,6 @@
 
 using namespace nvcuda;
 
-namespace sddmm{
 
 template <int Tile_K=64, int Tile_N=64, int VecLength=8>
 __device__ void wmmaSddmm_kernel_4b_(int m_vec, int n, int k, 
@@ -559,7 +558,6 @@ cudaError_t batched_wmmaSddmm_8b_template(
 }
 
 
-}
 
 
 
@@ -589,7 +587,6 @@ torch::Tensor batched_deq_sddmm_mma_8b(
     int m_vec = m / vec_length;
     int nnz = column_indices.numel();
 
-    int num_items_per_int32 = 32 / bits;
 
     int lhs_stride = m * k_int32;
     int rhs_stride = n * k_int32;

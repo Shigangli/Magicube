@@ -1,4 +1,3 @@
-namespace sddmm {
     template <int Tile_K, int MMA_Dim_K_int, int Blocks>
     struct wmma_rhs_4b{
 
@@ -106,4 +105,3 @@ namespace sddmm {
 	//    printf("Residue not supported\n");
         //}
     };
-}

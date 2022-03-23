@@ -1,7 +1,6 @@
 #ifndef SPMM_COMPUTE_UTILS_H
 #define SPMM_COMPUTE_UTILS_H
 
-namespace spmm{
     template <typename VecType, int Tile_K, int Tile_N, int BlockWidth, int VecLength>
     struct ComputeUtils {
 
@@ -3265,6 +3264,5 @@ namespace spmm{
             }
         }
     };
-}
 
 #endif

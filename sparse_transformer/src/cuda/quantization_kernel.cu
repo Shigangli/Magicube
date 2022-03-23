@@ -18,7 +18,7 @@ __device__ void quantizationKernel_4b_(
 {
 
     int offset = 32 * 8 * blockIdx.x + threadIdx.x * 8;
-    int4 *input_matrix_ = reinterpret_cast<int4 *>(input_matrix + offset);
+    const int4 *input_matrix_ = reinterpret_cast<const int4 *>(input_matrix + offset);
     int4 input_buffer = __ldg(input_matrix_);
 
     int quantized_vec = 0;
@@ -29,7 +29,7 @@ __device__ void quantizationKernel_4b_(
     int mask = 15;
     #pragma unroll
     for (int i = 0; i < 8; i++){
-        tempf = inputs[i]*scale;
+        tempf = __half2float(inputs[i])*scale;
         if(tempf < -8.0)
             tempf = -8.0;
         if(tempf > 7.0)
@@ -51,7 +51,7 @@ __device__ void quantizationKernel_8b_(
 {
 
     int offset = 32 * 8 * blockIdx.x + threadIdx.x * 8;
-    int4 *input_matrix_ = reinterpret_cast<int4 *>(input_matrix + offset);
+    const int4 *input_matrix_ = reinterpret_cast<const int4 *>(input_matrix + offset);
     int4 input_buffer = __ldg(input_matrix_);
 
     char quantized_vec[8] = {};
@@ -61,7 +61,7 @@ __device__ void quantizationKernel_8b_(
 
     #pragma unroll
     for (int i = 0; i < 8; i++){
-        tempf = inputs[i]*scale;
+        tempf = __half2float(inputs[i])*scale;
         if(tempf < -128.0)
             tempf = -128.0;
         if(tempf > 127.0)

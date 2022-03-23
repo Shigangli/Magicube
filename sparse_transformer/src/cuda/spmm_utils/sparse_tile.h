@@ -4,7 +4,6 @@
 #include <cuda_fp16.h>
 #include <cuda_runtime.h>
 
-namespace spmm{
     __device__ __forceinline__ void Mul(int x1, int2 x2, int2 *out) {
         out[0].x = x1 * x2.x;
         out[0].y = x1 * x2.y;
@@ -1293,5 +1292,4 @@ namespace spmm{
     //        asm(""); // without this, it is said that the loop cannot be unrolled.
     //    }
     //};
-}
 #endif

@@ -3,7 +3,6 @@
 
 #include <cuda_fp16.h>
 
-namespace spmm {
     template <typename LoadType, typename VecType, int Tile_K, int Tile_N, int BlockWidth, int VecLength>
     struct DenseTile {
         //
@@ -725,6 +724,5 @@ namespace spmm {
     //        }
     //    }
     //};
-}
 
 #endif

@@ -1,4 +1,3 @@
-namespace sddmm {
     template <int BlockWidth, int Tile_K_int, int WarpBlockWidth, int MMA_Dim_K_int>
     struct wmma_lhs_4b{
         const int dim_k_;
@@ -117,4 +116,3 @@ namespace sddmm {
 	    }
         }
     };
-}

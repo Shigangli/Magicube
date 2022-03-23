@@ -13,7 +13,6 @@
 
 using namespace nvcuda;
 
-namespace spmm{
 
 //4-bit Tile_N = 128 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
@@ -1054,7 +1053,6 @@ cudaError_t batched_wmmaSpmm_16b8b_template(
     return cudaGetLastError();
 }
 
-}
 
 torch::Tensor batched_deq_spmm_mma_16b8b(
     torch::Tensor row_indices,
