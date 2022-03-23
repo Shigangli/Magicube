@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(description='Sparse Multihead Attention')
 parser.add_argument('--vocab_size', type=int, default=257, help='The number of vocabularies in the dataset')
 parser.add_argument('--num_class', type=int, default=2, help='Number of classes in the model')
 parser.add_argument('--mlp_dim', type=int, default=1024, help='The embedding dimension. We have head_dim * num_heads = embed_dim')
-parser.add_argument('--embed_dim', type=int, default=256, help='the key and value dimension')
+parser.add_argument('--embed_dim', type=int, default=512, help='the key and value dimension')
 parser.add_argument('--num_heads', type=int, default=4, help='The number of attention heads')
 # Hyper-parameter of the input size
 parser.add_argument('--bs', type=int, default=2, help='batch size')
@@ -196,7 +196,7 @@ def sparse_profile():
         out = spTrans(x)
     else:
         # warm up
-        for i in range(10):
+        for i in range(2):
             out = spTrans(x)
 
         start_time = time.time()
