@@ -716,8 +716,6 @@ torch::Tensor deq_sddmm_mma_8b(
 
 }
 
-
-
 template <int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t batched_wmmaSddmm_8b_template(
     int m_vec, int n, int k, int batch_size,
@@ -756,7 +754,8 @@ torch::Tensor batched_deq_sddmm_mma_8b(
     int m = lhs_matrix.size(-2);
     int k = lhs_matrix.size(-1);
     int n = rhs_matrix.size(-2);
-    int batch_size = lhs_matrix.numel() / (m * k);
+    //int batch_size = lhs_matrix.numel() / (m * k);
+    int batch_size = rhs_matrix.size(-3);
 
     int m_vec = m / vec_length;
     int nnz = column_indices.numel();
