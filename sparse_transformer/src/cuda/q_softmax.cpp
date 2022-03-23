@@ -1,6 +1,6 @@
 #include <torch/extension.h>
 
-torch::Tensor q_csr_softmax_cuda(
+torch::Tensor csr_softmax_cuda(
     torch::Tensor row_indices,
     torch::Tensor row_offsets,
     torch::Tensor values,
@@ -19,11 +19,11 @@ torch::Tensor q_csr_softmax(
     int vec_length,
     int bits)
 {
-    return q_csr_softmax_cuda(row_indices, row_offsets, values, sqrt_dk, scale, vec_length, bits);
+    return csr_softmax_cuda(row_indices, row_offsets, values, sqrt_dk, scale, vec_length, bits);
 }
 
 
-torch::Tensor q_batched_csr_softmax_cuda(
+torch::Tensor batched_csr_softmax_cuda(
     torch::Tensor row_indices,
     torch::Tensor row_offsets,
     torch::Tensor values,
@@ -44,7 +44,7 @@ torch::Tensor q_batched_csr_softmax(
     int batch_size,
     int bits)
 {
-    return q_batched_csr_softmax_cuda(row_indices, row_offsets, values, sqrt_dk, scale, vec_length, batch_size, bits);
+    return batched_csr_softmax_cuda(row_indices, row_offsets, values, sqrt_dk, scale, vec_length, batch_size, bits);
 }
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m){
