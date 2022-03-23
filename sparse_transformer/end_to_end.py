@@ -8,7 +8,8 @@ import nvtx
 from torch.nn.modules import dropout
 from attention import MultiheadAttention as MultiheadAttention_
 from spattention import spMultiheadAttention
-from verify.static_mask import static_random_mask
+#from verify.static_mask import static_random_mask
+from verify.static_mask import static_random_mask_aligned
 from torch.cuda.amp import autocast
 from cudaprofile import start, stop
 from pytorch_memlab import LineProfiler, profile
