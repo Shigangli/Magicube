@@ -1510,14 +1510,14 @@
         // Compute
         __device__ __forceinline__ void TileMAC(int step){
             int lhs_fragment[1];
-            int rhs_fragment[8];
-            int rhs_fragment_transpose[8];
+            short rhs_fragment[8];
+            short rhs_fragment_transpose[8];
 	    int chunk_id = lane_id_ % 4;
-	    int base_offset = chunk_id * 136 + lane_id_ / 4;
+	    int base_offset = chunk_id * 144 + lane_id_ / 4;
 
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        rhs_fragment[i] = *(dense_tile_ + base_offset + i*16); 
+	        rhs_fragment[i] = *(reinterpret_cast<const short *>(dense_tile_) + base_offset + i*16); 
 	    }
 
             unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
@@ -1536,8 +1536,8 @@
 
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        for(int j=0; j<4; j++){
-	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
+	        for(int j=0; j<2; j++){
+	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*2);
 	        }
 	    }
 
@@ -1550,79 +1550,89 @@
 	    rhs_fragment_uint[1] = ((rhs_fragment_transpose_uint[0] & mask0) >> 4) | (rhs_fragment_transpose_uint[1] & mask0);
 	    rhs_fragment_uint[2] = (rhs_fragment_transpose_uint[2] & mask1) | ((rhs_fragment_transpose_uint[3] & mask1) << 4);
 	    rhs_fragment_uint[3] = ((rhs_fragment_transpose_uint[2] & mask0) >> 4) | (rhs_fragment_transpose_uint[3] & mask0);
-	    rhs_fragment_uint[4] = (rhs_fragment_transpose_uint[4] & mask1) | ((rhs_fragment_transpose_uint[5] & mask1) << 4);
-	    rhs_fragment_uint[5] = ((rhs_fragment_transpose_uint[4] & mask0) >> 4) | (rhs_fragment_transpose_uint[5] & mask0);
-	    rhs_fragment_uint[6] = (rhs_fragment_transpose_uint[6] & mask1) | ((rhs_fragment_transpose_uint[7] & mask1) << 4);
-	    rhs_fragment_uint[7] = ((rhs_fragment_transpose_uint[6] & mask0) >> 4) | (rhs_fragment_transpose_uint[7] & mask0);
 
             if(lane_id_ % 32 < ValuesBlockWidth)
 	        lhs_fragment[0] = lhs_tile_[lane_id_ % ValuesBlockWidth + (step % 2) * ValuesBlockWidth];
 	    else
 		lhs_fragment[0] = 0;
+
+            int *rhs_fragment_int = reinterpret_cast<int *>(rhs_fragment); 
             #pragma unroll
-            for (int i = 0; i < 8; i ++){
+            for (int i = 0; i < 4; i ++){
                 asm("mma.sync.aligned.m8n8k32.row.col.satfinite.s32.u4.u4.s32 \t"
                     "{%0, %1}, \t"
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[8 + i]):
+                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[4 + i]):
                     "r"(lhs_fragment[0]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_int[i])
                 );
             }
         }
 
         __device__ __forceinline__ void TileMACResidue(){
             int lhs_fragment[1];
-            int rhs_fragment[8];
-            int rhs_fragment_transpose[8];
+            short rhs_fragment[8];
+            short rhs_fragment_transpose[8];
 	    int chunk_id = lane_id_ % 4;
-	    int base_offset = chunk_id * 136 + lane_id_ / 4;
+	    int base_offset = chunk_id * 144 + lane_id_ / 4;
+
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        rhs_fragment[i] = *(dense_tile_ + base_offset + i*16); 
+	        rhs_fragment[i] = *(reinterpret_cast<const short *>(dense_tile_) + base_offset + i*16); 
 	    }
 
             unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
             unsigned char *rhs_fragment_transpose_char = reinterpret_cast<unsigned char *>(rhs_fragment_transpose);
 
+	    //baseline with more bit-wise shift
+	    //unsigned char maskc = 0x0F;
+            //#pragma unroll
+	    //for(int j = 0; j < 8; j++)
+	    //    for(int v = 0; v < 4; v++){
+	    //	    int intra_char_offset_0 = (j%2)*4;
+	    //	    int intra_char_offset_1 = ((j+1)%2)*4;
+	    //        rhs_fragment_transpose_char[8*v+j/2] |= ((rhs_fragment_char[j*4+v] & maskc) << intra_char_offset_0);
+	    //        rhs_fragment_transpose_char[8*v+8/2+j/2] |= ((rhs_fragment_char[j*4+v] & (maskc << 4)) >> intra_char_offset_1);
+	    //    }
+
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        for(int j=0; j<4; j++){
-	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
+	        for(int j=0; j<2; j++){
+	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*2);
 	        }
 	    }
+
             unsigned int mask0 = 0xF0F0F0F0;
             unsigned int mask1 = 0x0F0F0F0F;
             unsigned int *rhs_fragment_uint = reinterpret_cast<unsigned int *>(rhs_fragment); 
             unsigned int *rhs_fragment_transpose_uint = reinterpret_cast<unsigned int *>(rhs_fragment_transpose);
-
+	    
 	    rhs_fragment_uint[0] = (rhs_fragment_transpose_uint[0] & mask1) | ((rhs_fragment_transpose_uint[1] & mask1) << 4);
 	    rhs_fragment_uint[1] = ((rhs_fragment_transpose_uint[0] & mask0) >> 4) | (rhs_fragment_transpose_uint[1] & mask0);
 	    rhs_fragment_uint[2] = (rhs_fragment_transpose_uint[2] & mask1) | ((rhs_fragment_transpose_uint[3] & mask1) << 4);
 	    rhs_fragment_uint[3] = ((rhs_fragment_transpose_uint[2] & mask0) >> 4) | (rhs_fragment_transpose_uint[3] & mask0);
-	    rhs_fragment_uint[4] = (rhs_fragment_transpose_uint[4] & mask1) | ((rhs_fragment_transpose_uint[5] & mask1) << 4);
-	    rhs_fragment_uint[5] = ((rhs_fragment_transpose_uint[4] & mask0) >> 4) | (rhs_fragment_transpose_uint[5] & mask0);
-	    rhs_fragment_uint[6] = (rhs_fragment_transpose_uint[6] & mask1) | ((rhs_fragment_transpose_uint[7] & mask1) << 4);
-	    rhs_fragment_uint[7] = ((rhs_fragment_transpose_uint[6] & mask0) >> 4) | (rhs_fragment_transpose_uint[7] & mask0);
 
             if(lane_id_ % 32 < ValuesBlockWidth)
 	        lhs_fragment[0] = lhs_tile_[lane_id_ % ValuesBlockWidth];
 	    else
 		lhs_fragment[0] = 0;
+
+            int *rhs_fragment_int = reinterpret_cast<int *>(rhs_fragment); 
             #pragma unroll
-            for (int i = 0; i < 8; i ++){
+            for (int i = 0; i < 4; i ++){
                 asm("mma.sync.aligned.m8n8k32.row.col.satfinite.s32.u4.u4.s32 \t"
                     "{%0, %1}, \t"
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[8 + i]):
+                    "+r"(output_fragment_[0 + i]), "+r"(output_fragment_[4 + i]):
                     "r"(lhs_fragment[0]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_int[i])
                 );
             }
+
         }
     };
 
@@ -1653,14 +1663,14 @@
         // Compute
         __device__ __forceinline__ void TileMAC(int step){
             int lhs_fragment[2];
-            int rhs_fragment[8];
-            int rhs_fragment_transpose[8];
+            short rhs_fragment[8];
+            short rhs_fragment_transpose[8];
 	    int chunk_id = lane_id_ % 4;
-	    int base_offset = chunk_id * 136 + lane_id_ / 4;
+	    int base_offset = chunk_id * 144 + lane_id_ / 4;
 
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        rhs_fragment[i] = *(dense_tile_ + base_offset + i*16); 
+	        rhs_fragment[i] = *(reinterpret_cast<const short *>(dense_tile_) + base_offset + i*16); 
 	    }
 
             unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
@@ -1668,8 +1678,8 @@
 
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        for(int j=0; j<4; j++){
-	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
+	        for(int j=0; j<2; j++){
+	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*2);
 	        }
 	    }
 
@@ -1682,51 +1692,50 @@
 	    rhs_fragment_uint[1] = ((rhs_fragment_transpose_uint[0] & mask0) >> 4) | (rhs_fragment_transpose_uint[1] & mask0);
 	    rhs_fragment_uint[2] = (rhs_fragment_transpose_uint[2] & mask1) | ((rhs_fragment_transpose_uint[3] & mask1) << 4);
 	    rhs_fragment_uint[3] = ((rhs_fragment_transpose_uint[2] & mask0) >> 4) | (rhs_fragment_transpose_uint[3] & mask0);
-	    rhs_fragment_uint[4] = (rhs_fragment_transpose_uint[4] & mask1) | ((rhs_fragment_transpose_uint[5] & mask1) << 4);
-	    rhs_fragment_uint[5] = ((rhs_fragment_transpose_uint[4] & mask0) >> 4) | (rhs_fragment_transpose_uint[5] & mask0);
-	    rhs_fragment_uint[6] = (rhs_fragment_transpose_uint[6] & mask1) | ((rhs_fragment_transpose_uint[7] & mask1) << 4);
-	    rhs_fragment_uint[7] = ((rhs_fragment_transpose_uint[6] & mask0) >> 4) | (rhs_fragment_transpose_uint[7] & mask0);
 
 	    //ValuesBlockWidth = 64 for 8b 8v mma_dim_k=32
 	    lhs_fragment[0] = lhs_tile_[lane_id_ % 32 + (step % 2) * ValuesBlockWidth];
 	    lhs_fragment[1] = lhs_tile_[lane_id_ % 32 + 32 + (step % 2) * ValuesBlockWidth];
 
+            int *rhs_fragment_int = reinterpret_cast<int *>(rhs_fragment); 
+
             #pragma unroll
-            for (int i = 0; i < 8; i ++){
+            for (int i = 0; i < 4; i ++){
                 asm("mma.sync.aligned.m8n8k32.row.col.satfinite.s32.u4.u4.s32 \t"
                     "{%0, %1}, \t"
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+r"(output_fragment_0_[0 + i]), "+r"(output_fragment_0_[8 + i]):
+                    "+r"(output_fragment_0_[0 + i]), "+r"(output_fragment_0_[4 + i]):
                     "r"(lhs_fragment[0]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_int[i])
                 );
             }
 
             #pragma unroll
-            for (int i = 0; i < 8; i ++){
+            for (int i = 0; i < 4; i ++){
                 asm("mma.sync.aligned.m8n8k32.row.col.satfinite.s32.u4.u4.s32 \t"
                     "{%0, %1}, \t"
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+r"(output_fragment_1_[0 + i]), "+r"(output_fragment_1_[8 + i]):
+                    "+r"(output_fragment_1_[0 + i]), "+r"(output_fragment_1_[4 + i]):
                     "r"(lhs_fragment[1]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_int[i])
                 );
             }
         }
 
         __device__ __forceinline__ void TileMACResidue(){
             int lhs_fragment[2];
-            int rhs_fragment[8];
-            int rhs_fragment_transpose[8];
+            short rhs_fragment[8];
+            short rhs_fragment_transpose[8];
 	    int chunk_id = lane_id_ % 4;
-	    int base_offset = chunk_id * 136 + lane_id_ / 4;
+	    int base_offset = chunk_id * 144 + lane_id_ / 4;
+
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        rhs_fragment[i] = *(dense_tile_ + base_offset + i*16); 
+	        rhs_fragment[i] = *(reinterpret_cast<const short *>(dense_tile_) + base_offset + i*16); 
 	    }
 
             unsigned char *rhs_fragment_char = reinterpret_cast<unsigned char *>(rhs_fragment); 
@@ -1734,51 +1743,50 @@
 
             #pragma unroll
 	    for(int i=0; i<8; i++){
-	        for(int j=0; j<4; j++){
-	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*4);
+	        for(int j=0; j<2; j++){
+	            *(rhs_fragment_transpose_char + j*8 + i) = *(rhs_fragment_char + j + i*2);
 	        }
 	    }
+
             unsigned int mask0 = 0xF0F0F0F0;
             unsigned int mask1 = 0x0F0F0F0F;
             unsigned int *rhs_fragment_uint = reinterpret_cast<unsigned int *>(rhs_fragment); 
             unsigned int *rhs_fragment_transpose_uint = reinterpret_cast<unsigned int *>(rhs_fragment_transpose);
-
+	    
 	    rhs_fragment_uint[0] = (rhs_fragment_transpose_uint[0] & mask1) | ((rhs_fragment_transpose_uint[1] & mask1) << 4);
 	    rhs_fragment_uint[1] = ((rhs_fragment_transpose_uint[0] & mask0) >> 4) | (rhs_fragment_transpose_uint[1] & mask0);
 	    rhs_fragment_uint[2] = (rhs_fragment_transpose_uint[2] & mask1) | ((rhs_fragment_transpose_uint[3] & mask1) << 4);
 	    rhs_fragment_uint[3] = ((rhs_fragment_transpose_uint[2] & mask0) >> 4) | (rhs_fragment_transpose_uint[3] & mask0);
-	    rhs_fragment_uint[4] = (rhs_fragment_transpose_uint[4] & mask1) | ((rhs_fragment_transpose_uint[5] & mask1) << 4);
-	    rhs_fragment_uint[5] = ((rhs_fragment_transpose_uint[4] & mask0) >> 4) | (rhs_fragment_transpose_uint[5] & mask0);
-	    rhs_fragment_uint[6] = (rhs_fragment_transpose_uint[6] & mask1) | ((rhs_fragment_transpose_uint[7] & mask1) << 4);
-	    rhs_fragment_uint[7] = ((rhs_fragment_transpose_uint[6] & mask0) >> 4) | (rhs_fragment_transpose_uint[7] & mask0);
 
 	    //ValuesBlockWidth = 64 for 8b 8v mma_dim_k=32
 	    lhs_fragment[0] = lhs_tile_[lane_id_ % 32];
 	    lhs_fragment[1] = lhs_tile_[lane_id_ % 32 + 32];
 
+            int *rhs_fragment_int = reinterpret_cast<int *>(rhs_fragment); 
+
             #pragma unroll
-            for (int i = 0; i < 8; i ++){
+            for (int i = 0; i < 4; i ++){
                 asm("mma.sync.aligned.m8n8k32.row.col.satfinite.s32.u4.u4.s32 \t"
                     "{%0, %1}, \t"
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+r"(output_fragment_0_[0 + i]), "+r"(output_fragment_0_[8 + i]):
+                    "+r"(output_fragment_0_[0 + i]), "+r"(output_fragment_0_[4 + i]):
                     "r"(lhs_fragment[0]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_int[i])
                 );
             }
 
             #pragma unroll
-            for (int i = 0; i < 8; i ++){
+            for (int i = 0; i < 4; i ++){
                 asm("mma.sync.aligned.m8n8k32.row.col.satfinite.s32.u4.u4.s32 \t"
                     "{%0, %1}, \t"
                     "{%2}, \t"
                     "{%3}, \t"
                     "{%0, %1}; ":
-                    "+r"(output_fragment_1_[0 + i]), "+r"(output_fragment_1_[8 + i]):
+                    "+r"(output_fragment_1_[0 + i]), "+r"(output_fragment_1_[4 + i]):
                     "r"(lhs_fragment[1]),
-                    "r"(rhs_fragment[i])
+                    "r"(rhs_fragment_int[i])
                 );
             }
         }

@@ -364,8 +364,7 @@
             int * rhs_prefetch):
             rhs_cols_(rhs_cols),
             lane_id_(lane_id),
-            ints_per_row_(Tile_N/8),
-            //ints_per_row_(Tile_N/4),
+            ints_per_row_(Tile_N/4),
             matrix_base_(reinterpret_cast<const LoadType *>(matrix + offset)),
             row_offsets_base_(row_offsets),
             dense_tile_(reinterpret_cast<LoadType *>(dense_tile)),
@@ -403,23 +402,6 @@
                 if(*(row_offsets + i*4) >= 0)
                     *(dense_tile_ + i*72 + lane_id_ % 64 + (lane_id_ / 64) * 288)  = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + global_offset);
             }
-            //if(residue >= Tile_K){
-            //    for(int i=0; i<4; i++){
-            //        *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
-            //    }
-	    //}else{
-            //    const int steps = residue / 4;
-            //    const int res_residue = residue % 4;
-	    //    int i = 0;
-            //    for(; i<steps; i++){
-            //        *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
-            //    }
-
-            //    if(res_residue > 0){
-            //        if (*(row_offsets + i*4) >= 0)
-            //            *(dense_tile_ + i*72 + lane_id_) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
-	    //    }
-	    //}
         }
     };
 
@@ -610,42 +592,37 @@
         
 
         __device__ __forceinline__ void LoadRowfromRegister(int step){
-            for(int i=0; i<8; i++){
-                const int pad_offset = i/2;
-                *(dense_tile_ + pad_offset*8 + lane_id_ + i*64) = rhs_prefetch_[i];
+            for(int i=0; i<4; i++){
+                *(dense_tile_ + i*8 + lane_id_ + i*64) = rhs_prefetch_[i];
             }
         }
 
         __device__ __forceinline__ void Prefetch(int step){
-            const int *row_offsets = row_offsets_base_ + lane_id_/16 + (step % 2) * Tile_K;
-            const int bank_id = lane_id_%16;
-            for(int i=0; i<8; i++){
-                rhs_prefetch_[i] = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+            const int *row_offsets = row_offsets_base_ + lane_id_/8 + (step % 2) * Tile_K;
+            const int bank_id = lane_id_%8;
+            for(int i=0; i<4; i++){
+                rhs_prefetch_[i] = __ldg(matrix_base_ + *(row_offsets + i*8)*rhs_cols_ + bank_id);
             }
         }
 
         // Load the residual and compute the matrix product
         __device__ __forceinline__ void ResidueLoad(int residue){
-            const int steps = (residue/8)*2;
+            const int steps = residue/8;
             const int res_residue = residue % 8;
-            const int *row_offsets = row_offsets_base_ + lane_id_/16;
-            const int bank_id = lane_id_%16;
+            const int *row_offsets = row_offsets_base_ + lane_id_/8;
+            const int bank_id = lane_id_%8;
 
             int pad_offset = 0;
             int i = 0;
             for(; i<steps; i++){
-                pad_offset = i/2;
-                *(dense_tile_ + pad_offset*8 + lane_id_ + i*64) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+                pad_offset = i;
+                *(dense_tile_ + pad_offset*8 + lane_id_ + i*64) = __ldg(matrix_base_ + *(row_offsets + i*8)*rhs_cols_ + bank_id);
             }
 
             if(res_residue > 0){
-                pad_offset = i/2;
-                if (*(row_offsets + i*4) >= 0)
-                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*64) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
-                i++;
-                pad_offset = i/2;
-                if (*(row_offsets + i*4) >= 0)
-                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*64) = __ldg(matrix_base_ + *(row_offsets + i*4)*rhs_cols_ + bank_id);
+                pad_offset = i;
+                if (*(row_offsets + i*8) >= 0)
+                    *(dense_tile_ + pad_offset*8 + lane_id_ + i*64) = __ldg(matrix_base_ + *(row_offsets + i*8)*rhs_cols_ + bank_id);
             }
         }
     };

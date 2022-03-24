@@ -13,8 +13,7 @@
 
 using namespace nvcuda;
 
-
-//4-bit Tile_N = 128 with 2 warps
+//4-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __device__ void wmmaSpmm_kernel_4b_(
@@ -59,7 +58,7 @@ __device__ void wmmaSpmm_kernel_4b_(
         values_tile, column_indices_tile
     );
 
-    __align__(16) int rhs_prefetch[8] = {};
+    __align__(16) int rhs_prefetch[4] = {};
     // Initialize the pointers to the dense rhs matrix
     wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
         dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
@@ -106,7 +105,7 @@ __device__ void wmmaSpmm_kernel_4b_(
     output_tile_storer.Store();
 }
 
-//8-bit Tile_N = 128 with 4 warps
+//8-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __device__ void wmmaSpmm_kernel_8b_(
@@ -137,7 +136,7 @@ __device__ void wmmaSpmm_kernel_8b_(
 
     // One int32 has four 8-bit integers
     // Padding to avoid bank conflict 
-    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*7];
+    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*3];
 
     // Pointers to the shared memory tiles
     int* values_tile = values_tile_array;
@@ -198,7 +197,7 @@ __device__ void wmmaSpmm_kernel_8b_(
     output_tile_storer.Store();
 }
 
-//16-bit 8-bit Tile_N = 128 with 4 warps
+//16-bit 8-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __device__ void wmmaSpmm_kernel_16b8b_(
@@ -229,7 +228,7 @@ __device__ void wmmaSpmm_kernel_16b8b_(
 
     // One int32 has four 8-bit integers
     // Padding to avoid bank conflict 
-    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*7];
+    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*3];
 
     // Pointers to the shared memory tiles
     int* values_tile = values_tile_array;
@@ -291,7 +290,7 @@ __device__ void wmmaSpmm_kernel_16b8b_(
 }
 
 
-//16-bit 8-bit Tile_N = 128 with 4 warps 8v
+//16-bit 8-bit Tile_N = 64 with 2 warps 8v
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __device__ void wmmaSpmm_kernel_16b8b8v_(
@@ -322,7 +321,7 @@ __device__ void wmmaSpmm_kernel_16b8b8v_(
 
     // One int32 has four 8-bit integers
     // Padding to avoid bank conflict 
-    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*7];
+    __shared__ int dense_tile_array[Tile_N*Tile_K/4 + 8*3];
 
     // Pointers to the shared memory tiles
     int* values_tile = values_tile_array;
@@ -384,7 +383,7 @@ __device__ void wmmaSpmm_kernel_16b8b8v_(
     output_tile_storer.Store();
 }
 
-//8-bit A 4-bit B Tile_N = 128 warps = 2
+//8-bit A 4-bit B Tile_N = 64 warps = 2
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __device__ void wmmaSpmm_kernel_8b4b_(
@@ -427,7 +426,7 @@ __device__ void wmmaSpmm_kernel_8b4b_(
         values_tile, column_indices_tile
     );
 
-    __align__(16) int rhs_prefetch[8] = {};
+    __align__(16) int rhs_prefetch[4] = {};
     // Initialize the pointers to the dense rhs matrix
     wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
         dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
@@ -435,7 +434,8 @@ __device__ void wmmaSpmm_kernel_8b4b_(
 
     // Accumulator registers for the output values.
     __align__(16) int output_fragment[Tile_N / Warps / 4] = {};
-    wmmaComputeUtils_8b4b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
+    //wmmaComputeUtils_8b4b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
+    wmmaComputeUtils_4b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
 
     int steps = nonzeros / Tile_K;
     int residue = nonzeros % Tile_K;
@@ -474,7 +474,7 @@ __device__ void wmmaSpmm_kernel_8b4b_(
 }
 
 
-//8-bit A 4-bit B Tile_N = 128 warps = 2, 8v
+//8-bit A 4-bit B Tile_N = 64 warps = 2, 8v
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __device__ void wmmaSpmm_kernel_8b4b8v_(
@@ -517,7 +517,7 @@ __device__ void wmmaSpmm_kernel_8b4b8v_(
         values_tile, column_indices_tile
     );
 
-    __align__(16) int rhs_prefetch[8] = {};
+    __align__(16) int rhs_prefetch[4] = {};
     // Initialize the pointers to the dense rhs matrix
     wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
         dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
@@ -565,7 +565,7 @@ __device__ void wmmaSpmm_kernel_8b4b8v_(
 }
 
 
-//4-bit Tile_N = 128 with 2 warps
+//4-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_4b(
@@ -587,7 +587,7 @@ __global__ void wmmaSpmm_kernel_4b(
     output_matrix);
 }
 
-//4-bit Tile_N = 128 with 2 warps
+//4-bit Tile_N = 64 with 2 warps
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void batched_wmmaSpmm_kernel_4b(
@@ -618,7 +618,7 @@ __global__ void batched_wmmaSpmm_kernel_4b(
 }
 
 
-//8-bit Tile_N = 128 with 4 warps
+//8-bit Tile_N = 64 with 2 waprs
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_8b(
@@ -670,7 +670,7 @@ __global__ void batched_wmmaSpmm_kernel_8b(
 }
 
 
-//16-bit 8-bit Tile_N = 128 with 4 warps
+//16-bit 8-bit Tile_N = 64 with 2 waprs
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_16b8b(
@@ -721,7 +721,7 @@ __global__ void batched_wmmaSpmm_kernel_16b8b(
     output_matrix);
 }
 
-//16-bit 8-bit Tile_N = 128 with 4 warps 8v
+//16-bit 8-bit Tile_N = 64 with 2 waprs 8v
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_16b8b8v(
@@ -772,7 +772,7 @@ __global__ void batched_wmmaSpmm_kernel_16b8b8v(
     output_matrix);
 }
 
-//8-bit A 4-bit B Tile_N = 128 warps = 2
+//8-bit A 4-bit B Tile_N = 64 warps = 2
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_8b4b(
@@ -824,7 +824,7 @@ __global__ void batched_wmmaSpmm_kernel_8b4b(
 }
 
 
-//8-bit A 4-bit B Tile_N = 128 warps = 2, 8v
+//8-bit A 4-bit B Tile_N = 64 warps = 2, 8v
 template <typename LoadType, typename IndexType, typename VecType, int Tile_K, 
           int Tile_N, int Warps, int VecLength>
 __global__ void wmmaSpmm_kernel_8b4b8v(
@@ -915,7 +915,7 @@ cudaError_t wmmaSpmm_8b_template(
     return cudaGetLastError();
 }
 
-//8-bit 4-bit Tile_N = 128 with 2 warps
+//8-bit 4-bit Tile_N = 64 with 2 warps
 template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t wmmaSpmm_8b4b_template(
     int m_vec, int vec_length, int n, int k, float scale,
@@ -937,7 +937,7 @@ cudaError_t wmmaSpmm_8b4b_template(
     return cudaGetLastError();
 }
 
-//16-bit 8-bit Tile_N = 128 with 4 warps
+//16-bit 8-bit Tile_N = 64 with 2 waprs
 template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t wmmaSpmm_16b8b_template(
     int m_vec, int vec_length, int n, int k, float scale,
@@ -1003,7 +1003,7 @@ cudaError_t batched_wmmaSpmm_8b_template(
     return cudaGetLastError();
 }
 
-//8-bit 4-bit Tile_N = 128 with 2 warps
+//8-bit 4-bit Tile_N = 64 with 2 warps
 template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t batched_wmmaSpmm_8b4b_template(
     int m_vec, int vec_length, int n, int k, int batch_size, float scale,
@@ -1028,7 +1028,7 @@ cudaError_t batched_wmmaSpmm_8b4b_template(
     return cudaGetLastError();
 }
 
-//16-bit 8-bit Tile_N = 128 with 4 warps
+//16-bit 8-bit Tile_N = 64 with 2 waprs
 template <typename IndexType, typename VecType, int Tile_M, int Tile_K, int Tile_N, int WarpWidth, int Warps, int VecLength>
 cudaError_t batched_wmmaSpmm_16b8b_template(
     int m_vec, int vec_length, int n, int k, int batch_size, float scale,
@@ -1096,7 +1096,7 @@ torch::Tensor batched_deq_spmm_mma_16b8b(
 
     switch(vec_length){
         case 2:
-            batched_wmmaSpmm_16b8b_template<int, int, 1, 16, 128, 32, 4, 2>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_16b8b_template<int, int, 1, 16, 64, 32, 2, 2>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(values.data<int>()),
                 values_stride,
@@ -1106,7 +1106,7 @@ torch::Tensor batched_deq_spmm_mma_16b8b(
 	        output_stride);
             break;
         case 4:
-            batched_wmmaSpmm_16b8b_template<int, long long, 1, 16, 128, 32, 4, 4>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_16b8b_template<int, long long, 1, 16, 64, 32, 2, 4>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<long long *>(values.data<int>()),
                 values_stride,
@@ -1116,7 +1116,7 @@ torch::Tensor batched_deq_spmm_mma_16b8b(
 	        output_stride);
             break;
         case 8:
-            batched_wmmaSpmm_16b8b_template<int, long long, 1, 16, 128, 32, 4, 8>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_16b8b_template<int, long long, 1, 16, 64, 32, 2, 8>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<long long *>(values.data<int>()),
                 values_stride,
@@ -1172,7 +1172,7 @@ torch::Tensor batched_deq_spmm_mma_4b(
 
     switch(vec_length){
         case 2:
-            batched_wmmaSpmm_4b_template<int, char, 1, 32, 128, 32, 2, 2>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_4b_template<int, char, 1, 32, 64, 32, 2, 2>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<char *>(values.data<int>()),
                 values_stride,
@@ -1182,7 +1182,7 @@ torch::Tensor batched_deq_spmm_mma_4b(
 	        output_stride);
             break;
         case 4:
-            batched_wmmaSpmm_4b_template<int, short, 1, 32, 128, 32, 2, 4>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_4b_template<int, short, 1, 32, 64, 32, 2, 4>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<short *>(values.data<int>()),
                 values_stride,
@@ -1192,7 +1192,7 @@ torch::Tensor batched_deq_spmm_mma_4b(
 	        output_stride);
             break;
         case 8:
-            batched_wmmaSpmm_4b_template<int, int, 1, 32, 128, 32, 2, 8>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_4b_template<int, int, 1, 32, 64, 32, 2, 8>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(values.data<int>()),
                 values_stride,
@@ -1249,7 +1249,7 @@ torch::Tensor batched_deq_spmm_mma_8b4b(
 
     switch(vec_length){
         case 2:
-            batched_wmmaSpmm_8b4b_template<int, short, 1, 32, 128, 32, 2, 2>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_8b4b_template<int, short, 1, 32, 64, 32, 2, 2>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<short *>(values.data<int>()),
                 values_stride,
@@ -1259,7 +1259,7 @@ torch::Tensor batched_deq_spmm_mma_8b4b(
 	        output_stride);
             break;
         case 4:
-            batched_wmmaSpmm_8b4b_template<int, int, 1, 32, 128, 32, 2, 4>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_8b4b_template<int, int, 1, 32, 64, 32, 2, 4>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(values.data<int>()),
                 values_stride,
@@ -1269,7 +1269,7 @@ torch::Tensor batched_deq_spmm_mma_8b4b(
 	        output_stride);
             break;
         case 8:
-            batched_wmmaSpmm_8b4b_template<int, long long, 1, 32, 128, 32, 2, 8>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_8b4b_template<int, long long, 1, 32, 64, 32, 2, 8>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<long long *>(values.data<int>()),
                 values_stride,
@@ -1324,7 +1324,7 @@ torch::Tensor batched_deq_spmm_mma_8b(
 
     switch(vec_length){
         case 2:
-            batched_wmmaSpmm_8b_template<int, short, 1, 16, 128, 32, 4, 2>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_8b_template<int, short, 1, 16, 64, 32, 2, 2>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<short *>(values.data<int>()),
                 values_stride,
@@ -1334,7 +1334,7 @@ torch::Tensor batched_deq_spmm_mma_8b(
 	        output_stride);
             break;
         case 4:
-            batched_wmmaSpmm_8b_template<int, int, 1, 16, 128, 32, 4, 4>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_8b_template<int, int, 1, 16, 64, 32, 2, 4>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<int *>(values.data<int>()),
                 values_stride,
@@ -1344,7 +1344,7 @@ torch::Tensor batched_deq_spmm_mma_8b(
 	        output_stride);
             break;
         case 8:
-            batched_wmmaSpmm_8b_template<int, long long, 1, 16, 128, 32, 4, 8>(m_vec, vec_length, n, k, batch_size, scale,
+            batched_wmmaSpmm_8b_template<int, long long, 1, 16, 64, 32, 2, 8>(m_vec, vec_length, n, k, batch_size, scale,
                 row_indices.data<int>(), row_offsets.data<int>(), column_indices.data<int>(), 
                 reinterpret_cast<long long *>(values.data<int>()),
                 values_stride,
