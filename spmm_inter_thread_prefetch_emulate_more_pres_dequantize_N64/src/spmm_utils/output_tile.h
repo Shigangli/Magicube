@@ -318,20 +318,18 @@ namespace spmm{
         // Store
         __device__ __forceinline__ void Store(){
 
-            for(int i = 0; i < 16; i++)
+            for(int i = 0; i < 8; i++)
                 output_fragment_0_[i] += (output_fragment_1_[i] * 16);
 
-            half deq_results[16] = {};
+            half deq_results[8] = {};
             #pragma unroll
-            for(int i=0; i<16; i++){
+            for(int i=0; i<8; i++){
                 deq_results[i] = __float2half((float)(output_fragment_0_[i]) / scale_);
             }
 
-            int output_off = (lane_id_ % 4) * 4 + (lane_id_ / 32) * 16;
+            int output_off = (lane_id_ % 4) * 2 + (lane_id_ / 32) * 8;
             *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int2 *>(deq_results) + 0);
             *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int2 *>(deq_results) + 1);
-            *(output_matrix_ + output_off + 2) = *(reinterpret_cast<int2 *>(deq_results) + 2);
-            *(output_matrix_ + output_off + 3) = *(reinterpret_cast<int2 *>(deq_results) + 3);
         }
     };
 
@@ -345,7 +343,7 @@ namespace spmm{
         int intra_warp_tid_;
         // The register file fragment with the results to store
         unsigned long long* output_fragment_;
-        int2* output_matrix_;
+        int* output_matrix_;
         float scale_;
 
         // Constructor
@@ -361,7 +359,7 @@ namespace spmm{
             valid_tsize_ = 8 * vec_length; // =32/(8/vec_length)*2;
             half_valid_tsize_ = 4 * vec_length;
             const int output_offset = (m_index_vec * vec_length + (lane_id % half_valid_tsize_) / 4) * cols + column_offset;
-            output_matrix_ = reinterpret_cast<int2 *>(output_matrix + output_offset);
+            output_matrix_ = reinterpret_cast<int *>(output_matrix + output_offset);
             lane_id_ = lane_id;
             intra_warp_tid_ = lane_id % 32;
             scale_ = scale;
@@ -369,26 +367,24 @@ namespace spmm{
 
         // Store
         __device__ __forceinline__ void Store(){
-            output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 0] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 0], half_valid_tsize_, 32);
-            output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 1], half_valid_tsize_, 32);
-            output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 2] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 2], half_valid_tsize_, 32);
-            output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 3] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*4 + 3], half_valid_tsize_, 32);
+            output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*2 + 0] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*2 + 0], half_valid_tsize_, 32);
+            output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*2 + 1] = __shfl_xor_sync(0xffffffff, output_fragment_[((intra_warp_tid_/half_valid_tsize_+1)%2)*2 + 1], half_valid_tsize_, 32);
 
             int *final_output_fragment_ = reinterpret_cast<int *>(output_fragment_);
 
-            half deq_results[8] = {};
+            half deq_results[4] = {};
 
             if(lane_id_ % 32 < valid_tsize_){
-                for(int i = 0; i < 8; i++){
-                    final_output_fragment_[i] += (final_output_fragment_[i+8] * 16);
+                for(int i = 0; i < 4; i++){
+                    final_output_fragment_[i] += (final_output_fragment_[i+4] * 16);
                     deq_results[i] = __float2half((float)(final_output_fragment_[i]) / scale_);
                 }
             }
 
             int output_off = (intra_warp_tid_ % 4) * 4 + (intra_warp_tid_ / half_valid_tsize_) * 2 + (lane_id_ / 32) * 16;
             if(lane_id_ % 32 < valid_tsize_){
-                *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int2 *>(deq_results) + 0);
-                *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int2 *>(deq_results) + 1);
+                *(output_matrix_ + output_off + 0) = *(reinterpret_cast<int *>(deq_results) + 0);
+                *(output_matrix_ + output_off + 1) = *(reinterpret_cast<int *>(deq_results) + 1);
             }
         }
     };

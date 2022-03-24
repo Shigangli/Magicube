@@ -424,7 +424,7 @@ __global__ void wmmaSpmm_kernel_8b4b(
         values_tile, column_indices_tile
     );
 
-    __align__(16) int rhs_prefetch[8] = {};
+    __align__(16) int rhs_prefetch[4] = {};
     // Initialize the pointers to the dense rhs matrix
     wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
         dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
@@ -432,7 +432,8 @@ __global__ void wmmaSpmm_kernel_8b4b(
 
     // Accumulator registers for the output values.
     __align__(16) int output_fragment[Tile_N / Warps / 4] = {};
-    wmmaComputeUtils_8b4b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
+    //wmmaComputeUtils_8b4b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
+    wmmaComputeUtils_4b<Tile_K * VecLength / 4> computer(values_tile, dense_tile, output_fragment, lane_id);
 
     int steps = nonzeros / Tile_K;
     int residue = nonzeros % Tile_K;
@@ -514,7 +515,7 @@ __global__ void wmmaSpmm_kernel_8b4b8v(
         values_tile, column_indices_tile
     );
 
-    __align__(16) int rhs_prefetch[8] = {};
+    __align__(16) int rhs_prefetch[4] = {};
     // Initialize the pointers to the dense rhs matrix
     wmmaDenseTile_4b<LoadType, Tile_K, Tile_N> dense_tile_loader(
         dimN/8, dimN_index/8, lane_id, rhs_matrix, column_indices_tile, dense_tile, rhs_prefetch 
