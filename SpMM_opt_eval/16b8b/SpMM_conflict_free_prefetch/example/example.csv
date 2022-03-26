@@ -1,0 +1,33 @@
+==PROF== Connected to process 11277 (/projects/vectorSparse/spmm_benchmark)
+==PROF== Disconnected from process 11277
+"ID","Process ID","Process Name","Host Name","Kernel Name","Kernel Time","Context","Stream","Section Name","Metric Name","Metric Unit","Metric Value","Rule Name","Rule Type","Rule Description"
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","DRAM Frequency","cycle/second","701338639.65",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","SM Frequency","cycle/second","1043844971.06",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","Elapsed Cycles","cycle","23173",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","Memory [%]","%","36.69",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","SOL DRAM","%","14.86",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","Duration","nsecond","22112",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","SOL L1/TEX Cache","%","50.07",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","SOL L2 Cache","%","30.25",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","SM Active Cycles","cycle","16910.56",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","GPU Speed Of Light","SM [%]","%","28.63",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","SpeedOfLight","","","","SOLBottleneck","WRN","This kernel grid is too small to fill the available resources on this device, resulting in only 0.3 full waves across all SMs. Look at Launch Statistics for more details."
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Block Size","","128",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Function Cache Configuration","","cudaFuncCachePreferNone",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Grid Size","","64",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Registers Per Thread","register/thread","106",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Shared Memory Configuration Size","byte","98304",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Driver Shared Memory Per Block","byte/block","0",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Dynamic Shared Memory Per Block","byte/block","0",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Static Shared Memory Per Block","byte/block","24832",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Threads","thread","8192",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Launch Statistics","Waves Per SM","","0.27",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","LaunchStats","","","","LaunchConfiguration","WRN","The grid for this launch is configured to execute only 64 blocks, which is less than the GPU's 80 multiprocessors. This can underutilize some multiprocessors. If you do not intend to execute this kernel concurrently with other workloads, consider reducing the block size to have at least one block per multiprocessor or increase the size of the grid to fully utilize the available hardware resources."
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Block Limit SM","block","32",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Block Limit Registers","block","4",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Block Limit Shared Mem","block","3",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Block Limit Warps","block","16",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Theoretical Active Warps per SM","warp","12",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Theoretical Occupancy","%","18.75",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Achieved Occupancy","%","6.23",
+"0","11277","spmm_benchmark","127.0.0.1","volta_h884gemm_128x64_ldg8_nn","2021-Apr-03 09:09:08","1","7","Occupancy","Achieved Active Warps Per SM","warp","3.99",

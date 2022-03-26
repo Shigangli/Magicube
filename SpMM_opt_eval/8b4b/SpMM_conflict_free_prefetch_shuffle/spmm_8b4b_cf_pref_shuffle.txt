@@ -1,0 +1,52 @@
+Evaluation perf for different precisions: N = 512, Iteration = 1024 
+
+L8-R4 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.362387
+performance TOP/s: 8.53365
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 1.44955
+performance TOP/s: 34.8605
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.120795
+performance TOP/s: 4.63614
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.483181
+performance TOP/s: 20.4814
+Results verification: PASS
+counter = 1048576
+
+
