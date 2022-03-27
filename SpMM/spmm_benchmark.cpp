@@ -85,7 +85,7 @@ double compute_ref_integers(TypeA *A, int *B, int *ref_C, int M_GLOBAL, int K_GL
     TypeA *A_vec_tiles = new TypeA[scaleA];
     double flops = 0;     
     int b_tile = 32/preB;
-    printf("cpu: maskA %d, maskA_cut %d, maskB %d, vec_length %d, b_tile %d\n", maskA, maskA_cut, maskB, vec_length, b_tile); 
+    // printf("cpu: maskA %d, maskA_cut %d, maskB %d, vec_length %d, b_tile %d\n", maskA, maskA_cut, maskB, vec_length, b_tile); 
     // traverse all the vector rows
     for(int i=0; i < m_vec; i++){
         // traverse all the nonzero columns in this row
@@ -143,8 +143,10 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
     else
         mma_k_dim = 16;
 
-    std::cout << "preA: " << preA << "preA_cut: " << preA_cut << "preB: " << preB << "\n" ;
-    std::cout << "m_vec: " << m_vec << "n: " << dimN << "nonzeros_vec: " << nonzeros_vec << "k: " << dimK << "vec_length: " << vec_length << "mma_k_dim: " << mma_k_dim << "\n" ;
+    printf("preA %d, preA_cut %d, preB %d, vec_length %d \n", preA, preA_cut, preB, vec_length); 
+    printf("m_vec %d, dimN %d, nonzeros_vec %d, dimk %d, mma_k_dim %d \n", m_vec, dimN, nonzeros_vec, dimK, mma_k_dim); 
+    //std::cout << "preA: " << preA << "preA_cut: " << preA_cut << "preB: " << preB << "\n" ;
+    //std::cout << "m_vec: " << m_vec << "n: " << dimN << "nonzeros_vec: " << nonzeros_vec << "k: " << dimK << "vec_length: " << vec_length << "mma_k_dim: " << mma_k_dim << "\n" ;
 
     // Create the A column indices
 
@@ -409,7 +411,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 	    //}
         }// end if func
 
-	flops = flops/1024.0/1024.0/1024.0;
+	flops = flops/1000.0/1000.0/1000.0;
         std::cout << "total Gflops: " << flops << "\n";
 
         int *row_indices = new int[m_vec];
@@ -459,7 +461,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         
         cudaProfilerStart();
 	float spmm_ms_avg = 0.0f;
-	int NUM_PROFILES = 512;
+	int NUM_PROFILES = 1024;
         if((kernel == 0) && (preA_cut == 4) && (preB == 4)){
             printf("Using WMMA \n");
 	    for(int iter=0; iter<NUM_PROFILES; ++iter){
@@ -623,7 +625,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
             printf("Unsupported Kernel \n");
         }
         spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
-        std::cout << "performance GFLOP/s: " << flops/spmm_ms_avg << "\n";
+        std::cout << "performance TOP/s: " << flops/spmm_ms_avg/1000.0 << "\n";
         cudaProfilerStop();
 
         //else if (kernel == 1){
@@ -794,6 +796,7 @@ int main(int argc, char **argv){
         int sparse = std::atoi(argv[7]);
         int preA = std::atoi(argv[8]);
         int preB = std::atoi(argv[9]);
+        std::cout << "Sparse matrix: " << benchmark << "\n" ;
 
 	if ((preA == 4) && (preB == 4) && (vec_length == 8)) BmFN<int, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
 	else if ((preA == 4) && (preB == 4) && (vec_length == 4)) BmFN<short, int, int, short, half2, short2, CUDA_R_16F>(benchmark, dimN, vec_length, kernel, sorted, func, sparse, preA, preA, preB, 1);
