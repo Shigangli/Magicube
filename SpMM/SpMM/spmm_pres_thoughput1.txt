@@ -1,0 +1,1036 @@
+Evaluation perf for different precisions: N = 512, Iteration = 1024 
+
+L16-R16 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 0.5625
+performance GFLOP/s: 3175.94
+Results verification: PASS
+counter = 154506
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 1.125
+performance GFLOP/s: 6650.32
+Results verification: PASS
+counter = 308261
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 2.25
+performance GFLOP/s: 12544.7
+Results verification: PASS
+counter = 628778
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 0.3375
+performance GFLOP/s: 3118.94
+Results verification: PASS
+counter = 52082
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 0.674999
+performance GFLOP/s: 5956.83
+Results verification: PASS
+counter = 105471
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 1.35
+performance GFLOP/s: 11714.8
+Results verification: PASS
+counter = 212240
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.112499
+performance GFLOP/s: 2105.17
+Results verification: PASS
+counter = 261632
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.224998
+performance GFLOP/s: 4166.05
+Results verification: PASS
+counter = 519936
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.449997
+performance GFLOP/s: 9475.59
+Results verification: PASS
+counter = 1042166
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.0313187
+performance GFLOP/s: 918.218
+Results verification: PASS
+counter = 261118
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.0626373
+performance GFLOP/s: 1753.48
+Results verification: PASS
+counter = 523776
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 16, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.125275
+performance GFLOP/s: 5432.58
+Results verification: PASS
+counter = 1047040
+
+
+L16-R8 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 0.5625
+performance GFLOP/s: 5674.8
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 1.125
+performance GFLOP/s: 11268
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 2.25
+performance GFLOP/s: 21454
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 0.3375
+performance GFLOP/s: 5212.53
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 0.674999
+performance GFLOP/s: 10214.1
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 1.35
+performance GFLOP/s: 20029.4
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.112499
+performance GFLOP/s: 3351.6
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.224998
+performance GFLOP/s: 6532.12
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.449997
+performance GFLOP/s: 14665.3
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.0313187
+performance GFLOP/s: 1379.14
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.0626373
+performance GFLOP/s: 2643.93
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.125275
+performance GFLOP/s: 7119.85
+Results verification: PASS
+counter = 1048576
+
+
+L8-R8 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 0.5625
+performance GFLOP/s: 5846.39
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 1.125
+performance GFLOP/s: 11231.9
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 296880
+total Gflops: 2.25
+performance GFLOP/s: 23106.8
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 0.3375
+performance GFLOP/s: 6649.16
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 0.674999
+performance GFLOP/s: 10531.9
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 178928
+total Gflops: 1.35
+performance GFLOP/s: 21461.5
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.112499
+performance GFLOP/s: 4005.11
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.224998
+performance GFLOP/s: 7806.8
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 60944
+total Gflops: 0.449997
+performance GFLOP/s: 15435
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.0313187
+performance GFLOP/s: 2010.58
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.0626373
+performance GFLOP/s: 3986.09
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 8, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 16 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 18464
+total Gflops: 0.125275
+performance GFLOP/s: 7183.54
+Results verification: PASS
+counter = 1048576
+
+
+L16-R4 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 0.5625
+performance GFLOP/s: 9201.83
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 1.125
+performance GFLOP/s: 17859.7
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 2.25
+performance GFLOP/s: 29984.9
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.3375
+performance GFLOP/s: 7471.88
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.674999
+performance GFLOP/s: 14662.5
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 1.35
+performance GFLOP/s: 26418.6
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.112499
+performance GFLOP/s: 3948.8
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.224998
+performance GFLOP/s: 7610.54
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.449997
+performance GFLOP/s: 16065.8
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0313187
+performance GFLOP/s: 1434.4
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0626373
+performance GFLOP/s: 2724.32
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 16, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.125275
+performance GFLOP/s: 6240.95
+Results verification: PASS
+counter = 1048576
+
+
+L12-R4 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 0.5625
+performance GFLOP/s: 9204.39
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 1.125
+performance GFLOP/s: 18110.9
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 2.25
+performance GFLOP/s: 36066.4
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.3375
+performance GFLOP/s: 7510.12
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.674999
+performance GFLOP/s: 14921.7
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 1.35
+performance GFLOP/s: 31099.5
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.112499
+performance GFLOP/s: 3957.64
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.224998
+performance GFLOP/s: 7864.61
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.449997
+performance GFLOP/s: 18674.3
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0313187
+performance GFLOP/s: 1435.13
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0626373
+performance GFLOP/s: 2852.22
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 16, preA_cut 12, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.125275
+performance GFLOP/s: 6982.96
+Results verification: PASS
+counter = 1048576
+
+
+L8-R4 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 0.5625
+performance GFLOP/s: 9452.36
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 1.125
+performance GFLOP/s: 19228.5
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 2.25
+performance GFLOP/s: 37799.3
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.3375
+performance GFLOP/s: 7899.02
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.674999
+performance GFLOP/s: 15604.9
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 1.35
+performance GFLOP/s: 32468.6
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.112499
+performance GFLOP/s: 4306.91
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.224998
+performance GFLOP/s: 8145.33
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.449997
+performance GFLOP/s: 19044
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0313187
+performance GFLOP/s: 1585.75
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0626373
+performance GFLOP/s: 2917.98
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 8, preA_cut 8, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.125275
+performance GFLOP/s: 7040.24
+Results verification: PASS
+counter = 1048576
+
+
+L4-R4 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 0.5625
+Using WMMA 
+performance GFLOP/s: 10142.2
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 1.125
+Using WMMA 
+performance GFLOP/s: 20272.3
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 294912, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 294912 aligned_ nonzero_vec: 298848
+total Gflops: 2.25
+Using WMMA 
+performance GFLOP/s: 40746
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.3375
+Using WMMA 
+performance GFLOP/s: 8826.71
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 0.674999
+Using WMMA 
+performance GFLOP/s: 17668.8
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 176947, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 176947 aligned_ nonzero_vec: 181056
+total Gflops: 1.35
+Using WMMA 
+performance GFLOP/s: 34311.3
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.112499
+Using WMMA 
+performance GFLOP/s: 5527.75
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.224998
+Using WMMA 
+performance GFLOP/s: 10831.6
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 58982, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 58982 aligned_ nonzero_vec: 63232
+total Gflops: 0.449997
+Using WMMA 
+performance GFLOP/s: 19553.6
+Results verification: PASS
+counter = 1048576
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 2 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0313187
+Using WMMA 
+performance GFLOP/s: 2270.45
+Results verification: PASS
+counter = 262144
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 4 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.0626373
+Using WMMA 
+performance GFLOP/s: 4438.92
+Results verification: PASS
+counter = 524288
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+preA 4, preA_cut 4, preB 4, vec_length 8 
+m_vec 256, dimN 512, nonzeros_vec 16420, dimk 2304, mma_k_dim 32 
+device = 0
+number of SMs: 108
+ nonzero_vec: 16420 aligned_ nonzero_vec: 20384
+total Gflops: 0.125275
+Using WMMA 
+performance GFLOP/s: 6988.8
+Results verification: PASS
+counter = 1048576
+
+

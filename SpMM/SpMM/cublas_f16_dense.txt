@@ -1,0 +1,745 @@
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group2_1_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022278 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group1_2_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.020526 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/initial_conv.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 147
+Dense Baseline
+F16 dense runtime 0.024774 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group3_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0246801 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group4_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.022644 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0249001 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.011724 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.01091 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group2_2_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.019938 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group3_2_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019294 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_projection_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.01713 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group3_4_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.021998 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group4_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0343279 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group1_1_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.020556 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.020006 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group3_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0244601 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group3_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.021888 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group1_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.017112 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/final_dense.smtx
+vec_len: 2 m_vec: 1000 m: 2000 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.0295861 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group4_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.022506 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group2_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.01854 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group1_1_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.015162 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group3_4_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0245161 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group3_3_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0244521 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0342819 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group2_3_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022736 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group4_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0343299 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group1_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.01742 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_projection_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.020332 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group2_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018634 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group3_3_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019292 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022788 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.021854 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.016706 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group2_3_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018422 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0249181 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_projection_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.027786 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018744 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group3_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.02262 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group1_2_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.015304 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_projection_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019518 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group3_5_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.022188 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019594 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.022852 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group3_1_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019604 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group2_1_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.01988 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.020448 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group3_3_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.0223 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group4_1_1.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.02289 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group4_2_1.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.022002 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_1_block_group2_3_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.019866 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group3_4_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019506 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_3_block_group3_5_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019678 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/magnitude_pruning/0.5/bottleneck_2_block_group2_2_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022608 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group2_1_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022644 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group1_2_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.020332 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/initial_conv.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 147
+Dense Baseline
+F16 dense runtime 0.0244801 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0246301 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group4_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.02261 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0246581 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.011928 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.010692 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group2_2_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.019888 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group3_2_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019944 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_projection_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.017066 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group3_4_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.02221 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group4_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.034566 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group1_1_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.020456 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.02029 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0245521 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group3_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.022536 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group1_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.016988 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/final_dense.smtx
+vec_len: 2 m_vec: 1000 m: 2000 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.0287841 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group4_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.02237 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group2_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018616 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group1_1_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.01543 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_4_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0244961 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_3_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0247861 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0346739 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group2_3_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.02242 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group4_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0344579 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group1_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.016832 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_projection_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.021374 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group2_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018328 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group3_3_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019576 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.02288 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.022102 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.017006 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group2_3_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018298 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0246061 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_projection_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.027838 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.019014 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group3_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.021884 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group1_2_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.0153 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_projection_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019402 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group3_5_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.02225 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.01952 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.023088 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group3_1_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019814 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group2_1_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.020212 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.02067 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group3_3_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.021732 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group4_1_1.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.022862 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group4_2_1.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.022746 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_1_block_group2_3_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.02029 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group3_4_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019708 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_3_block_group3_5_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019404 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group2_2_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022642 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group2_1_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.02248 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group1_2_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.02043 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/initial_conv.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 147
+Dense Baseline
+F16 dense runtime 0.024438 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group3_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0246161 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group4_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.022724 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0248601 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.011804 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.01068 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group2_2_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.020134 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group3_2_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019708 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_projection_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.017154 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group3_4_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.022222 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group4_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0342919 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group1_1_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 576
+Dense Baseline
+F16 dense runtime 0.020416 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.019844 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group3_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0251381 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group3_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.02219 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group1_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.017134 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/final_dense.smtx
+vec_len: 2 m_vec: 1000 m: 2000 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.0288781 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group4_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 2048
+Dense Baseline
+F16 dense runtime 0.022912 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group2_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018962 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group1_1_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.015258 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group3_4_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0249161 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group3_3_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0251661 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0340759 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group2_3_1.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022832 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group4_2_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 4608
+Dense Baseline
+F16 dense runtime 0.0342739 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group1_2_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.017182 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_projection_block_group_projection_block_group3.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 512
+Dense Baseline
+F16 dense runtime 0.0211621 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group2_1_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.01865 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group3_3_1.smtx
+vec_len: 2 m_vec: 1024 m: 2048 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019404 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 128 m: 256 n: 128 k: 1152
+Dense Baseline
+F16 dense runtime 0.022504 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.022274 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group_projection_block_group1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 64
+Dense Baseline
+F16 dense runtime 0.0172 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group2_3_1.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.01869 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_2_block_group3_5_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 2304
+Dense Baseline
+F16 dense runtime 0.0247541 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_projection_block_group_projection_block_group4.smtx
+vec_len: 2 m_vec: 2048 m: 4096 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.027592 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_3_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 128
+Dense Baseline
+F16 dense runtime 0.018552 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group3_1_1.smtx
+vec_len: 2 m_vec: 256 m: 512 n: 128 k: 1024
+Dense Baseline
+F16 dense runtime 0.02191 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_1_block_group1_2_1.smtx
+vec_len: 2 m_vec: 64 m: 128 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.015374 ms
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/variational_dropout/0.5/bottleneck_projection_block_group_projection_block_group2.smtx
+vec_len: 2 m_vec: 512 m: 1024 n: 128 k: 256
+Dense Baseline
+F16 dense runtime 0.019416 ms
+
