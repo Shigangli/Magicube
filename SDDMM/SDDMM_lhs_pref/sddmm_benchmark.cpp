@@ -11,7 +11,6 @@
 #include <string>
 #include <cuda_profiler_api.h>
 #include <cublas_v2.h>
-#include "sputnik/sputnik.h"
 #include <cusparse.h>
 #include <iostream>
 
@@ -180,11 +179,14 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
         checkCuda(cudaMemcpy(d_row_indices, row_indices, m_vec * sizeof(int), cudaMemcpyHostToDevice));
 
         cudaProfilerStart();
-        int NUM_PROFILES = 1024;
+        int NUM_PROFILES = 512;
         float sddmm_ms_avg = 0.0f;
         // TODO: Launch kernel
         if (preA == 4 && preB == 4){
             printf("Using WMMA \n");
+            for(int iter=0; iter<32; ++iter){
+                sddmm::wmmaSddmm_4b(m_vec, k, n, d_row_indices, d_row_offsets, d_col_indices, d_lhs_matrix, d_rhs_matrix, d_output_values, vec_length);
+            }
             for(int iter=0; iter<NUM_PROFILES; ++iter){
                 float sddmm_ms = 0.0f;
                 cudaEvent_t sddmm_start;
@@ -202,6 +204,9 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
             }
         }
 	else if (preA == 8 && preB == 8){
+            for(int iter=0; iter<32; ++iter){
+                sddmm::wmmaSddmm_8b(m_vec, k, n, d_row_indices, d_row_offsets, d_col_indices, d_lhs_matrix, d_rhs_matrix, d_output_values, vec_length);
+            }
             for(int iter=0; iter<NUM_PROFILES; ++iter){
                 float sddmm_ms = 0.0f;
                 cudaEvent_t sddmm_start;
@@ -219,6 +224,9 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
             }
         }
 	else if (preA == 16 && preB == 16){
+            for(int iter=0; iter<32; ++iter){
+                sddmm::wmmaSddmm_16b(m_vec, k, n, d_row_indices, d_row_offsets, d_col_indices, d_lhs_matrix, d_rhs_matrix, d_output_values, vec_length);
+            }
             for(int iter=0; iter<NUM_PROFILES; ++iter){
                 float sddmm_ms = 0.0f;
                 cudaEvent_t sddmm_start;
@@ -241,8 +249,11 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
         }
 
 	flops = flops/1000.0/1000.0/1000.0;
+        std::cout << "Runtime: " << sddmm_ms_avg/(float)NUM_PROFILES << " ms" << "\n";
         sddmm_ms_avg = sddmm_ms_avg/(float)NUM_PROFILES/1000.0;
-        std::cout << "runtime: " << sddmm_ms_avg << " s, SDDMM TOPS: " << flops/1000.0 << "  performance TOP/s: " << flops/sddmm_ms_avg/1000.0 << "\n";
+        if (func){
+            std::cout << "SDDMM TOPS: " << flops/1000.0 << "  performance TOP/s: " << flops/sddmm_ms_avg/1000.0 << "\n";
+	}
 
         cudaProfilerStop();
 
@@ -254,8 +265,6 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
             // Verify the result
             int errors = 0;
             for (int j=0; j < aligned_num_item*vec_length; j++){
-		//if(j<256)
-                //    printf("item %d, expect %d, got %d\n", j, h_output_values[j], output_value_cuda[j]);
                 if ((output_value_cuda[j] - h_output_values[j]) != 0){
 		    //if(j<256)
                     //    printf("item %d, expect %d, got %d\n", j, h_output_values[j], output_value_cuda[j]);
@@ -322,13 +331,13 @@ int main(int argc, char **argv){
 
 	switch (vec_length){
             case 2:
-                printf("Vec_length: %d \n", vec_length);
+                //printf("Vec_length: %d \n", vec_length);
                 break;
             case 4:
-                printf("Vec_length: %d \n", vec_length);
+                //printf("Vec_length: %d \n", vec_length);
                 break;
             case 8:
-                printf("Vec_length: %d \n", vec_length);
+                //printf("Vec_length: %d \n", vec_length);
                 break;
             default:
                 printf("Unsupported vec_length!\n");
@@ -339,4 +348,5 @@ int main(int argc, char **argv){
 	else if ((preA == 16) && (preB == 16)) BmFN(benchmark, dimK, vec_length, sorted, func, sparse, preA, preB);
 	else printf("Unsupported precision!\n");
     }
+    printf("\n");
 }
