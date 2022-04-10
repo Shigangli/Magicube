@@ -1,0 +1,458 @@
+Evaluation perf for different precisions: K = 1024, Iteration = 1024 
+
+L16-R16 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 16, PreB: 16, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 589824, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+runtime: 0.000313205 s, SDDMM TOPS: 0.00120796  performance TOP/s: 3.85676
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 16, PreB: 16, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 1179648, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+runtime: 0.000283193 s, SDDMM TOPS: 0.00241592  performance TOP/s: 8.53099
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 16, PreB: 16, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 2359296, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+runtime: 0.000336864 s, SDDMM TOPS: 0.00483184  performance TOP/s: 14.3436
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 16, PreB: 16, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 353894, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+runtime: 0.000212385 s, SDDMM TOPS: 0.000724775  performance TOP/s: 3.41255
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 16, PreB: 16, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 707788, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+runtime: 0.000190103 s, SDDMM TOPS: 0.00144955  performance TOP/s: 7.62507
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 16, PreB: 16, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 1415576, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+runtime: 0.000220271 s, SDDMM TOPS: 0.0028991  performance TOP/s: 13.1615
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 16, PreB: 16, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+runtime: 0.000149419 s, SDDMM TOPS: 0.000483181  performance TOP/s: 3.23372
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 16, PreB: 16, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 471856, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+runtime: 0.000135275 s, SDDMM TOPS: 0.000966361  performance TOP/s: 7.14368
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 16, PreB: 16, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 943712, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+runtime: 0.000153805 s, SDDMM TOPS: 0.00193272  performance TOP/s: 12.5661
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 16, PreB: 16, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 117964, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+runtime: 8.58989e-05 s, SDDMM TOPS: 0.00024159  performance TOP/s: 2.81249
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 16, PreB: 16, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+runtime: 7.84207e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 6.16139
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 16, PreB: 16, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 471856, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+runtime: 8.76925e-05 s, SDDMM TOPS: 0.000966361  performance TOP/s: 11.0199
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 16, PreB: 16, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 58982, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+runtime: 5.38231e-05 s, SDDMM TOPS: 0.000120795  performance TOP/s: 2.2443
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 16, PreB: 16, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 117964, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+runtime: 4.94201e-05 s, SDDMM TOPS: 0.00024159  performance TOP/s: 4.8885
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 16, PreB: 16, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+runtime: 5.94579e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 8.12643
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 16, PreB: 16, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 32840, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+runtime: 4.1419e-05 s, SDDMM TOPS: 6.72563e-05  performance TOP/s: 1.6238
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 16, PreB: 16, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 65680, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+runtime: 3.90122e-05 s, SDDMM TOPS: 0.000134513  performance TOP/s: 3.44797
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 16, PreB: 16, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 131360, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+runtime: 4.45658e-05 s, SDDMM TOPS: 0.000269025  performance TOP/s: 6.03658
+SDDMM results verification: PASS
+
+
+L8-R8 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 8, PreB: 8, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 589824, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+runtime: 0.000198603 s, SDDMM TOPS: 0.00120796  performance TOP/s: 6.08228
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 8, PreB: 8, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 1179648, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+runtime: 0.00022071 s, SDDMM TOPS: 0.00241592  performance TOP/s: 10.9461
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 8, PreB: 8, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 2359296, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+runtime: 0.000233588 s, SDDMM TOPS: 0.00483184  performance TOP/s: 20.6853
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 8, PreB: 8, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 353894, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+runtime: 0.000135384 s, SDDMM TOPS: 0.000724775  performance TOP/s: 5.35347
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 8, PreB: 8, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 707788, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+runtime: 0.000136572 s, SDDMM TOPS: 0.00144955  performance TOP/s: 10.6138
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 8, PreB: 8, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 1415576, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+runtime: 0.000146421 s, SDDMM TOPS: 0.0028991  performance TOP/s: 19.7997
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 8, PreB: 8, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+runtime: 9.51541e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 5.07787
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 8, PreB: 8, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 471856, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+runtime: 9.67295e-05 s, SDDMM TOPS: 0.000966361  performance TOP/s: 9.99034
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 8, PreB: 8, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 943712, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+runtime: 0.000102928 s, SDDMM TOPS: 0.00193272  performance TOP/s: 18.7775
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 8, PreB: 8, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 117964, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+runtime: 4.306e-05 s, SDDMM TOPS: 0.00024159  performance TOP/s: 5.61055
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 8, PreB: 8, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+runtime: 5.58944e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 8.64452
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 8, PreB: 8, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 471856, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+runtime: 5.9456e-05 s, SDDMM TOPS: 0.000966361  performance TOP/s: 16.2534
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 8, PreB: 8, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 58982, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+runtime: 3.54938e-05 s, SDDMM TOPS: 0.000120795  performance TOP/s: 3.40327
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 8, PreB: 8, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 117964, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+runtime: 3.59676e-05 s, SDDMM TOPS: 0.00024159  performance TOP/s: 6.71689
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 8, PreB: 8, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+runtime: 3.77887e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 12.7864
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 8, PreB: 8, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 32840, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+runtime: 2.73023e-05 s, SDDMM TOPS: 6.72563e-05  performance TOP/s: 2.46339
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 8, PreB: 8, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 65680, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+runtime: 2.77603e-05 s, SDDMM TOPS: 0.000134513  performance TOP/s: 4.8455
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 8, PreB: 8, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 131360, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+runtime: 2.89088e-05 s, SDDMM TOPS: 0.000269025  performance TOP/s: 9.306
+SDDMM results verification: PASS
+
+
+L4-R4 
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 4, PreB: 4, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 589824, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+Using WMMA 
+runtime: 0.000120027 s, SDDMM TOPS: 0.00120796  performance TOP/s: 10.0641
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 4, PreB: 4, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 1179648, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+Using WMMA 
+runtime: 0.000121467 s, SDDMM TOPS: 0.00241592  performance TOP/s: 19.8896
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.5/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 4, PreB: 4, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 2359296, K: 1024
+ nonzero_vec: 294912 aligned_ nonzero_vec: 295816
+Using WMMA 
+runtime: 0.000128876 s, SDDMM TOPS: 0.00483184  performance TOP/s: 37.4921
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 4, PreB: 4, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 353894, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+Using WMMA 
+runtime: 7.79365e-05 s, SDDMM TOPS: 0.000724775  performance TOP/s: 9.29956
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 4, PreB: 4, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 707788, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+Using WMMA 
+runtime: 7.89159e-05 s, SDDMM TOPS: 0.00144955  performance TOP/s: 18.3683
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.7/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 4, PreB: 4, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 1415576, K: 1024
+ nonzero_vec: 176947 aligned_ nonzero_vec: 177816
+Using WMMA 
+runtime: 8.30614e-05 s, SDDMM TOPS: 0.0028991  performance TOP/s: 34.9031
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 4, PreB: 4, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+Using WMMA 
+runtime: 5.75857e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 8.39063
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 4, PreB: 4, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 471856, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+Using WMMA 
+runtime: 5.82413e-05 s, SDDMM TOPS: 0.000966361  performance TOP/s: 16.5924
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.8/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 4, PreB: 4, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 943712, K: 1024
+ nonzero_vec: 117964 aligned_ nonzero_vec: 118880
+Using WMMA 
+runtime: 6.11829e-05 s, SDDMM TOPS: 0.00193272  performance TOP/s: 31.5892
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 4, PreB: 4, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 117964, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+Using WMMA 
+runtime: 3.69979e-05 s, SDDMM TOPS: 0.00024159  performance TOP/s: 6.52984
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 4, PreB: 4, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+Using WMMA 
+runtime: 3.72968e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 12.955
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.9/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 4, PreB: 4, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 471856, K: 1024
+ nonzero_vec: 58982 aligned_ nonzero_vec: 59880
+Using WMMA 
+runtime: 3.88952e-05 s, SDDMM TOPS: 0.000966361  performance TOP/s: 24.8453
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 4, PreB: 4, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 58982, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+Using WMMA 
+runtime: 2.45962e-05 s, SDDMM TOPS: 0.000120795  performance TOP/s: 4.91114
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 4, PreB: 4, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 117964, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+Using WMMA 
+runtime: 2.49822e-05 s, SDDMM TOPS: 0.00024159  performance TOP/s: 9.67049
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.95/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 4, PreB: 4, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 235928, K: 1024
+ nonzero_vec: 29491 aligned_ nonzero_vec: 30328
+Using WMMA 
+runtime: 2.62212e-05 s, SDDMM TOPS: 0.000483181  performance TOP/s: 18.4271
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 2 
+PreA: 4, PreB: 4, vec_len: 2, M: 512, M_vec: 256, N: 2304, nnz: 32840, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+Using WMMA 
+runtime: 2.0228e-05 s, SDDMM TOPS: 6.72563e-05  performance TOP/s: 3.32492
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 4 
+PreA: 4, PreB: 4, vec_len: 4, M: 1024, M_vec: 256, N: 2304, nnz: 65680, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+Using WMMA 
+runtime: 2.0147e-05 s, SDDMM TOPS: 0.000134513  performance TOP/s: 6.67657
+SDDMM results verification: PASS
+
+
+Sparse matrix: /users/shigang/gitrepo/dlmc/rn50/random_pruning/0.98/bottleneck_2_block_group3_5_1.smtx
+Vec_length: 8 
+PreA: 4, PreB: 4, vec_len: 8, M: 2048, M_vec: 256, N: 2304, nnz: 131360, K: 1024
+ nonzero_vec: 16420 aligned_ nonzero_vec: 17392
+Using WMMA 
+runtime: 2.10659e-05 s, SDDMM TOPS: 0.000269025  performance TOP/s: 12.7706
+SDDMM results verification: PASS
+
+
