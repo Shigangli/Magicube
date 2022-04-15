@@ -12,7 +12,6 @@
 #include <string>
 #include <cuda_profiler_api.h>
 #include <cublas_v2.h>
-#include "sputnik/sputnik.h"
 #include <cusparse.h>
 #include <iostream>
 
