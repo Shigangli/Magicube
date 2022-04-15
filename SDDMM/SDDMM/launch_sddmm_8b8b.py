@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description='lauch the sddmm benchmarks')
 #parser.add_argument('--preB', type=int, default=8, help="number of bits for B")
 args = parser.parse_args()
 
-dataset_dir = '/users/shigang/gitrepo/dlmc/'
+dataset_dir = os.environ.get('dataset_dir')
 sparsities = ['50', '70', '80', '90', '95', '98']
 dimKs = [128, 256]
 vec_lens = [2, 4, 8]
@@ -25,7 +25,7 @@ for dimK in dimKs:
             lines = matrix_list.readlines()
             #for i in range(1):
             for i in range(len(lines)):
-                matrix = '%s%s' % (dataset_dir, lines[i][:-1])
+                matrix = '%s/%s' % (dataset_dir, lines[i][:-1])
                 cmd = './sddmm_benchmark %s %d %d 1 0 1 8 8' % (matrix, dimK, vec_len)
                 os.system(cmd)
 
