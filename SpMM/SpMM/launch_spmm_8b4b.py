@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(description='lauch the spmm benchmarks')
 #parser.add_argument('--preB', type=int, default=8, help="number of bits for B")
 args = parser.parse_args()
 
+dataset_dir = os.environ.get('dataset_dir')
 sparsities = ['50', '70', '80', '90', '95', '98']
 dimNs = [128, 256]
 vec_lens = [2, 4, 8]
@@ -21,12 +22,11 @@ for dimN in dimNs:
         for sparsity in sparsities:
             print("dimN: ", dimN, "vec_len: ", vec_len, "sparsity: ", sparsity)
         
-            matrix_list = open('/users/shigang/gitrepo/dlmc/s%s.txt' % sparsity, 'r')
+            matrix_list = open('./eval_matrices/s%s.txt' % sparsity, 'r')
             lines = matrix_list.readlines()
-            #print("number_of_matrix: ", len(lines))
             for i in range(len(lines)):
-                matrix = '/users/shigang/gitrepo/dlmc/%s' % lines[i][:-1]
-                #print(matrix)
+            #for i in range(1):
+                matrix = '%s/%s' % (dataset_dir, lines[i][:-1])
                 cmd = './spmm_benchmark %s %d %d 0 1 1 1 8 4' % (matrix, dimN, vec_len)
                 os.system(cmd)
 
