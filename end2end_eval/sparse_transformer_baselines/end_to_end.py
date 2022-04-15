@@ -200,7 +200,8 @@ def sparse_profile():
         for i in range(32):
             out = spTrans(x)
         end_time = time.time()
-        print("Sparse average runtime: [%.6f] seconds" % ((end_time-start_time)/32.0))
+        #print("vectorSparse average runtime: [%.6f] seconds" % ((end_time-start_time)/32.0))
+        print("vectorSparse average runtime: [%.6f] seconds, batchsize [%d]" % ((end_time-start_time)/32.0, args.bs))
 
         # profile
         for i in range(10):
@@ -231,7 +232,7 @@ def dense_prof():
         for i in range(32):
             out = denseTrans(x)
         end_time = time.time()
-        print("Dense average runtime: [%.6f] seconds" % ((end_time-start_time)/32.0))
+        print("Dense average runtime: [%.6f] seconds, batchsize [%d]" % ((end_time-start_time)/32.0, args.bs))
 
         # profile
         for i in range(10):
