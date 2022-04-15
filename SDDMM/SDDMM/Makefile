@@ -1,7 +1,7 @@
 SPUTNIK_PATH = /users/shigang/gitrepo/sputnik/
 
 NVCC = nvcc
-NVCC_FLAGS = -std=c++11 -arch=sm_80 -lineinfo -lcublas -lcusparse -I${SPUTNIK_PATH}
+NVCC_FLAGS = -std=c++11 -arch=sm_80 -lineinfo -lcublas -lcusparse
 
 
 ##################################################################
@@ -17,18 +17,16 @@ OBJ_DIR = bin
 # Include header file directory
 INC_DIR = include
 
-# Library directory
-LIB_DIR = ${SPUTNIK_PATH}/build/sputnik
 
 ##################################################################
 
 ## Compile ##
 
 sddmm_benchmark: $(OBJ_DIR)/sddmm_benchmark.o $(OBJ_DIR)/cuda_sddmm.o $(OBJ_DIR)/wmma_sddmm.o $(OBJ_DIR)/cublas_gemm.o
-	@$(NVCC) $(NVCC_FLAGS) $(LIB_DIR)/libsputnik.so $^ -o $@
+	@$(NVCC) $(NVCC_FLAGS) $^ -o $@
 
 spmm_benchmark: $(OBJ_DIR)/spmm_benchmark.o $(OBJ_DIR)/cuda_spmm.o $(OBJ_DIR)/wmma_spmm.o $(OBJ_DIR)/cublas_gemm.o
-	@$(NVCC) $(NVCC_FLAGS) $(LIB_DIR)/libsputnik.so $^  -o $@
+	@$(NVCC) $(NVCC_FLAGS) $^  -o $@
 
 # Compile main file to object file
 $(OBJ_DIR)/%.o : %.cpp
