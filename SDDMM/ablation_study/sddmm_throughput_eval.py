@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser(description='lauch the sddmm benchmarks')
 
 args = parser.parse_args()
 
-dataset_dir = '/users/shigang/gitrepo/dlmc'
+dataset_dir = os.environ.get('dataset_dir')
 sparsities = ['0.5', '0.7', '0.8', '0.9', '0.95', '0.98']
 vec_lens = [2, 4, 8]
 
