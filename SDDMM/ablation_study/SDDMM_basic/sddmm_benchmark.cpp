@@ -242,7 +242,7 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
 
 	flops = flops/1000.0/1000.0/1000.0;
         sddmm_ms_avg = sddmm_ms_avg/(float)NUM_PROFILES/1000.0;
-        std::cout << "runtime: " << sddmm_ms_avg << " s, SDDMM TOPS: " << flops/1000.0 << "  performance TOP/s: " << flops/sddmm_ms_avg/1000.0 << "\n";
+        std::cout << "runtime: " << sddmm_ms_avg << " s, SDDMM basic TOPS: " << flops/1000.0 << "  performance TOP/s: " << flops/sddmm_ms_avg/1000.0 << "\n";
 
         cudaProfilerStop();
 
@@ -320,13 +320,13 @@ int main(int argc, char **argv){
 
 	switch (vec_length){
             case 2:
-                printf("Vec_length: %d \n", vec_length);
+                //printf("Vec_length: %d \n", vec_length);
                 break;
             case 4:
-                printf("Vec_length: %d \n", vec_length);
+                //printf("Vec_length: %d \n", vec_length);
                 break;
             case 8:
-                printf("Vec_length: %d \n", vec_length);
+                //printf("Vec_length: %d \n", vec_length);
                 break;
             default:
                 printf("Unsupported vec_length!\n");
@@ -337,4 +337,5 @@ int main(int argc, char **argv){
 	else if ((preA == 16) && (preB == 16)) BmFN(benchmark, dimK, vec_length, sorted, func, sparse, preA, preB);
 	else printf("Unsupported precision!\n");
     }
+    printf("\n");
 }
