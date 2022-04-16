@@ -9,9 +9,9 @@ from sptrans.quantization import bquantization
 #from sptrans.softmax import bcsr_softmax
 
 from sptrans.deq_sddmm import bsddmm_8b
+from sptrans.deq_sddmm import bsddmm_4b
 from sptrans.deq_spmm import bspmm_8b
 from sptrans.deq_spmm import bspmm_16b8b
-from sptrans.deq_sddmm import bsddmm_4b
 from sptrans.deq_spmm import bspmm_4b
 from sptrans.q_softmax import q_bcsr_softmax
 
@@ -37,6 +37,8 @@ def sp_multi_head_attention_forward(
     row_offsets: Optional[torch.Tensor] = None,         # the row indices of the csr mask
     column_indices: Optional[torch.Tensor] = None,      # the column indices of the csr mask
     vec_length: Optional[int] = 2,                      # the vector length of column vector sparsity
+    lhs_pre: Optional[int] = 8,                         # the precision of lhs matrix
+    rhs_pre: Optional[int] = 8,                         # the precision of rhs matrix
     use_separate_proj_weight: bool = False,             # if True, the q/k/v_proj_weight will be used rather than in_proj_weight
     q_proj_weight: Optional[torch.Tensor] = None,
     k_proj_weight: Optional[torch.Tensor] = None,
@@ -47,9 +49,7 @@ def sp_multi_head_attention_forward(
 
     scale_qkv = 36.0
     #scale_sfmx = 255.0
-    #bits = 8
-    scale_sfmx = 15.0
-    bits = 4
+    scale_sfmx = 32.0
 
     # Get problem size
     tgt_len, bsz, embed_dim = query.size()
@@ -179,32 +179,19 @@ def sp_multi_head_attention_forward(
                 key_padding_mask = torch.nn.functional.pad(key_padding_mask, (0, 1))
 
     with nvtx.annotate("QKV quantization"):
-        #print("q shape: ", q.size())
-        #print("k shape: ", k.size())
-        #print("v shape: ", v.size())
-        q = bquantization(q, 8, scale_qkv)
-        k = bquantization(k, 8, scale_qkv)
-        v = bquantization(v, 8, scale_qkv)
-        #q = bquantization(q, 4, scale_qkv)
-        #k = bquantization(k, 4, scale_qkv)
-        #v = bquantization(v, 4, scale_qkv)
-        #print("quantized q shape: ", q.size())
-        #print("quantized k shape: ", k.size())
-        #print("quantized v shape: ", v.size())
+        q = bquantization(q, rhs_pre, scale_qkv)
+        k = bquantization(k, rhs_pre, scale_qkv)
+        v = bquantization(v, rhs_pre, scale_qkv)
     
     # batched matrix multiplication
     with nvtx.annotate("sp QK^T"):
-        #attn_output_weights = bsddmm(row_indices, row_offsets, column_indices, q, k, vec_length)
-        attn_output_weights = bsddmm_8b(row_indices, row_offsets, column_indices, q, k, vec_length, 8, scale_qkv*scale_qkv)
-        #attn_output_weights = bsddmm_4b(row_indices, row_offsets, column_indices, q, k, vec_length, 4, scale_qkv*scale_qkv)
-        #print("attn_output_weights shape: ", attn_output_weights.size())
+        if rhs_pre == 8:
+            attn_output_weights = bsddmm_8b(row_indices, row_offsets, column_indices, q, k, vec_length, rhs_pre, scale_qkv*scale_qkv)
+        if rhs_pre == 4:
+            attn_output_weights = bsddmm_4b(row_indices, row_offsets, column_indices, q, k, vec_length, rhs_pre, scale_qkv*scale_qkv)
     
     with nvtx.annotate("sp Softmax"):
-        #attn_output_weights = bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, vec_length, batch_size)
-        #attn_output_weights = q_bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, scale_sfmx, vec_length, batch_size, 8)
-        attn_output_weights = q_bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, scale_sfmx, vec_length, batch_size, 16)
-        #attn_output_weights = q_bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, scale_sfmx, vec_length, batch_size, 4)
-        #print("attn_output_weights softmax shape: ", attn_output_weights.size())
+        attn_output_weights = q_bcsr_softmax(row_indices, row_offsets, attn_output_weights, scaling, scale_sfmx, vec_length, batch_size, lhs_pre)
     
     # Apply dropout
     #with nvtx.annotate("sp dropout"):
@@ -212,11 +199,12 @@ def sp_multi_head_attention_forward(
     
     # batch multiplication with the value
     with nvtx.annotate("sp AV"):
-        #attn_output = bspmm(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length)
-        #attn_output = bspmm_8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, 8, 8, scale_qkv*scale_sfmx)
-        attn_output = bspmm_16b8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, 16, 8, scale_qkv*scale_sfmx)
-        #attn_output = bspmm_4b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, 4, 4, scale_qkv*scale_sfmx)
-        #print("bspmm output shape: ", attn_output.size())
+        if lhs_pre == 8 and rhs_pre == 8:
+            attn_output = bspmm_8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, lhs_pre, rhs_pre, scale_qkv*scale_sfmx)
+        if lhs_pre == 16 and rhs_pre == 8:
+            attn_output = bspmm_16b8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, lhs_pre, rhs_pre, scale_qkv*scale_sfmx)
+        if lhs_pre == 4 and rhs_pre == 4:
+            attn_output = bspmm_4b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, lhs_pre, rhs_pre, scale_qkv*scale_sfmx)
     
     # transpose the output and concatenate the heads
     with nvtx.annotate("sp Output transpose"):
@@ -239,7 +227,7 @@ class spMultiheadAttention(torch.nn.MultiheadAttention):
     
     def forward(self, query: torch.Tensor, key: torch.Tensor, value: torch.Tensor, key_padding_mask: Optional[torch.Tensor] = None,
                 need_weights: bool = True, row_indices: Optional[torch.Tensor] = None, row_offsets: Optional[torch.Tensor] = None,
-                column_indices: Optional[torch.Tensor] = None, vec_length: int = 2) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+                column_indices: Optional[torch.Tensor] = None, vec_length: int = 2, lhs_pre: int = 8, rhs_pre: int = 8) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         return sp_multi_head_attention_forward(
             query, key, value, self.embed_dim, self.num_heads,
             self.in_proj_weight, self.in_proj_bias,
@@ -248,4 +236,6 @@ class spMultiheadAttention(torch.nn.MultiheadAttention):
             training=self.training,
             key_padding_mask=key_padding_mask, need_weights=need_weights,
             row_indices=row_indices, row_offsets=row_offsets, column_indices=column_indices,
-            vec_length=vec_length)
+            vec_length=vec_length,
+            lhs_pre=lhs_pre,
+            rhs_pre=rhs_pre)

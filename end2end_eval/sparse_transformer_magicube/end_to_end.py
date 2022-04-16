@@ -27,6 +27,8 @@ parser.add_argument('--embed_dim', type=int, default=256, help='the key and valu
 parser.add_argument('--num_heads', type=int, default=4, help='The number of attention heads')
 # Hyper-parameter of the input size
 parser.add_argument('--bs', type=int, default=2, help='batch size')
+parser.add_argument('--lhs_pre', type=int, default=8, help='precision of lhs matrix')
+parser.add_argument('--rhs_pre', type=int, default=8, help='precision of rhs matrix')
 parser.add_argument('--seq_len', type=int, default=4096, help='sequence length')
 # For sparse mask
 parser.add_argument('--sparsity', type=float, default=0.9, help='mask sparsity')
@@ -46,9 +48,13 @@ class SparseTransformerBlock(nn.Module):
     def __init__(self, embed_dim, mlp_dim, num_heads, sparsity, seq_len):
         super(SparseTransformerBlock, self).__init__()
 
-        m = int(seq_len / 8)
+        m = int(seq_len / args.vec_length)
         n = seq_len
         mma_k_dim = 16
+        if args.rhs_pre == 8:
+            mma_k_dim = 16
+        if args.rhs_pre == 4:
+            mma_k_dim = 32
 
         self.self_attention = spMultiheadAttention(embed_dim=embed_dim, num_heads=num_heads, dropout=0).cuda()
         #self.column_indices, self.row_offsets, self.row_indices = static_random_mask(m, n, sparsity)
@@ -66,7 +72,7 @@ class SparseTransformerBlock(nn.Module):
             out = self.self_attention(
                 out, out, out, need_weights=False, row_indices=self.row_indices, 
                 row_offsets=self.row_offsets, column_indices=self.column_indices, 
-                vec_length=8)
+                vec_length=args.vec_length, lhs_pre=args.lhs_pre, rhs_pre=args.rhs_pre)
         with nvtx.annotate("Residual 1"):
             out = out[0] + x
         with nvtx.annotate("Layer Norm 2"):
@@ -204,7 +210,7 @@ def sparse_profile():
         for i in range(32):
             out = spTrans(x)
         end_time = time.time()
-        print("Sparse average runtime: [%.6f] seconds" % ((end_time-start_time)/32.0))
+        print("Magicube (lhs_pre[%d], rhs_pre[%d], batch_size[%d]) average runtime: [%.6f] seconds" % (args.lhs_pre, args.rhs_pre, args.bs, (end_time-start_time)/32.0))
 
         # profile
         for i in range(10):
