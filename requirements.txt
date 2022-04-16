@@ -1,0 +1,3 @@
+nvtx
+scipy
+pytorch_memlab
