@@ -38,11 +38,13 @@ cd ./SpMM/ablation_study
 
 **(2) To reproduce the results of Fig. 12:**
 
-`cd ./SpMM/SpMM`
+```bash
+cd ./SpMM/SpMM
+./setup.sh
 
-`./setup.sh`
-
-`./spmm_pres.sh`
+# about 5 minutes
+./spmm_pres.sh > spmm_pres.txt
+``` 
 
 **(3) To reproduce the results of Fig. 13:**
 
