@@ -28,11 +28,15 @@ which is a common configuration on a machine with A100 GPUs. This is no complex 
 
 **(1) To reproduce the results of Fig. 11:**
 
-`cd ./SpMM/ablation_study`
+```bash
+cd ./SpMM/ablation_study
 
-`./compile_jobs.sh`
+# about 3 minutes
+./compile_jobs.sh
 
-`./spmm_ablation_study.sh`
+# about 3 minutes
+./spmm_ablation_study.sh > spmm_abl_study.txt
+``` 
 
 **(2) To reproduce the results of Fig. 12:**
 
