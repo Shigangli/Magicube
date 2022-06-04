@@ -658,7 +658,7 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
             printf("Unsupported Kernel \n");
         }
 
-	std::cout << "Runtime " << spmm_ms_avg/(float)NUM_PROFILES << " ms" << "\n";
+	std::cout << "Magicube SpMM runtime " << spmm_ms_avg/(float)NUM_PROFILES << " ms" << "\n";
         spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
         std::cout << "performance TOP/s: " << flops/spmm_ms_avg/1000.0 << "\n";
         cudaProfilerStop();
