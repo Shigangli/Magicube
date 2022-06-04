@@ -58,53 +58,42 @@ python sddmm_ablation_study.py > sddmm_abl_study.txt
 
 **(4) To reproduce the results of Fig. 14:**
 
-`cd ./baselines`
+```bash
+cd ./baselines
+./setup.sh
+python launch_spmm_cublas_fp16.py > spmm_cublas_fp16.txt
+python launch_spmm_cublas_int8.py > spmm_cublas_int8.txt
+python launch_spmm_vectorSparse.py > spmm_vectorSparse.txt
+python launch_spmm_cusparse_fp16.py > spmm_cusparse_fp16.txt
+python launch_spmm_cusparse_int8.py > spmm_cusparse_int8.txt
+``` 
 
-`./setup.sh`
-
-`python launch_spmm_cublas_fp16.py`
-
-`python launch_spmm_cublas_int8.py`
-
-`python launch_spmm_vectorSparse.py`
-
-`python launch_spmm_cusparse_fp16.py`
-
-`python launch_spmm_cusparse_int8.py`
-
-`cd ./SpMM/SpMM`
-
-`./setup.sh`
-
-`python launch_spmm_magicube_16b8b.py`
-
-`python launch_spmm_magicube_8b8b.py`
-
-`python launch_spmm_magicube_8b4b.py`
-
-`python launch_spmm_magicube_4b4b.py`
+```bash
+cd ./SpMM/SpMM
+./setup.sh
+python launch_spmm_magicube_16b8b.py > spmm_magicube_16b8b.txt
+python launch_spmm_magicube_8b8b.py > spmm_magicube_8b8b.txt
+python launch_spmm_magicube_8b4b.py > spmm_magicube_8b4b.txt
+python launch_spmm_magicube_4b4b.py > spmm_magicube_4b4b.txt
+``` 
 
 **(5) To reproduce the results of Fig. 15:**
 
-`cd ./baselines`
+```bash
+cd ./baselines
+./setup.sh
+python launch_sddmm_cublas_fp16.py > sddmm_cublas_fp16.txt
+python launch_sddmm_cublas_int8.py > sddmm_cublas_int8.txt
+python launch_sddmm_vectorSparse.py > sddmm_vectorSparse.txt
+``` 
 
-`./setup.sh`
-
-`python launch_sddmm_cublas_fp16.py`
-
-`python launch_sddmm_cublas_int8.py`
-
-`python launch_sddmm_vectorSparse.py`
-
+```bash
 cd ./SDDMM/SDDMM
-
-`./setup.sh`
-
-`python launch_sddmm_magicube_16b16b.py`
-
-`python launch_sddmm_magicube_8b8b.py`
-
-`python launch_sddmm_magicube_4b4b.py`
+./setup.sh
+python launch_sddmm_magicube_16b16b.py > sddmm_magicube_16b16b.txt
+python launch_sddmm_magicube_8b8b.py > sddmm_magicube_8b8b.txt
+python launch_sddmm_magicube_4b4b.py > sddmm_magicube_4b4b.txt
+``` 
 
 **(6) To reproduce the results of Fig. 16:**
   
