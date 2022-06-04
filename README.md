@@ -26,7 +26,7 @@ which is a common configuration on a machine with A100 GPUs. This is no complex 
 
 ## Step 3: Compile and run the experiments.
 
-\ \\ (1) To reproduce the results of Fig. 11:
+(1) To reproduce the results of Fig. 11:
 
 `cd ./SpMM/ablation_study`
 
@@ -34,7 +34,7 @@ which is a common configuration on a machine with A100 GPUs. This is no complex 
 
 `./spmm_ablation_study.sh`
 
-\ \\ (2) To reproduce the results of Fig. 12:
+(2) To reproduce the results of Fig. 12:
 
 `cd ./SpMM/SpMM`
 
@@ -42,7 +42,7 @@ which is a common configuration on a machine with A100 GPUs. This is no complex 
 
 `./spmm_pres.sh`
 
-\ \\ (3) To reproduce the results of Fig. 13:
+(3) To reproduce the results of Fig. 13:
 
 `cd ./SDDMM/ablation_study`
 
@@ -50,7 +50,7 @@ which is a common configuration on a machine with A100 GPUs. This is no complex 
 
 `python sddmm_ablation_study.py`
 
-\ \\ (4) To reproduce the results of Fig. 14:
+(4) To reproduce the results of Fig. 14:
 
 `cd ./baselines`
 
@@ -78,7 +78,7 @@ which is a common configuration on a machine with A100 GPUs. This is no complex 
 
 `python launch_spmm_magicube_4b4b.py`
 
-\ \\ (5) To reproduce the results of Fig. 15:
+(5) To reproduce the results of Fig. 15:
 
 `cd ./baselines`
 
@@ -100,7 +100,7 @@ cd ./SDDMM/SDDMM
 
 `python launch_sddmm_magicube_4b4b.py`
 
-\ \\ (6) To reproduce the results of Fig. 17:
+(6) To reproduce the results of Fig. 17:
 
 `cd ./end2end_eval/sparse_transformer_baselines/src/`
 
@@ -119,3 +119,12 @@ cd ./SDDMM/SDDMM
 `cd ..`
 
 `python launch_magicube.py`
+
+
+## Step 4: Plot figures.
+
+
+
+## License
+
+See [LICENSE](LICENSE).
