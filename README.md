@@ -48,11 +48,13 @@ cd ./SpMM/SpMM
 
 **(3) To reproduce the results of Fig. 13:**
 
-`cd ./SDDMM/ablation_study`
+```bash
+cd ./SDDMM/ablation_study
+./compile_jobs.sh
 
-`./compile_jobs.sh`
-
-`python sddmm_ablation_study.py`
+# about 5 minutes
+python sddmm_ablation_study.py > sddmm_abl_study.txt
+``` 
 
 **(4) To reproduce the results of Fig. 14:**
 
