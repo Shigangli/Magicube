@@ -6,23 +6,21 @@ which is a common configuration on a machine with A100 GPUs. This is no complex 
 
 ## Step 1: Prepare Dataset and Code.
 
-`wget https://storage.googleapis.com/sgk-sc2020/dlmc.tar.gz`
-
-`tar -xvf dlmc.tar.gz`
-
-`export dataset_dir=/the/path/of/dlmc`
-
-`git clone git@github.com:Shigangli/Magicube.git`
+```bash
+wget https://storage.googleapis.com/sgk-sc2020/dlmc.tar.gz
+tar -xvf dlmc.tar.gz
+export dataset_dir=/the/path/of/dlmc
+git clone git@github.com:Shigangli/Magicube.git
+``` 
 
 ## Step 2: Setup Python environment.
 
-`conda create --name py38_sc22 python=3.8`
-
-`conda activate py38_sc22`
-
-`pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 torchaudio==0.9.1 -f https://download.pytorch.org/whl/torch_stable.html`
-
-`pip install -r requirements.txt`
+```bash
+conda create --name py38_sc22 python=3.8
+conda activate py38_sc22
+pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 torchaudio==0.9.1 -f https://download.pytorch.org/whl/torch_stable.html
+pip install -r requirements.txt
+``` 
 
 ## Step 3: Compile and run the experiments.
 
@@ -129,7 +127,7 @@ python launch_magicube.py > magicube_n2n.txt
 ``` 
 
 
-## Step 4: Plot figures.
+## Step 4: Plot the figures.
 Figure 13
 Figure 14
 Figure 15
