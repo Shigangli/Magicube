@@ -1,5 +1,3 @@
-SPUTNIK_PATH = /users/shigang/gitrepo/sputnik/
-
 NVCC = nvcc
 NVCC_FLAGS = -std=c++11 -arch=sm_80 -lineinfo -lcublas -lcusparse
 
