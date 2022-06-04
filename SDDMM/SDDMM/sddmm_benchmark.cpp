@@ -249,7 +249,7 @@ void BmFN(std::string benchmark, int dimK, int vec_length, bool sorted, bool fun
         }
 
 	flops = flops/1000.0/1000.0/1000.0;
-        std::cout << "Runtime: " << sddmm_ms_avg/(float)NUM_PROFILES << " ms" << "\n";
+        std::cout << "Magicube SDDMM runtime " << sddmm_ms_avg/(float)NUM_PROFILES << " ms" << "\n";
         sddmm_ms_avg = sddmm_ms_avg/(float)NUM_PROFILES/1000.0;
         if (func){
             std::cout << "SDDMM TOPS: " << flops/1000.0 << "  performance TOP/s: " << flops/sddmm_ms_avg/1000.0 << "\n";
