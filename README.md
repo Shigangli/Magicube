@@ -114,10 +114,14 @@ Run Pytorch (cudnn) end-to-end test, which takes about 0.5 hour. It's all right 
 
 Run vectorSparse end-to-end test, which takes about 0.8 hour.
 
-`**python launch_vectorSparse.py > vectorSparse_n2n.txt**`
+`python launch_vectorSparse.py > vectorSparse_n2n.txt`
 
   
- 
+```bash
+cd ./end2end_eval/sparse_transformer_magicube/src
+
+./install.sh
+``` 
 
 `cd ./end2end_eval/sparse_transformer_magicube/src`
 
@@ -125,7 +129,7 @@ Run vectorSparse end-to-end test, which takes about 0.8 hour.
 
 `cd ..`
 
-**Run magicube end-to-end test**, which takes about 2.6 hours.
+Run magicube end-to-end test, which takes about 2.6 hours.
 
 `python launch_magicube.py > magicube_n2n.txt`
 
