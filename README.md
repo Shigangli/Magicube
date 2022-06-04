@@ -1,1 +1,121 @@
+## Magicube
 
+The software requirements to reproduce the artfifact are: `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`,
+
+which is a common configuration on a machine with A100 GPUs. This is no complex software dependency and the reproducibility process is easy to conduct following the steps below.
+
+## Step 1: Prepare Dataset and Code.
+
+`wget https://storage.googleapis.com/sgk-sc2020/dlmc.tar.gz`
+
+`tar -xvf dlmc.tar.gz`
+
+`export dataset_dir=/the/path/of/dlmc`
+
+`git clone git@github.com:Shigangli/Magicube.git`
+
+## Step 2: Setup Python environment.
+
+`conda create --name py38_sc22 python=3.8`
+
+`conda activate py38_sc22`
+
+`pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 torchaudio==0.9.1 -f https://download.pytorch.org/whl/torch_stable.html`
+
+`pip install -r requirements.txt`
+
+## Step 3: Compile and run the experiments.
+
+\ \\ (1) To reproduce the results of Fig. 11:
+
+`cd ./SpMM/ablation_study`
+
+`./compile_jobs.sh`
+
+`./spmm_ablation_study.sh`
+
+\ \\ (2) To reproduce the results of Fig. 12:
+
+`cd ./SpMM/SpMM`
+
+`./setup.sh`
+
+`./spmm_pres.sh`
+
+\ \\ (3) To reproduce the results of Fig. 13:
+
+`cd ./SDDMM/ablation_study`
+
+`./compile_jobs.sh`
+
+`python sddmm_ablation_study.py`
+
+\ \\ (4) To reproduce the results of Fig. 14:
+
+`cd ./baselines`
+
+`./setup.sh`
+
+`python launch_spmm_cublas_fp16.py`
+
+`python launch_spmm_cublas_int8.py`
+
+`python launch_spmm_vectorSparse.py`
+
+`python launch_spmm_cusparse_fp16.py`
+
+`python launch_spmm_cusparse_int8.py`
+
+`cd ./SpMM/SpMM`
+
+`./setup.sh`
+
+`python launch_spmm_magicube_16b8b.py`
+
+`python launch_spmm_magicube_8b8b.py`
+
+`python launch_spmm_magicube_8b4b.py`
+
+`python launch_spmm_magicube_4b4b.py`
+
+\ \\ (5) To reproduce the results of Fig. 15:
+
+`cd ./baselines`
+
+`./setup.sh`
+
+`python launch_sddmm_cublas_fp16.py`
+
+`python launch_sddmm_cublas_int8.py`
+
+`python launch_sddmm_vectorSparse.py`
+
+cd ./SDDMM/SDDMM
+
+`./setup.sh`
+
+`python launch_sddmm_magicube_16b16b.py`
+
+`python launch_sddmm_magicube_8b8b.py`
+
+`python launch_sddmm_magicube_4b4b.py`
+
+\ \\ (6) To reproduce the results of Fig. 17:
+
+`cd ./end2end_eval/sparse_transformer_baselines/src/`
+
+`./install.sh`
+
+`cd ..`
+
+`python launch_cudnn_fp16.py`
+
+`python launch_vectorSparse.py`
+
+`cd ./end2end_eval/sparse_transformer_magicube/src`
+
+`./install.sh`
+
+`cd ..`
+
+`python launch_magicube.py`
