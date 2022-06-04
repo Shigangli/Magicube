@@ -100,7 +100,7 @@ cd ./SDDMM/SDDMM
 
 `python launch_sddmm_magicube_4b4b.py`
 
-(6) To reproduce the results of Fig. 17:
+(6) To reproduce the results of Fig. 16:
 
 `cd ./end2end_eval/sparse_transformer_baselines/src/`
 
@@ -108,9 +108,11 @@ cd ./SDDMM/SDDMM
 
 `cd ..`
 
-`python launch_cudnn_fp16.py`
+Run Pytorch (cudnn) end-to-end test, which takes about 0.5 hour. It's all right if it reports Out-of-Memory error during the evaluation.
+`python launch_cudnn_fp16.py > pytorch_n2n.txt`
 
-`python launch_vectorSparse.py`
+Run vectorSparse end-to-end test, which takes about 0.8 hour.
+`python launch_vectorSparse.py > vectorSparse_n2n.txt`
 
 `cd ./end2end_eval/sparse_transformer_magicube/src`
 
@@ -118,11 +120,15 @@ cd ./SDDMM/SDDMM
 
 `cd ..`
 
-`python launch_magicube.py`
+Run magicube end-to-end test, which takes about 2.6 hours.
+`python launch_magicube.py > magicube_n2n.txt`
 
 
 ## Step 4: Plot figures.
-
+Figure 13
+Figure 14
+Figure 15
+Figure 16
 
 
 ## License
