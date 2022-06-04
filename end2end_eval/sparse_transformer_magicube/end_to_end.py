@@ -210,7 +210,7 @@ def sparse_profile():
         for i in range(32):
             out = spTrans(x)
         end_time = time.time()
-        print("Magicube (lhs_pre[%d], rhs_pre[%d], batch_size[%d]) average runtime: [%.6f] seconds" % (args.lhs_pre, args.rhs_pre, args.bs, (end_time-start_time)/32.0))
+        print("Magicube (lhs_pre[%d], rhs_pre[%d], batch_size[%d]) average runtime %.4f milliseconds" % (args.lhs_pre, args.rhs_pre, args.bs, (end_time-start_time)/32.0*1000.0))
 
         # profile
         for i in range(10):
