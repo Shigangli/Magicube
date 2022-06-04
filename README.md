@@ -61,20 +61,13 @@ python sddmm_ablation_study.py > sddmm_abl_study.txt
 ```bash
 cd ./baselines
 ./setup.sh
-python launch_spmm_cublas_fp16.py > spmm_cublas_fp16.txt
-python launch_spmm_cublas_int8.py > spmm_cublas_int8.txt
-python launch_spmm_vectorSparse.py > spmm_vectorSparse.txt
-python launch_spmm_cusparse_fp16.py > spmm_cusparse_fp16.txt
-python launch_spmm_cusparse_int8.py > spmm_cusparse_int8.txt
+./run_spmm_baselines.sh
 ``` 
 
 ```bash
 cd ./SpMM/SpMM
 ./setup.sh
-python launch_spmm_magicube_16b8b.py > spmm_magicube_16b8b.txt
-python launch_spmm_magicube_8b8b.py > spmm_magicube_8b8b.txt
-python launch_spmm_magicube_8b4b.py > spmm_magicube_8b4b.txt
-python launch_spmm_magicube_4b4b.py > spmm_magicube_4b4b.txt
+./run_spmm_magicube.sh
 ``` 
 
 **(5) To reproduce the results of Fig. 15:**
@@ -82,17 +75,13 @@ python launch_spmm_magicube_4b4b.py > spmm_magicube_4b4b.txt
 ```bash
 cd ./baselines
 ./setup.sh
-python launch_sddmm_cublas_fp16.py > sddmm_cublas_fp16.txt
-python launch_sddmm_cublas_int8.py > sddmm_cublas_int8.txt
-python launch_sddmm_vectorSparse.py > sddmm_vectorSparse.txt
+./run_sddmm_baselines.sh
 ``` 
 
 ```bash
 cd ./SDDMM/SDDMM
 ./setup.sh
-python launch_sddmm_magicube_16b16b.py > sddmm_magicube_16b16b.txt
-python launch_sddmm_magicube_8b8b.py > sddmm_magicube_8b8b.txt
-python launch_sddmm_magicube_4b4b.py > sddmm_magicube_4b4b.txt
+./run_sddmm_magicube.sh
 ``` 
 
 **(6) To reproduce the results of Fig. 16:**
