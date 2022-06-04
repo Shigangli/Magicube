@@ -13,6 +13,7 @@ from sptrans.deq_sddmm import bsddmm_4b
 from sptrans.deq_spmm import bspmm_8b
 from sptrans.deq_spmm import bspmm_16b8b
 from sptrans.deq_spmm import bspmm_4b
+from sptrans.deq_spmm import bspmm_8b4b
 from sptrans.q_softmax import q_bcsr_softmax
 
 
@@ -179,6 +180,12 @@ def sp_multi_head_attention_forward(
                 key_padding_mask = torch.nn.functional.pad(key_padding_mask, (0, 1))
 
     with nvtx.annotate("QKV quantization"):
+        #q_abs_max = torch.max(torch.abs(q))
+        #k_abs_max = torch.max(torch.abs(k))
+        #v_abs_max = torch.max(torch.abs(v))
+        #q = bquantization(q, rhs_pre, scale_qkv/q_abs_max*q_abs_max)
+        #k = bquantization(k, rhs_pre, scale_qkv/q_abs_max*q_abs_max)
+        #v = bquantization(v, rhs_pre, scale_qkv/q_abs_max*q_abs_max)
         q = bquantization(q, rhs_pre, scale_qkv)
         k = bquantization(k, rhs_pre, scale_qkv)
         v = bquantization(v, rhs_pre, scale_qkv)
@@ -203,6 +210,8 @@ def sp_multi_head_attention_forward(
             attn_output = bspmm_8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, lhs_pre, rhs_pre, scale_qkv*scale_sfmx)
         if lhs_pre == 16 and rhs_pre == 8:
             attn_output = bspmm_16b8b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, lhs_pre, rhs_pre, scale_qkv*scale_sfmx)
+        if lhs_pre == 8 and rhs_pre == 4:
+            attn_output = bspmm_8b4b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, lhs_pre, rhs_pre, scale_qkv*scale_sfmx)
         if lhs_pre == 4 and rhs_pre == 4:
             attn_output = bspmm_4b(row_indices, row_offsets, column_indices, attn_output_weights, v, vec_length, lhs_pre, rhs_pre, scale_qkv*scale_sfmx)
     
