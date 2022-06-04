@@ -102,25 +102,17 @@ cd ./SDDMM/SDDMM
 
 **(6) To reproduce the results of Fig. 16:**
 
-`cd ./end2end_eval/sparse_transformer_baselines/src/`
-
-`./install.sh`
-
-`cd ..`
-
-Run Pytorch (cudnn) end-to-end test, which takes about 0.5 hour. It's all right if it reports Out-of-Memory error during the evaluation.
-
-`python launch_cudnn_fp16.py > pytorch_n2n.txt`
-
-Run vectorSparse end-to-end test, which takes about 0.8 hour.
-
-`python launch_vectorSparse.py > vectorSparse_n2n.txt`
-
   
 ```bash
-cd ./end2end_eval/sparse_transformer_magicube/src
+`cd ./end2end_eval/sparse_transformer_baselines/src/`
+`./install.sh`
+`cd ..`
 
-./install.sh
+# Run Pytorch (cudnn) end-to-end test, which takes about 0.5 hour. It's all right if it reports Out-of-Memory error during the evaluation.
+`python launch_cudnn_fp16.py > pytorch_n2n.txt`
+
+# Run vectorSparse end-to-end test, which takes about 0.8 hour.
+`python launch_vectorSparse.py > vectorSparse_n2n.txt`
 ``` 
 
 `cd ./end2end_eval/sparse_transformer_magicube/src`
