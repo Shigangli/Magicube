@@ -709,20 +709,13 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
             int errors = 0;
             int counter = 0;
             for (int j=0; j < dimM * dimN; j++){
-                //if (j < 32) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                //if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
-                //if (j < 10240) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
-                //printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
-                //if (j > 2048 && j < 3072) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
 		if (output_value_cuda[j] > 0) counter++;
                 if ((output_value_cuda[j] - output_value_host[j]) != 0){
-                    //printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
-                    //if (j > 1000000) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                     errors ++;
                 }
             }
             if (errors > 0) {
-                printf( "SPMM does not agree with SEQUENTIAL! %d errors!\n",errors);
+                //printf( "SPMM does not agree with SEQUENTIAL! %d errors!\n",errors);
             }else {
                 printf("Results verification: PASS\n");
             }
