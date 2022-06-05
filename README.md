@@ -61,12 +61,16 @@ python sddmm_ablation_study.py > sddmm_abl_study.txt
 ```bash
 cd ./baselines
 ./setup.sh
+
+# about 13 hours
 ./run_spmm_baselines.sh
 ``` 
 
 ```bash
 cd ./SpMM/SpMM
 ./setup.sh
+
+# about 7 hours
 ./run_spmm_magicube.sh
 ``` 
 
@@ -75,12 +79,16 @@ cd ./SpMM/SpMM
 ```bash
 cd ./baselines
 ./setup.sh
+
+# about 8 hours
 ./run_sddmm_baselines.sh
 ``` 
 
 ```bash
 cd ./SDDMM/SDDMM
 ./setup.sh
+
+# about 5 hours
 ./run_sddmm_magicube.sh
 ``` 
 
