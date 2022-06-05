@@ -12,7 +12,6 @@
 #include <string>
 #include <cuda_profiler_api.h>
 #include <cublas_v2.h>
-//#include "sputnik/sputnik.h"
 #include <cusparse.h>
 #include <iostream>
 
@@ -384,35 +383,10 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
 
         if(func){
             flops = compute_ref_integers<TypeA>(values, rhs_matrix, output_value_host, dimM, dimK, dimN, preA, preA_cut, preB, vec_length, row_offsets, col_indices, m_vec, scaleA);
-            //if(mixed == 2){
-            //    flops = compute_ref_integers<TypeA>(values, rhs_matrix, output_value_host, m, n, k, 8, 8, 4, row_offsets, col_indices, m_vec);
-            //}
-	    //else{
-            //    // Initialize the output matrix with 0
-            //    for (int i=0; i < m * k; i++){
-            //        output_value_host[i] = 0.0f;
-            //    }
-            //    
-            //    // traverse all the vector rows
-            //    for (int i=0; i < m_vec; i++){
-            //        // traverse all the nonzero columns in this row
-            //        for (int j=row_offsets[i]; j < row_offsets[i+1]; j++){
-            //            int col_idx = col_indices[j];
-            //            // traverse all the elements in the vector
-            //            for (int v=0; v < vec_length; v++){
-            //                int row_idx = i * vec_length + v;
-            //                for (int l=0; l < k; l++){
-            //                    output_value_host[row_idx * k + l] += (float)values[j * vec_length + v] * (float)rhs_matrix[col_idx * k + l];
-            //                    flops += 2.0;
-            //                }
-            //            }
-            //        }
-            //    }
-	    //}
+	    flops = flops/1000.0/1000.0/1000.0;
+            std::cout << "total Gflops: " << flops << "\n";
         }// end if func
 
-	flops = flops/1000.0/1000.0/1000.0;
-        std::cout << "total Gflops: " << flops << "\n";
 
         int *row_indices = new int[m_vec];
         if(sorted){
@@ -461,7 +435,6 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         
         cudaProfilerStart();
 	float spmm_ms_avg = 0.0f;
-	//int NUM_PROFILES = 1024;
 	int NUM_PROFILES = 512;
         if((kernel == 0) && (preA_cut == 4) && (preB == 4)){
             //printf("Using WMMA \n");
@@ -659,8 +632,11 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
         }
 
 	std::cout << "Magicube SpMM runtime " << spmm_ms_avg/(float)NUM_PROFILES << " ms" << "\n";
-        spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
-        std::cout << "performance TOP/s: " << flops/spmm_ms_avg/1000.0 << "\n";
+	if (func){
+            spmm_ms_avg = spmm_ms_avg/(float)NUM_PROFILES/1000.0;
+            std::cout << "performance TOP/s: " << flops/spmm_ms_avg/1000.0 << "\n";
+	}
+
         cudaProfilerStop();
 
         //else if (kernel == 1){
@@ -744,15 +720,8 @@ void BmFN(std::string benchmark, int N, int vec_length, int kernel, bool sorted,
             int errors = 0;
             int counter = 0;
             for (int j=0; j < dimM * dimN; j++){
-                //if (j < 32) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
-                //if (abs((float)output_value_cuda[j] - (float)output_value_host[j]) > 0.5){
-                //if (j < 10240) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
-                //printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
-                //if (j > 2048 && j < 3072) printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
 		if (output_value_cuda[j] > 0) counter++;
                 if ((output_value_cuda[j] - output_value_host[j]) != 0){
-                    //printf("item %d, expect %d, got %d\n", j, output_value_host[j], output_value_cuda[j]);
-                    //if (j > 1000000) printf("item %d, expect %.4f, got %.4f\n", j, (float)output_value_host[j], (float)output_value_cuda[j]);
                     errors ++;
                 }
             }

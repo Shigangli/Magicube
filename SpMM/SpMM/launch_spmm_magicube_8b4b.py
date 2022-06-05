@@ -27,6 +27,6 @@ for dimN in dimNs:
             for i in range(len(lines)):
             #for i in range(1):
                 matrix = '%s/%s' % (dataset_dir, lines[i][:-1])
-                cmd = './spmm_benchmark %s %d %d 0 1 1 1 8 4' % (matrix, dimN, vec_len)
+                cmd = './spmm_benchmark %s %d %d 0 1 0 1 8 4' % (matrix, dimN, vec_len)
                 os.system(cmd)
 
