@@ -1,3 +1,4 @@
 nvtx
 scipy
 pytorch_memlab
+seaborn
