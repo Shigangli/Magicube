@@ -1,11 +1,12 @@
 import re
 import six
 
-filename = "0-sddmm-cublase-int8-dense.txt"
+
+filename = "../baselines/spmm_cublas_fp16.txt"
 pattern = r"runtime (\d+(\.\d+)?) ms"
 
 reader = open(filename, 'r')
-runtime = []
+tops = []
 
 while True:
     line = reader.readline()
@@ -14,19 +15,20 @@ while True:
     line = line.rstrip()
     m = re.search(pattern, line)
     if m:
-        runtime.append(m.group(1))
+        tops.append(m.group(1))
 
-writer = open('1-sddmm-cublase-int8-dense.txt', 'w')
-for r in runtime:
+writer = open('0_spmm_cublas_fp16.txt', 'w')
+for r in tops:
     writer.write(str(r) + '\n')
 writer.close()
 
 
-filename = "0-sddmm-cublase-f16-dense.txt"
+
+filename = "../baselines/spmm_cublas_int8.txt"
 pattern = r"runtime (\d+(\.\d+)?) ms"
 
 reader = open(filename, 'r')
-runtime = []
+tops = []
 
 while True:
     line = reader.readline()
@@ -35,20 +37,20 @@ while True:
     line = line.rstrip()
     m = re.search(pattern, line)
     if m:
-        runtime.append(m.group(1))
+        tops.append(m.group(1))
 
-writer = open('1-sddmm-cublase-f16-dense.txt', 'w')
-for r in runtime:
+writer = open('0_spmm_cublas_int8.txt', 'w')
+for r in tops:
     writer.write(str(r) + '\n')
 writer.close()
 
 
 
-filename = "0-sc21-sddmm.txt"
+filename = "../baselines/spmm_vectorSparse.txt"
 pattern = r"runtime (\d+(\.\d+)?) ms"
 
 reader = open(filename, 'r')
-runtime = []
+tops = []
 
 while True:
     line = reader.readline()
@@ -57,20 +59,20 @@ while True:
     line = line.rstrip()
     m = re.search(pattern, line)
     if m:
-        runtime.append(m.group(1))
+        tops.append(m.group(1))
 
-writer = open('1-sc21-sddmm.txt', 'w')
-for r in runtime:
+writer = open('0_spmm_vectorSparse.txt', 'w')
+for r in tops:
     writer.write(str(r) + '\n')
 writer.close()
 
 
 
-filename = "0-magicube-sddmm-4b4b.txt"
-pattern = r"Runtime: (\d+(\.\d+)?) ms"
+filename = "../baselines/spmm_cusparse_fp16.txt"
+pattern = r"runtime (\d+(\.\d+)?) ms"
 
 reader = open(filename, 'r')
-runtime = []
+tops = []
 
 while True:
     line = reader.readline()
@@ -79,22 +81,20 @@ while True:
     line = line.rstrip()
     m = re.search(pattern, line)
     if m:
-        runtime.append(m.group(1))
+        tops.append(m.group(1))
 
-writer = open('1-sddmm-4b4b.txt', 'w')
-for r in runtime:
+writer = open('0_spmm_cusparse_fp16.txt', 'w')
+for r in tops:
     writer.write(str(r) + '\n')
 writer.close()
 
 
 
-
-
-filename = "0-magicube-sddmm-8b8b.txt"
-pattern = r"Runtime: (\d+(\.\d+)?) ms"
+filename = "../baselines/spmm_cusparse_int8.txt"
+pattern = r"runtime (\d+(\.\d+)?) ms"
 
 reader = open(filename, 'r')
-runtime = []
+tops = []
 
 while True:
     line = reader.readline()
@@ -103,21 +103,20 @@ while True:
     line = line.rstrip()
     m = re.search(pattern, line)
     if m:
-        runtime.append(m.group(1))
+        tops.append(m.group(1))
 
-writer = open('1-sddmm-8b8b.txt', 'w')
-for r in runtime:
+writer = open('0_spmm_cusparse_int8.txt', 'w')
+for r in tops:
     writer.write(str(r) + '\n')
 writer.close()
 
 
 
-
-filename = "0-magicube-sddmm-16b16b.txt"
-pattern = r"Runtime: (\d+(\.\d+)?) ms"
+filename = "../SpMM/SpMM/spmm_magicube_16b8b.txt"
+pattern = r"runtime (\d+(\.\d+)?) ms"
 
 reader = open(filename, 'r')
-runtime = []
+tops = []
 
 while True:
     line = reader.readline()
@@ -126,13 +125,75 @@ while True:
     line = line.rstrip()
     m = re.search(pattern, line)
     if m:
-        runtime.append(m.group(1))
+        tops.append(m.group(1))
 
-writer = open('1-sddmm-16b16b.txt', 'w')
-for r in runtime:
+writer = open('0_spmm_magicube_16b8b.txt', 'w')
+for r in tops:
     writer.write(str(r) + '\n')
 writer.close()
 
 
 
+filename = "../SpMM/SpMM/spmm_magicube_8b8b.txt"
+pattern = r"runtime (\d+(\.\d+)?) ms"
 
+reader = open(filename, 'r')
+tops = []
+
+while True:
+    line = reader.readline()
+    if len(line) == 0:
+        break
+    line = line.rstrip()
+    m = re.search(pattern, line)
+    if m:
+        tops.append(m.group(1))
+
+writer = open('0_spmm_magicube_8b8b.txt', 'w')
+for r in tops:
+    writer.write(str(r) + '\n')
+writer.close()
+
+
+
+filename = "../SpMM/SpMM/spmm_magicube_8b4b.txt"
+pattern = r"runtime (\d+(\.\d+)?) ms"
+
+reader = open(filename, 'r')
+tops = []
+
+while True:
+    line = reader.readline()
+    if len(line) == 0:
+        break
+    line = line.rstrip()
+    m = re.search(pattern, line)
+    if m:
+        tops.append(m.group(1))
+
+writer = open('0_spmm_magicube_8b4b.txt', 'w')
+for r in tops:
+    writer.write(str(r) + '\n')
+writer.close()
+
+
+
+filename = "../SpMM/SpMM/spmm_magicube_4b4b.txt"
+pattern = r"runtime (\d+(\.\d+)?) ms"
+
+reader = open(filename, 'r')
+tops = []
+
+while True:
+    line = reader.readline()
+    if len(line) == 0:
+        break
+    line = line.rstrip()
+    m = re.search(pattern, line)
+    if m:
+        tops.append(m.group(1))
+
+writer = open('0_spmm_magicube_4b4b.txt', 'w')
+for r in tops:
+    writer.write(str(r) + '\n')
+writer.close()
