@@ -1,8 +1,6 @@
 ## Magicube
 
-The software requirements to reproduce the artfifact are: `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`,
-
-which is a common configuration on a machine with A100 GPUs. This is no complex software dependency and the reproducibility process is easy to conduct following the steps below.
+The software requirements to reproduce the artfifact are: `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`, which is a common configuration on a machine with A100 GPUs. [vectorSparse](https://github.com/apuaaChen/vectorSparse) (published in SC'21, one of the baselines) is already integrated in the repo. This is no complex software dependency and the reproducibility process is easy to conduct following the steps below.
 
 ## Step 1: Prepare Dataset and Code.
 
