@@ -68,7 +68,7 @@ cd ./baselines
 cd ./SpMM/SpMM
 ./setup.sh
 
-# about 7 hours
+# about 8 hours
 ./run_spmm_magicube.sh
 ``` 
 
