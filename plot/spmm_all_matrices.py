@@ -360,7 +360,7 @@ for ll in range(9):
         for i in range(m):
             data_list[i + ll*m].append(round(float(runtime[i])/float(runtime8[i]), 4))
 
-with open('0_spmm_all_matrices.csv', 'w', encoding='UTF8') as f:
+with open('spmm_all_matrices.csv', 'w', encoding='UTF8') as f:
     writer = csv.writer(f)
 
     writer.writerow(header)
