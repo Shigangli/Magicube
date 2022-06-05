@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
+sns.set_context(rc = {'patch.linewidth': 0.0})
 order = ['Pytorch-fp16', 'vectorSparse-fp16', 'Magicube-16b8b', 'Magicube-8b8b', 'Magicube-8b4b', 'Magicube-4b4b']
 n2n_a_data = pd.read_csv('n2n_a.csv')
 sns.set(rc={"lines.linewidth": 0.5})
