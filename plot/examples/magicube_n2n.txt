@@ -1,0 +1,576 @@
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.1986 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.3999 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.3777 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.3994 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.1820 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.3728 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.3933 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.3805 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.2725 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.3409 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.4281 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.2664 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.4154 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.3757 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.4411 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.4259 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.7442 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.7259 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.7284 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.6664 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.7467 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.7493 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.7483 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.7420 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.8160 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.7533 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.6284 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.8369 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.7988 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.7963 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.5664 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.8365 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 11.7299 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 12.2557 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 11.6664 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 12.1422 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 12.2555 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 12.4076 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 11.7569 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 12.1731 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.0656 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.8752 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.4022 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.2500 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.9181 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.3102 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.7152 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 12.1352 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 13.3932 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 12.9273 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 13.5866 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 13.7348 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 13.4936 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 13.2071 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 12.8843 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 12.8631 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 13.5746 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 13.7646 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 13.7772 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 12.9878 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 13.1694 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 13.2152 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 13.2556 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 13.7967 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.5945 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.7446 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 7.1005 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.4262 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.5817 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.3268 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 7.0823 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.9968 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.7106 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.1911 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.2747 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.2938 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.2069 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.1516 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.1737 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.2457 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.9226 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.8736 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 7.4477 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 7.5008 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 7.5789 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 7.3325 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 7.0359 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 7.2002 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 7.4813 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 7.1181 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 6.8636 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 7.3105 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 7.2125 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 7.8710 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 7.3580 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 7.1885 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 24.4964 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 23.3881 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 23.4292 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 23.6491 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 23.8506 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 23.4446 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 23.6066 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 23.5457 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 24.3877 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 24.2000 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 24.2375 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 24.1544 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 24.2009 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 24.6969 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 23.6832 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 24.5288 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 26.4992 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 26.2471 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 26.1337 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 25.4774 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 26.1743 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 25.9039 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 26.5356 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 26.5032 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.6883 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.0817 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.2300 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.0129 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.8620 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.6123 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.9565 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 26.4451 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.6566 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 9.2395 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.7312 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.9188 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.8684 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 9.2381 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 9.0422 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.9839 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 9.7789 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 8.8240 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 9.3787 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 8.7791 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 9.3760 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 9.5378 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 8.7931 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 9.4781 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 10.4296 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 10.0571 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 9.9188 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 9.8485 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 10.6596 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 10.2578 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 9.8806 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 10.2078 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.9080 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.2131 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.8316 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.9214 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.8213 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.8255 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.3983 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 10.8295 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 33.6951 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 34.2131 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 34.1972 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 34.2597 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 34.4850 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 34.0017 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 34.1922 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 34.0140 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.7256 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.6467 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.1679 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.0795 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.6117 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.0000 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.9046 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 34.2723 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 37.7383 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 38.0302 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 37.9637 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 37.9865 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 38.0860 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 38.3787 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 38.2181 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 38.1024 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 39.3253 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 38.6768 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 38.7967 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 39.1352 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 39.4541 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 39.1057 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 38.7898 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 38.5960 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 17.4284 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 17.0912 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 17.0353 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 17.3608 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 18.1592 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 17.4775 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 17.3603 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 17.5445 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 17.5429 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 17.5277 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 18.3954 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 17.6769 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 18.3491 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 18.0132 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 17.4096 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 18.0787 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 19.6879 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 19.9034 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 20.2552 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 20.4059 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 20.1512 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 19.7877 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 20.0431 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 19.4404 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 20.5028 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 20.1722 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 19.7785 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 19.7231 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 19.8149 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 20.3462 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 20.5386 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 20.0262 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 66.8270 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 66.8062 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 66.6929 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 67.2352 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 66.7281 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 67.4221 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 67.4437 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 66.4197 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 67.4832 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 68.3041 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 68.1240 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 67.6579 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 68.6290 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 68.5024 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 68.0542 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 67.4640 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 76.0008 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 75.7642 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 76.2825 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 75.7348 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 75.6680 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 75.3815 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 75.2697 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 75.9569 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 76.6875 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 77.2164 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 76.9674 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 76.8135 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 76.2590 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 77.2160 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 77.4754 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 77.1191 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.9 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.0102 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 2.9897 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.0210 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.0142 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.0264 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.0136 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.0303 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 3.0246 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.0401 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.0409 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.0314 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.0463 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 2.9196 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.0557 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 2.9825 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 3.0282 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.1388 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.1528 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.1555 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.1506 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.1513 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.0405 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.0602 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 3.0895 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.2336 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.2034 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.0400 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.2034 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.1155 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.0541 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.1801 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 3.2203 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 11.6560 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 10.8762 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 11.4969 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 10.6295 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 11.1816 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 10.7727 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 10.8202 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 10.9108 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 11.2679 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 10.8382 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 11.2949 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 10.8258 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 11.6256 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 11.7337 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 10.8550 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 11.4226 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 11.2278 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 11.5747 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 11.0363 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 11.5087 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 12.0224 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 11.5006 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 11.2836 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 11.0643 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 11.9999 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 12.2602 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 12.1341 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 12.1765 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 11.4167 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 11.4708 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 11.6202 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 11.4170 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 4096 --bs 8 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 5.5167 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 5.8770 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 5.8759 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.4173 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.3861 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 5.9544 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.4040 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 6.3771 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.4291 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 5.9849 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 5.9576 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 5.7595 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.2194 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.0649 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 5.8813 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 6.4049 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.6425 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.6818 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.7267 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.7151 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 5.9014 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 5.9529 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.6997 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 6.5275 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 5.8996 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 6.5583 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 6.7856 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 6.7737 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 6.2422 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 6.1170 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 6.3704 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 5.9916 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 22.1846 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 21.2573 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 21.4417 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 22.4670 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 21.2751 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 21.7586 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 21.8899 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 22.0690 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 21.5978 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 21.7968 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 21.9360 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 22.4834 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 21.9050 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 22.0474 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 22.2824 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 22.2461 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 22.3115 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 22.3248 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 22.2373 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 22.6419 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 22.9061 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 22.2101 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 23.1986 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 23.1980 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 23.6387 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 22.5479 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 22.7495 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 23.1855 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 23.2680 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 23.4718 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 23.0815 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 22.7547 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 4096 --bs 8 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.7106 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 7.6232 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.5244 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 7.9002 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.2141 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 7.7274 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.0698 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 8.0783 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.9163 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.8541 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.9859 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 8.8085 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 8.3487 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 8.0316 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 7.8571 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 8.6415 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 8.5164 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 8.6092 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 9.0377 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 8.1689 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 8.2947 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 8.3845 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 8.7615 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 8.8714 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 8.8397 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 9.0435 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 9.2938 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 8.9493 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 8.7068 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 8.1834 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 8.3454 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 8.1808 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 30.3525 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 29.6184 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 29.9101 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 29.9755 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 29.6842 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 29.6696 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 30.3950 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 29.8572 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 30.6798 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 29.8096 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 30.0013 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 30.7518 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 30.5180 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 30.5815 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 30.4959 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 29.6410 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 31.6758 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 32.0341 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 31.4499 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 31.7205 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 31.9241 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 32.0679 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 31.5823 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 32.0303 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 32.3598 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 32.6090 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 32.9775 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 32.2047 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 32.2096 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 31.8719 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 32.9899 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 32.3737 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 1024 --embed_dim 256 --num_heads 4 --seq_len 8192 --bs 8 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 16.0412 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 15.9499 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 15.8531 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 15.2715 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 15.6885 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 15.7576 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 16.0408 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[2]) average runtime 15.7073 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 16.0660 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 15.3312 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 15.9978 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 15.8661 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 15.3748 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 15.7681 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 15.2780 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[2]) average runtime 15.1378 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 16.4422 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 16.9249 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 16.6124 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 16.1456 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 17.0497 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 16.2446 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 16.8851 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[2]) average runtime 16.7609 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 16.7076 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 16.8943 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 16.3851 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 17.1244 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 16.8060 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 17.1335 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 17.0980 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[2]) average runtime 17.1642 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 2 --lhs_pre 16 --rhs_pre 8
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 58.7655 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 59.7360 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 59.5910 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 59.2402 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 59.2877 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 59.4972 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 59.2521 milliseconds
+Magicube (lhs_pre[4], rhs_pre[4], batch_size[8]) average runtime 58.9164 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 4 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 59.5823 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 59.6015 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 59.9497 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 59.5094 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 59.9428 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 60.2463 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 59.7499 milliseconds
+Magicube (lhs_pre[8], rhs_pre[4], batch_size[8]) average runtime 60.2171 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 4
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 62.8380 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 63.3201 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 63.5446 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 63.5320 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 63.0082 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 63.7967 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 63.1942 milliseconds
+Magicube (lhs_pre[8], rhs_pre[8], batch_size[8]) average runtime 63.5111 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 8 --rhs_pre 8
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 63.7351 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 63.6367 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 63.7131 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 64.1999 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 64.6353 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 64.4017 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 64.2929 milliseconds
+Magicube (lhs_pre[16], rhs_pre[8], batch_size[8]) average runtime 63.9266 milliseconds
+CUDA_VISIBLE_DEVICES=GPU-31acddbe-f963-b876-2508-0c529c73da36 python3 end_to_end.py --model sparse --sparsity 0.95 --mlp_dim 2048 --embed_dim 512 --num_heads 8 --seq_len 8192 --bs 8 --lhs_pre 16 --rhs_pre 8
