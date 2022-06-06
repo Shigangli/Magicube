@@ -1,5 +1,8 @@
 import numpy as np
 import scipy.stats as st
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 #define sample data
 np.random.seed(0)
