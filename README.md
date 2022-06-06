@@ -116,11 +116,16 @@ python launch_magicube.py > magicube_n2n.txt
 
 
 ## Step 4: Plot the figures.
-Figure 13
-Figure 14
-Figure 15
-Figure 16
+```bash
+cd ./plot
 
+# generate csv files
+./gen_csv.sh
+
+# plot figures
+./plot.sh
+``` 
+At last, all figures are in `./plot/figs`
 
 ## License
 
