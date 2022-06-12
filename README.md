@@ -127,9 +127,12 @@ cd ./plot
 ``` 
 At last, see all figures in `./plot/figs`
 
+
+<!--
 ## Alternate identifier:
 
 https://github.com/Shigangli/Magicube
+-->
 
 ## License
 
