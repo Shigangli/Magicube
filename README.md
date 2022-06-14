@@ -1,4 +1,4 @@
-## Magicube
+## Magicube - SC22 Artifact
 
 [Magicube](https://github.com/Shigangli/Magicube) is a high-performance library for quantized sparse matrix operations of deep learning on Tensor Cores. We conduct all the experiments on NVIDIA A100 GPU. The software requirements to reproduce the artfifact are: `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`, which is a common configuration on a machine with A100 GPUs. All baselines, including vectorSparse (in SC21), are already integrated in the repo. The reproducibility process is easy to conduct following the steps below.
 
@@ -133,6 +133,18 @@ At last, see all figures in `./plot/figs`
 
 https://github.com/Shigangli/Magicube
 -->
+
+Publication
+-----------
+Magicube will appear in [SC22](https://sc22.supercomputing.org/):
+```bibtex
+@inproceedings{li2022efficient,
+  title={Efficient Quantized Sparse Matrix Operations on Tensor Cores},
+  author={Li, Shigang and Osawa, Kazuki and Hoefler, Torsten},
+  booktitle={International Conference for High Performance Computing, Networking, Storage and Analysis},
+  year={2022}
+}
+```
 
 ## License
 
