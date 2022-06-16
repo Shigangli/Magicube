@@ -137,6 +137,7 @@ https://github.com/Shigangli/Magicube
 Publication
 -----------
 Magicube will appear in [SC22](https://sc22.supercomputing.org/):
+<!--
 ```bibtex
 @inproceedings{li2022efficient,
   title={Efficient Quantized Sparse Matrix Operations on Tensor Cores},
@@ -145,6 +146,7 @@ Magicube will appear in [SC22](https://sc22.supercomputing.org/):
   year={2022}
 }
 ```
+-->
 
 ## License
 
