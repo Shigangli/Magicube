@@ -1,5 +1,7 @@
 ## Magicube - SC22 Artifact
 
+![Magicube](magicubeLogo.svg)
+
 Magicube is a high-performance library for quantized sparse matrix operations (SpMM and SDDMM) of deep learning on Tensor Cores. We conduct all the experiments on NVIDIA A100-SXM4-40GB GPU. The software requirements to reproduce the artfifact are: `GCC 8.4.1`, `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`.
 
 We provide two ways to reproduce the results. The first way is to reproduce the artifact with docker container, in which the software environment is already configured and the input dataset is also included. Note that nvidia-docker must be installed to run the container on GPU. Using docker container enables an easy reproducibility process. The second way is to reproduce the artifact with source code, in which users have to setup the software environment and download the input dataset by themselves following the provided instructions.
