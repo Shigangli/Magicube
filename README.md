@@ -66,7 +66,6 @@ python sddmm_ablation_study.py > sddmm_abl_study.txt
 
 ```bash
 cd /artifacts/Magicube/baselines
-
 bash setup.sh
 
 # about 13 hours
@@ -108,7 +107,7 @@ python launch_cudnn_fp16.py > pytorch_n2n.txt
 # about 0.8 hour
 python launch_vectorSparse.py > vectorSparse_n2n.txt
 
-cd /artifacts/Magicube/end2end_eval/ sparse_transformer_magicube/src
+cd /artifacts/Magicube/end2end_eval/sparse_transformer_magicube/src
 bash install.sh
 cd ..
 
@@ -127,15 +126,14 @@ bash gen_csv.sh
 # plot figures
 bash plot.sh
 
-cd /artifacts/Magicube/plot/figs
-
 # copy figures
+cd /artifacts/Magicube/plot/figs
 scp *.pdf username@hostmachine:/host/path/target
 ```
 
 ## Reproduction with source code
 
-Different from docker container, users have to setup the software environment and download the input dataset by themselves when producing from source code.
+Different from docker container, users have to setup the software environment and download the input dataset by themselves when reproducing from source code.
 
 **Step 1**: Prepare dataset and code, and setup python environment.
 
