@@ -2,7 +2,7 @@
 
 ![Magicube](magicubeLogo.svg)
 
-Magicube is a high-performance library for quantized sparse matrix operations (SpMM and SDDMM) of deep learning on Tensor Cores. Magicube is published in [SC 2022](https://sc22.supercomputing.org/), **Best Paper Finalist**. We conduct all the experiments on NVIDIA A100-SXM4-40GB GPU. The software requirements to reproduce the artfifact are: `GCC 8.4.1`, `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`.
+Magicube is a high-performance library for quantized sparse matrix operations (SpMM and SDDMM) of deep learning on Tensor Cores. Magicube is published in [SC 2022](https://sc22.supercomputing.org/), Best Paper Finalist. We conduct all the experiments on NVIDIA A100-SXM4-40GB GPU. The software requirements to reproduce the artfifact are: `GCC 8.4.1`, `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`.
 
 **We provide two ways to reproduce the results.** The first way is to reproduce the artifact with **docker container**, in which the software environment is already configured and the input dataset is also included. Note that nvidia-docker must be installed to run the container on GPU. Using docker container enables an easy reproducibility process. The second way is to reproduce the artifact with **source code**, in which users have to setup the software environment and download the input dataset by themselves following the provided instructions.
 
@@ -15,7 +15,7 @@ We run all the experiments on NVIDIA A100-SXM4-40GB GPU. Please double-check the
 Download magicube_container.tar.gz from the DOI by:
 
 ```bash
-`wget https://zenodo.org/record/6924338/files/magicube_container.tar.gz`
+wget https://zenodo.org/record/6924338/files/magicube_container.tar.gz
 ```
 
 Run the container and activate python by:
