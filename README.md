@@ -1,6 +1,6 @@
 ## Magicube: Efficient Quantized Sparse Matrix Operations on Tensor Cores
 
-![Magicube](magicubeLogo.svg)
+![MagicubeLogo](magicubeLogo.svg)
 
 Magicube is a high-performance library for quantized sparse matrix operations (SpMM and SDDMM) of deep learning on Tensor Cores. Magicube is published in [SC 2022](https://sc22.supercomputing.org/), Best Paper Finalist. We conduct all the experiments on NVIDIA A100-SXM4-40GB GPU. The software requirements to reproduce the artfifact are: `GCC 8.4.1`, `CUDA Toolkit 11.4.0`, `Python 3.8.5`, `PyTorch 1.9.0` with `cuDNN version 8005`.
 
