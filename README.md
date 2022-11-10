@@ -159,7 +159,7 @@ pip install -r requirements.txt
 
 ## Publication
 
-Magicube is pulished in SC 2022, **Best Paper Finalist**. To cite our work:
+Magicube is pulished in SC 2022, Best Paper Finalist. To cite our work:
 ```bibtex
 @inproceedings{li2022efficient,
   title={Efficient Quantized Sparse Matrix Operations on Tensor Cores},
