@@ -162,10 +162,15 @@ pip install -r requirements.txt
 Magicube is pulished in SC 2022, Best Paper Finalist. To cite our work:
 ```bibtex
 @inproceedings{li2022efficient,
-  title={Efficient Quantized Sparse Matrix Operations on Tensor Cores},
-  author={Li, Shigang and Osawa, Kazuki and Hoefler, Torsten},
-  booktitle={International Conference for High Performance Computing, Networking, Storage and Analysis (SC'22)},
-  year={2022}
+  author = {Li, Shigang and Osawa, Kazuki and Hoefler, Torsten},
+  title = {Efficient Quantized Sparse Matrix Operations on Tensor Cores},
+  booktitle = {Proceedings of the International Conference on High Performance Computing, Networking, Storage and Analysis},
+  articleno = {37},
+  numpages = {15},
+  location = {Dallas, Texas},
+  publisher = {IEEE Press},
+  series = {SC'22},
+  year = {2022}
 }
 ```
 
